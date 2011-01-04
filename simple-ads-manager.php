@@ -1,0 +1,54 @@
+<?php
+/*
+Plugin Name: Simple Ads Manager
+Plugin URI: http://www.simplelib.com/?p=480
+Description: "Simple Ads Manager" is easy to use plugin providing a flexible logic of displaying advertisements. Visit <a href="http://www.simplelib.com/">SimpleLib blog</a> for more details.
+Version: 0.1.1
+Author: minimus
+Author URI: http://blogcoding.ru
+*/
+
+/*  Copyright 2009, minimus  (email : minimus.blogovod@gmail.com)
+
+    This program is free software; you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation; either version 2 of the License, or
+    (at your option) any later version.
+
+    This program is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with this program; if not, write to the Free Software
+    Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
+*/
+
+global $samObject;
+
+if (is_admin()) {
+	include_once('sam-class.php');
+	include_once('sam-admin-class.php');
+	if (class_exists("SimpleAdsManagerAdmin") && class_exists("SimpleAdsManager")) 
+		$samObject = new SimpleAdsManagerAdmin();
+}
+else {
+	include_once('sam-class.php');
+	if (class_exists("SimpleAdsManager")) $samObject = new SimpleAdsManager();
+}
+
+include_once('sam-widget-class.php');
+if(class_exists('simple_ads_manager_widget')) 
+  add_action('widgets_init', create_function('', 'return register_widget("simple_ads_manager_widget");'));
+
+if(class_exists("SimpleAdsManagerAdmin") || class_exists("SimpleAdsManager")) {
+  function drawAdsPlace($args = null, $codes = false) {
+    global $samObject;
+    
+    if(is_null($args)) echo '';
+    if(is_object($samObject)) echo $samObject->buildAd($args, $codes);
+    else echo '';
+  }
+}
+?>

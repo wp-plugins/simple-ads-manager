@@ -1,0 +1,1095 @@
+# The Genesis 1.3 Translation Master File
+# Copyright (C) 2010 StudioPress
+# This file is distributed under the same license as the Genesis package.
+msgid ""
+msgstr ""
+"Project-Id-Version: Simple Ads Manager\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2010-12-18 23:17+0200\n"
+"PO-Revision-Date: \n"
+"Last-Translator: minimus <minimus@blogcoding.ru>\n"
+"Language-Team: minimus <minimus@blogcoding.ru>\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=3; plural=(n%10==1 && n%100!=11 ? 0 : n%10>=2 && n%10<=4 && (n%100<10 || n%100>=20) ? 1 : 2);\n"
+"X-Poedit-Language: Russian\n"
+"X-Poedit-Country: BELARUS\n"
+"X-Poedit-SourceCharset: utf-8\n"
+"X-Poedit-KeywordsList: __;_e;__ngettext:1,2;__ngettext_noop:1,2;__ngettext;_n:1,2;_nc:1,2;esc_attr__\n"
+"X-Poedit-Basepath: .\n"
+"X-Poedit-SearchPath-0: .\n"
+
+#: sam-admin-class.php:53
+msgid "General Settings"
+msgstr "Основные параметры"
+
+#: sam-admin-class.php:54
+msgid "Auto Inserting Settings"
+msgstr "Параметры автовставки"
+
+#: sam-admin-class.php:55
+msgid "Admin Layout"
+msgstr "Параметры административных страниц"
+
+#: sam-admin-class.php:56
+msgid "Plugin Deactivating"
+msgstr "Деактивация плагина"
+
+#: sam-admin-class.php:58
+msgid "Views per Cycle"
+msgstr "Показов в цикле"
+
+#: sam-admin-class.php:58
+msgid "Number of hits of one ad for a full cycle of rotation (maximal activity)."
+msgstr "Количество показов одного рекламного объявления за полный цикл ротации при максимальной активности (см. \"вес объявления\")."
+
+#: sam-admin-class.php:60
+msgid "Ads Place before content"
+msgstr "Рекламное место до контента"
+
+#: sam-admin-class.php:61
+msgid "Allow Ads Place auto inserting before post/page content"
+msgstr "Разрешить автоматическую вставку рекламного места перед контентом статьи/страницы"
+
+#: sam-admin-class.php:62
+#: sam-admin-class.php:65
+msgid "Allow using predefined Ads Place HTML codes (before and after codes)"
+msgstr "Использовать заранее заданные коды рекламного места (коды рекламного места \"до\" и \"после\")"
+
+#: sam-admin-class.php:63
+msgid "Ads Place after content"
+msgstr "Рекламное место после контента"
+
+#: sam-admin-class.php:64
+msgid "Allow Ads Place auto inserting after post/page content"
+msgstr "Разрешить автоматическую вставку рекламного места после контента статьи/страницы"
+
+#: sam-admin-class.php:67
+msgid "Ads Places per Page"
+msgstr "Рекламных мест на страницу"
+
+#: sam-admin-class.php:67
+msgid "Ads Places Management grid pagination. How many Ads Places will be shown on one page of grid."
+msgstr "Разбиение на страницы таблицы представления рекламных мест. Сколько рекламных мест будет показано в таблице на одной странице."
+
+#: sam-admin-class.php:68
+msgid "Ads per Page"
+msgstr "Объявлений на страницу"
+
+#: sam-admin-class.php:68
+msgid "Ads of Ads Place Management grid pagination. How many Ads will be shown on one page of grid."
+msgstr "Разбиение на страницы таблицы представления рекламных объявлений. Сколько рекламных объявлений будет показано в таблице на одной странице."
+
+#: sam-admin-class.php:70
+msgid "Delete plugin options during deactivating plugin"
+msgstr "Удалить параметры плагина при деактивации"
+
+#: sam-admin-class.php:71
+msgid "Delete database tables of plugin during deactivating plugin"
+msgstr "Удалить таблицы базы данных плагина во время деактивации"
+
+#: sam-admin-class.php:72
+msgid "Delete custom images folder of plugin during deactivating plugin"
+msgstr "Удалить папку пользовательских изображений плагина во время деактивации"
+
+#: sam-admin-class.php:76
+msgid "Ads"
+msgstr "Реклама"
+
+#: sam-admin-class.php:77
+msgid "Ads List"
+msgstr "Список рекламных объявлений"
+
+#: sam-admin-class.php:77
+msgid "Ads Places"
+msgstr "Рекламные места"
+
+#: sam-admin-class.php:79
+msgid "Ads Editor"
+msgstr "Редактор рекламных объявлений"
+
+#: sam-admin-class.php:79
+msgid "New Place"
+msgstr "Новое место"
+
+#: sam-admin-class.php:82
+#: sam-admin-class.php:488
+msgid "Simple Ads Manager Settings"
+msgstr "Параметры Simple Ads Manager"
+
+#: sam-admin-class.php:82
+msgid "Settings"
+msgstr "Параметры"
+
+#: sam-admin-class.php:127
+#: sam-admin-class.php:247
+msgid "Custom sizes"
+msgstr "Пользовательские размеры"
+
+#: sam-admin-class.php:130
+#: sam-admin-class.php:191
+msgid "Large Leaderboard"
+msgstr "Большая доска почёта"
+
+#: sam-admin-class.php:131
+#: sam-admin-class.php:192
+msgid "Leaderboard"
+msgstr "Доска почёта"
+
+#: sam-admin-class.php:132
+#: sam-admin-class.php:134
+#: sam-admin-class.php:135
+#: sam-admin-class.php:193
+#: sam-admin-class.php:195
+#: sam-admin-class.php:196
+msgid "Small Leaderboard"
+msgstr "Малая доска почёта"
+
+#: sam-admin-class.php:133
+#: sam-admin-class.php:194
+msgid "Mega Unit"
+msgstr "Мегаблок"
+
+#: sam-admin-class.php:136
+#: sam-admin-class.php:137
+#: sam-admin-class.php:138
+#: sam-admin-class.php:140
+#: sam-admin-class.php:141
+#: sam-admin-class.php:142
+#: sam-admin-class.php:197
+#: sam-admin-class.php:198
+#: sam-admin-class.php:199
+#: sam-admin-class.php:201
+#: sam-admin-class.php:202
+#: sam-admin-class.php:203
+msgid "Tall Banner"
+msgstr "Высокий баннер"
+
+#: sam-admin-class.php:139
+#: sam-admin-class.php:200
+msgid "Banner"
+msgstr "Баннер"
+
+#: sam-admin-class.php:143
+#: sam-admin-class.php:145
+#: sam-admin-class.php:175
+#: sam-admin-class.php:176
+#: sam-admin-class.php:204
+#: sam-admin-class.php:206
+#: sam-admin-class.php:240
+#: sam-admin-class.php:241
+msgid "Half Banner"
+msgstr "Полубаннер"
+
+#: sam-admin-class.php:144
+#: sam-admin-class.php:173
+#: sam-admin-class.php:174
+#: sam-admin-class.php:205
+#: sam-admin-class.php:238
+#: sam-admin-class.php:239
+msgid "Tall Half Banner"
+msgstr "Высокий полубаннер"
+
+#: sam-admin-class.php:146
+#: sam-admin-class.php:147
+#: sam-admin-class.php:172
+#: sam-admin-class.php:179
+#: sam-admin-class.php:180
+#: sam-admin-class.php:207
+#: sam-admin-class.php:208
+#: sam-admin-class.php:237
+#: sam-admin-class.php:244
+#: sam-admin-class.php:245
+msgid "Button"
+msgstr "Кнопка"
+
+#: sam-admin-class.php:148
+#: sam-admin-class.php:209
+msgid "Micro Bar"
+msgstr "Микро-бар"
+
+#: sam-admin-class.php:149
+#: sam-admin-class.php:150
+#: sam-admin-class.php:151
+#: sam-admin-class.php:152
+#: sam-admin-class.php:210
+#: sam-admin-class.php:211
+#: sam-admin-class.php:212
+#: sam-admin-class.php:213
+msgid "Thin Banner"
+msgstr "Тонкий баннер"
+
+#: sam-admin-class.php:149
+#: sam-admin-class.php:150
+#: sam-admin-class.php:151
+#: sam-admin-class.php:152
+#: sam-admin-class.php:173
+#: sam-admin-class.php:174
+#: sam-admin-class.php:175
+#: sam-admin-class.php:176
+#: sam-admin-class.php:177
+#: sam-admin-class.php:178
+#: sam-admin-class.php:179
+#: sam-admin-class.php:180
+#: sam-admin-class.php:210
+#: sam-admin-class.php:211
+#: sam-admin-class.php:212
+#: sam-admin-class.php:213
+#: sam-admin-class.php:238
+#: sam-admin-class.php:239
+#: sam-admin-class.php:240
+#: sam-admin-class.php:241
+#: sam-admin-class.php:242
+#: sam-admin-class.php:243
+#: sam-admin-class.php:244
+#: sam-admin-class.php:245
+#, php-format
+msgid "%d Link"
+msgid_plural "%d Links"
+msgstr[0] "%d ссылка"
+msgstr[1] "%d ссылки"
+msgstr[2] "%d ссылок"
+
+#: sam-admin-class.php:153
+#: sam-admin-class.php:216
+msgid "Wide Skyscraper"
+msgstr "Широкий небоскрёб"
+
+#: sam-admin-class.php:154
+#: sam-admin-class.php:217
+msgid "Skyscraper"
+msgstr "Небоскрёб"
+
+#: sam-admin-class.php:155
+#: sam-admin-class.php:218
+msgid "Wide Half Banner"
+msgstr "Широкий полубаннер"
+
+#: sam-admin-class.php:156
+#: sam-admin-class.php:219
+msgid "Vertical Rectangle"
+msgstr "Вертикальный прямоугольник"
+
+#: sam-admin-class.php:157
+#: sam-admin-class.php:158
+#: sam-admin-class.php:220
+#: sam-admin-class.php:221
+msgid "Tall Rectangle"
+msgstr "Высокий прямоугольник"
+
+#: sam-admin-class.php:159
+#: sam-admin-class.php:222
+msgid "Vertical Banner"
+msgstr "Вертикальный баннер"
+
+#: sam-admin-class.php:160
+#: sam-admin-class.php:225
+msgid "Large Rectangle"
+msgstr "Большой прямоугольник"
+
+#: sam-admin-class.php:161
+#: sam-admin-class.php:162
+#: sam-admin-class.php:226
+#: sam-admin-class.php:227
+msgid "Wide Rectangle"
+msgstr "Широкий прямоугольник"
+
+#: sam-admin-class.php:163
+#: sam-admin-class.php:228
+msgid "Medium Rectangle"
+msgstr "Средний прямоугольник"
+
+#: sam-admin-class.php:164
+#: sam-admin-class.php:165
+#: sam-admin-class.php:229
+#: sam-admin-class.php:230
+msgid "Small Wide Rectangle"
+msgstr "Малый широкий прямоугольник"
+
+#: sam-admin-class.php:166
+#: sam-admin-class.php:231
+msgid "Mini Wide Rectangle"
+msgstr "Маленький широкий прямоугольник"
+
+#: sam-admin-class.php:167
+#: sam-admin-class.php:232
+#: sam-admin-class.php:252
+msgid "Square"
+msgstr "Прямоугольники"
+
+#: sam-admin-class.php:168
+#: sam-admin-class.php:171
+#: sam-admin-class.php:233
+#: sam-admin-class.php:236
+msgid "Small Square"
+msgstr "Малый квадрат"
+
+#: sam-admin-class.php:169
+#: sam-admin-class.php:170
+#: sam-admin-class.php:234
+#: sam-admin-class.php:235
+msgid "Small Rectangle"
+msgstr "Малый прямоугольник"
+
+#: sam-admin-class.php:177
+#: sam-admin-class.php:178
+#: sam-admin-class.php:242
+#: sam-admin-class.php:243
+msgid "Tall Button"
+msgstr "Широкая кнопка"
+
+#: sam-admin-class.php:250
+msgid "Horizontal"
+msgstr "Горизонтальные"
+
+#: sam-admin-class.php:251
+msgid "Vertical"
+msgstr "Вертикальные"
+
+#: sam-admin-class.php:253
+msgid "Custom width and height"
+msgstr "Пользовательские высота и ширина"
+
+#: sam-admin-class.php:353
+msgid "Uploading"
+msgstr "Загружается"
+
+#: sam-admin-class.php:354
+msgid "Uploaded."
+msgstr "загружен."
+
+#: sam-admin-class.php:355
+msgid "Only JPG, PNG or GIF files are allowed"
+msgstr "Разрешается загрузка файлов формата JPG, PNG или GIF"
+
+#: sam-admin-class.php:356
+msgid "File"
+msgstr "Файл"
+
+#: sam-admin-class.php:429
+msgid "There are general options."
+msgstr "Основные параметры плагина."
+
+#: sam-admin-class.php:433
+msgid "Single post/page auto inserting options. Use these parameters for allowing/defining Ads Places which will be automatically inserted before/after post/page content."
+msgstr "Параметры автоматической вставки для режима вывода одной статьи/страницы. Используйте эти параметры для разрешения/определения рекламных мест, которые будут автоматически вставлены до/после контента статьи/страницы."
+
+#: sam-admin-class.php:437
+msgid "This options define layout for Ads Managin Pages."
+msgstr "Эти параметры определяют внешний вид страниц управления рекламными объявлениями и рекламными местами."
+
+#: sam-admin-class.php:441
+msgid "Are you allow to perform these actions during deactivating plugin?"
+msgstr "Вы разрешаете выполнение этих деиствий в ходе деактивации плагина?"
+
+#: sam-admin-class.php:494
+msgid "Simple Ads Manager Settings Updated."
+msgstr "Параметры Simple Ads Manager сохранены."
+
+#: sam-admin-class.php:574
+#: sam-admin-class.php:706
+msgid "&laquo;"
+msgstr "&laquo;"
+
+#: sam-admin-class.php:575
+#: sam-admin-class.php:707
+msgid "&raquo;"
+msgstr "&raquo;"
+
+#: sam-admin-class.php:582
+msgid "Managing Ads Places"
+msgstr "Управление рекламными местами"
+
+#: sam-admin-class.php:584
+#: sam-admin-class.php:716
+msgid "All"
+msgstr "Все"
+
+#: sam-admin-class.php:585
+#: sam-admin-class.php:717
+msgid "Active"
+msgstr "Активные"
+
+#: sam-admin-class.php:586
+#: sam-admin-class.php:718
+msgid "Trash"
+msgstr "Корзина"
+
+#: sam-admin-class.php:591
+#: sam-admin-class.php:668
+#: sam-admin-class.php:724
+#: sam-admin-class.php:809
+msgid "Clear Trash"
+msgstr "Очистить корзину"
+
+#: sam-admin-class.php:593
+#: sam-admin-class.php:670
+msgid "Add New Place"
+msgstr "Добавить новое место"
+
+#: sam-admin-class.php:597
+#: sam-admin-class.php:674
+#: sam-admin-class.php:734
+#: sam-admin-class.php:818
+#, php-format
+msgid "Displaying %s&#8211;%s of %s"
+msgstr "Показано %s&#8211;%s из %s"
+
+#: sam-admin-class.php:609
+#: sam-admin-class.php:617
+#: sam-admin-class.php:748
+#: sam-admin-class.php:757
+msgid "ID"
+msgstr "ID"
+
+#: sam-admin-class.php:610
+#: sam-admin-class.php:618
+msgid "Place Name"
+msgstr "Имя места"
+
+#: sam-admin-class.php:611
+#: sam-admin-class.php:619
+#: sam-admin-class.php:949
+#: sam-admin-class.php:1266
+msgid "Size"
+msgstr "Размеры"
+
+#: sam-admin-class.php:612
+#: sam-admin-class.php:620
+msgid "Total Ads"
+msgstr "Объявлений"
+
+#: sam-admin-class.php:631
+#: sam-admin-class.php:775
+msgid "There are no data ..."
+msgstr "Нет данных для показа ..."
+
+#: sam-admin-class.php:641
+#: sam-admin-class.php:787
+msgid "in Trash"
+msgstr "в корзине"
+
+#: sam-admin-class.php:643
+msgid "Edit Place"
+msgstr "Изменить рекламное место"
+
+#: sam-admin-class.php:643
+#: sam-admin-class.php:789
+msgid "Edit"
+msgstr "Изменить"
+
+#: sam-admin-class.php:647
+msgid "Restore this Place from the Trash"
+msgstr "Восстановить это место из корзины"
+
+#: sam-admin-class.php:647
+#: sam-admin-class.php:793
+msgid "Restore"
+msgstr "Восстановить"
+
+#: sam-admin-class.php:648
+msgid "Remove this Place permanently"
+msgstr "Удалить это рекламное место навсегда"
+
+#: sam-admin-class.php:648
+#: sam-admin-class.php:794
+msgid "Remove permanently"
+msgstr "Удалить навсегда"
+
+#: sam-admin-class.php:653
+msgid "Move this Place to the Trash"
+msgstr "Поместить это место в корзину"
+
+#: sam-admin-class.php:653
+#: sam-admin-class.php:795
+msgid "Delete"
+msgstr "Удалить"
+
+#: sam-admin-class.php:654
+msgid "View List of Place Ads"
+msgstr "Показать список рекламных мест"
+
+#: sam-admin-class.php:654
+msgid "View Ads"
+msgstr "Объявления"
+
+#: sam-admin-class.php:655
+msgid "Create New Ad"
+msgstr "Создать новое объявление"
+
+#: sam-admin-class.php:655
+msgid "New Ad"
+msgstr "Новое объявление"
+
+#: sam-admin-class.php:714
+msgid "Managing Items of Ads Place"
+msgstr "Управление объявлениями рекламного места"
+
+#: sam-admin-class.php:726
+#: sam-admin-class.php:811
+msgid "Add New Ad"
+msgstr "Добавить новое рекламное объявление"
+
+#: sam-admin-class.php:730
+#: sam-admin-class.php:815
+msgid "Back to Ads Places Management"
+msgstr "Назад, к списку мест"
+
+#: sam-admin-class.php:749
+#: sam-admin-class.php:758
+#: sam-widget-class.php:7
+msgid "Advertisment"
+msgstr "Рекламное объявление"
+
+#: sam-admin-class.php:750
+#: sam-admin-class.php:759
+#: sam-admin-class.php:1258
+msgid "Activity"
+msgstr "Активность"
+
+#: sam-admin-class.php:751
+#: sam-admin-class.php:760
+#: sam-admin-class.php:1260
+msgid "Hits"
+msgstr "Показы"
+
+#: sam-admin-class.php:752
+#: sam-admin-class.php:761
+#: sam-admin-class.php:1262
+msgid "Clicks"
+msgstr "Клики"
+
+#: sam-admin-class.php:781
+msgid "Yes"
+msgstr "Да"
+
+#: sam-admin-class.php:782
+msgid "No"
+msgstr "Нет"
+
+#: sam-admin-class.php:789
+msgid "Edit this Item of Ads Place"
+msgstr "Изменить этот элемент рекламного места"
+
+#: sam-admin-class.php:793
+msgid "Restore this Ad from the Trash"
+msgstr "Восстановить это объявление из корзины"
+
+#: sam-admin-class.php:794
+msgid "Remove this Ad permanently"
+msgstr "Удалить это рекламное объявление навсегда"
+
+#: sam-admin-class.php:795
+msgid "Move this item to the Trash"
+msgstr "Поместить этот элемент в корзину"
+
+#: sam-admin-class.php:869
+#: sam-admin-class.php:899
+#: sam-admin-class.php:914
+#: sam-admin-class.php:915
+#: sam-admin-class.php:916
+#: sam-admin-class.php:924
+#: sam-admin-class.php:1149
+#: sam-admin-class.php:1199
+#: sam-admin-class.php:1223
+#: sam-admin-class.php:1224
+#: sam-admin-class.php:1225
+msgid "Undefined"
+msgstr "Не определено"
+
+#: sam-admin-class.php:880
+msgid "Ads Place Data Updated."
+msgstr "Данные рекламного места сохранены."
+
+#: sam-admin-class.php:924
+msgid "New Ads Place"
+msgstr "Новое рекламное место"
+
+#: sam-admin-class.php:924
+msgid "Edit Ads Place"
+msgstr "Изменить рекламное место"
+
+#: sam-admin-class.php:929
+#: sam-admin-class.php:987
+#: sam-admin-class.php:1001
+#: sam-admin-class.php:1023
+#: sam-admin-class.php:1083
+#: sam-admin-class.php:1237
+#: sam-admin-class.php:1306
+#: sam-admin-class.php:1321
+#: sam-admin-class.php:1379
+msgid "Click to toggle"
+msgstr "Кликнуть для переключения"
+
+#: sam-admin-class.php:930
+#: sam-admin-class.php:1238
+msgid "Status"
+msgstr "Статус"
+
+#: sam-admin-class.php:937
+msgid "Back to Places List"
+msgstr "Назад, к списку мест"
+
+#: sam-admin-class.php:943
+#: js/dialog.php:66
+msgid "Ads Place ID"
+msgstr "ID рекламного места"
+
+#: sam-admin-class.php:951
+#: sam-admin-class.php:1268
+msgid "Width"
+msgstr "Ширина"
+
+#: sam-admin-class.php:953
+#: sam-admin-class.php:1270
+msgid "Height"
+msgstr "Высота"
+
+#: sam-admin-class.php:957
+msgid "Is Active"
+msgstr "Активно"
+
+#: sam-admin-class.php:958
+#: sam-admin-class.php:1277
+msgid "Is In Trash"
+msgstr "В корзине"
+
+#: sam-admin-class.php:965
+#: sam-admin-class.php:1284
+#: js/dialog.php:89
+msgid "Cancel"
+msgstr "Отмена"
+
+#: sam-admin-class.php:968
+#: sam-admin-class.php:1287
+msgid "Save"
+msgstr "Сохранить"
+
+#: sam-admin-class.php:981
+msgid "Name"
+msgstr "Наименование"
+
+#: sam-admin-class.php:988
+#: sam-admin-class.php:992
+#: sam-admin-class.php:1310
+msgid "Description"
+msgstr "Описание"
+
+#: sam-admin-class.php:990
+msgid "Enter description of this Ads Place."
+msgstr "Введите описание для этого рекламного места."
+
+#: sam-admin-class.php:995
+#: sam-admin-class.php:1314
+msgid "This description is not used anywhere and is added solely for the convenience of managing advertisements."
+msgstr "Это описание нигде не используется и введено исключительно для удобства в уравлении рекламными объявлениями."
+
+#: sam-admin-class.php:1002
+msgid "Ads Place Size"
+msgstr "Размеры рекламного места"
+
+#: sam-admin-class.php:1004
+msgid "Select size of this Ads Place."
+msgstr "Выберите размеры для этого рекламного места."
+
+#: sam-admin-class.php:1008
+#: sam-admin-class.php:1095
+msgid "You can enter any HTML codes here for the further withdrawal of their before and after the code of Ads Place."
+msgstr "Вы можете ввести здесь любой HTML код для дальнейшего вывода его до и после кода рекламного места."
+
+#: sam-admin-class.php:1010
+msgid "Custom Width"
+msgstr "Ширина, заданная пользователем"
+
+#: sam-admin-class.php:1014
+msgid "Custom Height"
+msgstr "Высота, заданная пользователем"
+
+#: sam-admin-class.php:1017
+msgid "These values are not used and are added solely for the convenience of advertising management. Will be used in the future..."
+msgstr "Эти значения нигде не используется и введены исключительно для удобства в уравлении рекламными объявлениями. Будут использоваться в будущем ..."
+
+#: sam-admin-class.php:1024
+msgid "Ads Place Patch"
+msgstr "Заглушка рекламного места"
+
+#: sam-admin-class.php:1026
+msgid "Select type of the code of a patch and fill data entry fields with the appropriate data."
+msgstr "Выберите тип заплатки и заполните нужные поля соответствующими данными."
+
+#: sam-admin-class.php:1028
+#: sam-admin-class.php:1032
+msgid "Image"
+msgstr "Изображение"
+
+#: sam-admin-class.php:1036
+msgid "This image is a patch for advertising space. This may be an image with the text \"Place your ad here\"."
+msgstr "Введите путь к изображению для заплатки рекламного места. Это может быть изображение содержащее текст \"Разместите своё рекламное объявление здесь\"."
+
+#: sam-admin-class.php:1039
+msgid "Target"
+msgstr "Цель"
+
+#: sam-admin-class.php:1043
+msgid "This is a link to a page where are your suggestions for advertisers."
+msgstr "Это ссылка на страницу, на которой размещены Ваши предложения рекламодателям."
+
+#: sam-admin-class.php:1046
+#: sam-admin-class.php:1344
+msgid "Image Tools"
+msgstr "Инструменты"
+
+#: sam-admin-class.php:1048
+#: sam-admin-class.php:1346
+msgid "Select File"
+msgstr "Выберите файл"
+
+#: sam-admin-class.php:1052
+#: sam-admin-class.php:1350
+msgid "Apply"
+msgstr "Применить"
+
+#: sam-admin-class.php:1053
+#: sam-admin-class.php:1351
+msgid "Select file from your blog server."
+msgstr "Выберите файл, расположенный на сервере Вашего блога."
+
+#: sam-admin-class.php:1056
+#: sam-admin-class.php:1354
+msgid "Upload File"
+msgstr "Загрузить файл"
+
+#: sam-admin-class.php:1057
+#: sam-admin-class.php:1355
+msgid "Upload"
+msgstr "Загрузить"
+
+#: sam-admin-class.php:1060
+#: sam-admin-class.php:1358
+msgid "Select and upload file from your local computer."
+msgstr "Выберите и загрузите файл на сервер с Вашего локального компьютера."
+
+#: sam-admin-class.php:1066
+msgid "HTML or Javascript Code"
+msgstr "Код HTML или Javascript"
+
+#: sam-admin-class.php:1070
+msgid "Patch Code"
+msgstr "Код заглушки"
+
+#: sam-admin-class.php:1074
+msgid "This is a HTML-code patch of advertising space. For example: use the code to display AdSense advertisment."
+msgstr "Это HTML-код заплатки рекламного места. Например: используйте код показа рекламы от AdSense."
+
+#: sam-admin-class.php:1077
+msgid "The patch shows that if the logic of the plugin can not show any advertisements on the current page of the document."
+msgstr "Заплатка показывается в том случае, когда логика плагина не позволяет показать какое-либо рекламное объявление на текущей странице документа."
+
+#: sam-admin-class.php:1084
+msgid "Codes"
+msgstr "Коды"
+
+#: sam-admin-class.php:1086
+msgid "Enter the code to output before and after the codes of Ads Place."
+msgstr "Введите коды для вывода до и после кода места рекламных объявлений."
+
+#: sam-admin-class.php:1088
+msgid "Code Before"
+msgstr "Код до"
+
+#: sam-admin-class.php:1092
+msgid "Code After"
+msgstr "Код после"
+
+#: sam-admin-class.php:1160
+msgid "Ad Data Updated."
+msgstr "Данные рекламного объявления сохранены."
+
+#: sam-admin-class.php:1232
+msgid "New Advertisment"
+msgstr "Новое рекламное объявление"
+
+#: sam-admin-class.php:1232
+msgid "Edit Advertisment"
+msgstr "Изменить рекламное объявление"
+
+#: sam-admin-class.php:1245
+msgid "Back to Ads List"
+msgstr "Назад, к списку объявлений"
+
+#: sam-admin-class.php:1251
+msgid "Advertisment ID"
+msgstr "ID объявления"
+
+#: sam-admin-class.php:1259
+msgid "Ad is Active"
+msgstr "Активно"
+
+#: sam-admin-class.php:1259
+msgid "Ad is Inactive"
+msgstr "Неактивно"
+
+#: sam-admin-class.php:1275
+msgid "Is in Rotation"
+msgstr "В ротации"
+
+#: sam-admin-class.php:1300
+msgid "Title"
+msgstr "Имя"
+
+#: sam-admin-class.php:1307
+msgid "Advertisment Description"
+msgstr "Описание рекламного объявления"
+
+#: sam-admin-class.php:1322
+#: sam-admin-class.php:1369
+msgid "Ad Code"
+msgstr "Код рекламного объявления"
+
+#: sam-admin-class.php:1326
+msgid "Image Mode"
+msgstr "Режим изображения"
+
+#: sam-admin-class.php:1330
+msgid "Ad Image"
+msgstr "Изображение объявления"
+
+#: sam-admin-class.php:1334
+msgid "Ad Target"
+msgstr "Ссылка объявления"
+
+#: sam-admin-class.php:1339
+msgid "Count clicks for this advertisment"
+msgstr "Считать клики для этого рекламного объявления"
+
+#: sam-admin-class.php:1341
+msgid "Use carefully!"
+msgstr "Используйте крайне осторожно!"
+
+#: sam-admin-class.php:1341
+msgid "Do not use if the wp-admin folder is password protected. In this case the viewer will be prompted to enter a username and password during ajax request. It's not good."
+msgstr "Если папка wp-admin защищена паролем, использовать не имеет смысла, т.к., в этом случае, во время Ajax запроса посетителю будет предложено ввести имя пользователя и пароль."
+
+#: sam-admin-class.php:1365
+msgid "Code Mode"
+msgstr "Режим кода"
+
+#: sam-admin-class.php:1371
+msgid "This code of ad contains PHP script"
+msgstr "Этот код объявления содержит PHP скрипт"
+
+#: sam-admin-class.php:1380
+msgid "Restrictions of advertisements showing"
+msgstr "Ограничения показа объявления"
+
+#: sam-admin-class.php:1383
+msgid "Ad Weight"
+msgstr "Вес объявления"
+
+#: sam-admin-class.php:1390
+msgid "Inactive"
+msgstr "Неактивно"
+
+#: sam-admin-class.php:1391
+msgid "Minimal Activity"
+msgstr "Минимальная активность"
+
+#: sam-admin-class.php:1392
+msgid "Maximal Activity"
+msgstr "Максимальная активность"
+
+#: sam-admin-class.php:1402
+msgid "Ad weight - coefficient of frequency of show of the advertisement for one cycle of advertisements rotation."
+msgstr "Вес рекламного объявления является коэффициентом частоты показа рекламного объявления за однин цикл ротации."
+
+#: sam-admin-class.php:1403
+msgid "0 - ad is inactive, 1 - minimal activity of this advertisment, 10 - maximal activity of this ad."
+msgstr "0 - объявление не активно, 1 - минимальная активность этого объявления, 10 - максимальная активность данного объявления."
+
+#: sam-admin-class.php:1408
+msgid "Show ad on all pages of blog"
+msgstr "Показывать объявление на всех страницах блога"
+
+#: sam-admin-class.php:1412
+msgid "Show ad only on pages of this type"
+msgstr "Показывать объявление только на страницах данного типа"
+
+#: sam-admin-class.php:1416
+msgid "Home Page (Home or Front Page)"
+msgstr "Главная страница (главная или фронтальная страница)"
+
+#: sam-admin-class.php:1418
+msgid "Singular Pages"
+msgstr "Сингулярные страницы"
+
+#: sam-admin-class.php:1421
+msgid "Single Post"
+msgstr "Страница статьи"
+
+#: sam-admin-class.php:1423
+msgid "Page"
+msgstr "Страница"
+
+#: sam-admin-class.php:1425
+msgid "Attachment"
+msgstr "Приложение"
+
+#: sam-admin-class.php:1428
+msgid "Search Page"
+msgstr "Страница вывода результата поиска"
+
+#: sam-admin-class.php:1430
+msgid "\"Not found\" Page (HTTP 404: Not Found)"
+msgstr "Страница \"Не найдено\" (ошибка HTTP 404)"
+
+#: sam-admin-class.php:1432
+msgid "Archive Pages"
+msgstr "Страницы архивов"
+
+#: sam-admin-class.php:1435
+msgid "Taxonomy Archive Pages"
+msgstr "Страницы архивов таксономий"
+
+#: sam-admin-class.php:1437
+msgid "Category Archive Pages"
+msgstr "Страницы архивов рубрик"
+
+#: sam-admin-class.php:1439
+msgid "Tag Archive Pages"
+msgstr "Страницы архивов меток"
+
+#: sam-admin-class.php:1441
+msgid "Author Archive Pages"
+msgstr "Страницы архивов авторов"
+
+#: sam-admin-class.php:1443
+msgid "Date Archive Pages (any date-based archive pages, i.e. a monthly, yearly, daily or time-based archive)"
+msgstr "Страницы архивов по датам (любые основанные на датах страницы архивов, другими словами, архивы по месяцам, по годам, по дням и по времени)"
+
+#: sam-admin-class.php:1449
+msgid "Show ad only in certain posts"
+msgstr "Показывать объявление только в определённых статьях"
+
+#: sam-admin-class.php:1452
+msgid "Posts IDs (comma separated)"
+msgstr "ID статей (разделять запятыми)"
+
+#: sam-admin-class.php:1456
+msgid "Use this setting to display an ad only in certain posts. Enter the ID of posts, separated by commas."
+msgstr "Используйте этот параметр для показа рекламных объявлений только в выбранных статьях. Введите ID статей, разделённых запятыми."
+
+#: sam-admin-class.php:1461
+msgid "Show ad only in single posts of certain categories"
+msgstr "Показывать объявление только в одиночных статьях заданных рубрик"
+
+#: sam-admin-class.php:1464
+msgid "Categories (comma separated)"
+msgstr "Рубрики (разделять запятыми)"
+
+#: sam-admin-class.php:1468
+msgid "Use this setting to display an ad only in single posts of certain categories. Enter the names of categories, separated by commas."
+msgstr "Используйте этот параметр для показа рекламных объявлений только в одиночных статьях выбранных рубрик. Введите названия рубрик, разделённых запятыми."
+
+#: sam-admin-class.php:1473
+msgid "Use the schedule for this ad"
+msgstr "Использовать расписание для этого объявления"
+
+#: sam-admin-class.php:1476
+msgid "Campaign Start Date"
+msgstr "Дата начала кампании"
+
+#: sam-admin-class.php:1480
+msgid "Campaign End Date"
+msgstr "Дата окончания кампании"
+
+#: sam-widget-class.php:5
+msgid "Ads serviced by Simple Ads Manager."
+msgstr "Рекламные объявления, обслуживаемые плагином Simple Ads Manager."
+
+#: sam-widget-class.php:185
+msgid "Title:"
+msgstr "Заголовок:"
+
+#: sam-widget-class.php:192
+msgid "Ads Place:"
+msgstr "Рекламное место"
+
+#: sam-widget-class.php:208
+msgid "Hide widget style."
+msgstr "Скрывать стиль виджета."
+
+#: sam-widget-class.php:217
+msgid "Allow using previously defined \"before\" and \"after\" codes of Ads Place.."
+msgstr "Разрешить использование ранее определённых кодов \"до\" и \"после\" для рекламного места."
+
+#: js/dialog.php:27
+msgid "Insert Ads Place"
+msgstr "Вставить рекламное место"
+
+#: js/dialog.php:41
+msgid "Basic Settings"
+msgstr "Основные параметры"
+
+#: js/dialog.php:48
+msgid "Ads Place"
+msgstr "Рекламное место"
+
+#: js/dialog.php:69
+msgid "Ads Place Name"
+msgstr "Имя места"
+
+#: js/dialog.php:79
+msgid "Allow Ads Places predefined codes"
+msgstr "Использовать заданные коды рекламного места"
+
+#: js/dialog.php:92
+msgid "Insert"
+msgstr "Вставить"
+
+#~ msgid "Ad Style Settings"
+#~ msgstr "Параметры стиля объявления"
+
+#~ msgid "Here you can adjust the style of the advertisement."
+#~ msgstr "Здесь Вы можете настроить параметры стиля рекламного объявления."
+
+#~ msgid "Ad Padding"
+#~ msgstr "Внутренние отступы"
+
+#~ msgid "Ad Margins"
+#~ msgstr "Внешние отступы"
+
+#~ msgid "Ad Border Width"
+#~ msgstr "Ширина окантовки"
+
+#~ msgid "Ad Border Color"
+#~ msgstr "Цвет окантовки"
+
+#~ msgid "Source"
+#~ msgstr "Источник"
+
+#, fuzzy
+#~ msgid "Thumbnail Settings"
+#~ msgstr "Параметры"
+
+#, fuzzy
+#~ msgid "Enter the code to output before and after the codes of gallery item."
+#~ msgstr "Введите коды для вывода до и после кода места рекламных объявлений."
+
+#, fuzzy
+#~ msgid ""
+#~ "You can enter any HTML codes here for the further withdrawal of their "
+#~ "before and after the code of multimedia gallery item."
+#~ msgstr ""
+#~ "Вы можете ввести здесь любой HTML код для дальнейшего вывода его до и "
+#~ "после кода рекламного места."
+
+#~ msgid "Version:"
+#~ msgstr "Версия:"
+
+#~ msgid "DB Version:"
+#~ msgstr "Версия таблиц базы данных:"
+
+#, fuzzy
+#~ msgid "New Places"
+#~ msgstr "Места"

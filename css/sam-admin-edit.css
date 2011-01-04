@@ -1,0 +1,40 @@
+.clear-line {
+  border-bottom: 1px solid #DFDFDF; 
+  margin-left: 5px; 
+  margin-right: 5px;
+  margin-top: 5px;
+}
+
+.postbox .inside label,
+#misc-publishing-actions label,
+.postbox .inside span,
+#misc-publishing-actions span {
+  vertical-align: middle;
+}
+
+.postbox .inside input {
+  font-size: 11px;
+}
+
+.radio-content {
+  padding-left: 15px;
+  padding-right: 5px;
+  line-height: 140%;
+}
+
+#source_tools {
+  background: #F4F4F4;
+  padding: 2px 5px 5px;
+  margin: 6px 5px 8px 7px;
+  border-bottom-left-radius: 6px;
+  border-bottom-right-radius: 6px;
+  border-top-left-radius: 6px;
+  border-top-right-radius: 6px;
+  -moz-border-radius: 4px 4px 4px 4px;
+  border: 1px solid #DFDFDF;
+}
+
+#files {
+  display: block;
+  padding: 5px;
+}
