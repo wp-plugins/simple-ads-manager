@@ -1,0 +1,10 @@
+.untrash,
+.untrash a {
+  color: #006505;
+}
+
+.untrash a:hover, 
+.untrash a:active, 
+.untrash a:focus {
+  color: #D54E21;
+}
