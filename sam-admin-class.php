@@ -622,7 +622,7 @@ if ( !class_exists( 'SimpleAdsManagerAdmin' && class_exists('SimpleAdsManager') 
 		</tfoot>
 		<tbody>
 				<?php
-					$places = $wpdb->get_results("SELECT id, name, description, place_size, place_custom_width, place_custom_height, trash, (SELECT COUNT(*) FROM wp_sam_ads WHERE ".$aTable.".pid = ".$pTable.".id) AS items FROM ".$pTable.(($mode !== 'all') ? ' WHERE trash = '.(($mode === 'trash') ? 'TRUE' : 'FALSE') : '').' LIMIT '.$offset.', '.$places_per_page, ARRAY_A);          
+					$places = $wpdb->get_results("SELECT id, name, description, place_size, place_custom_width, place_custom_height, trash, (SELECT COUNT(*) FROM {$aTable} WHERE ".$aTable.".pid = ".$pTable.".id) AS items FROM ".$pTable.(($mode !== 'all') ? ' WHERE trash = '.(($mode === 'trash') ? 'TRUE' : 'FALSE') : '').' LIMIT '.$offset.', '.$places_per_page, ARRAY_A);          
 					$i = 0;
 					if(!is_array($places) || empty ($places)) {
 				?>
