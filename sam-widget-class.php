@@ -63,7 +63,7 @@ if(!class_exists('simple_ads_manager_widget') && class_exists('WP_Widget')) {
       $whereClause2W = "AND ({$aTable}.ad_weight > 0)";
       
       if(!empty($args['id'])) $pId = "{$pTable}.id = {$args['id']}";
-      else $pId = "{$pTable}.name = {$args['name']}";
+      else $pId = "{$pTable}.name = '{$args['name']}'";
       
       $pSql = "SELECT
                   {$pTable}.id,
