@@ -17,7 +17,7 @@ if ( !class_exists( 'SimpleAdsManager' ) ) {
 		);
 		
 		function __construct() {
-      define('SAM_VERSION', '0.1.2');
+      define('SAM_VERSION', '0.1.3');
 			define('SAM_DB_VERSION', '0.1');
       define('SAM_PATH', dirname( __FILE__ ));
       define('SAM_URL', WP_PLUGIN_URL . '/' . str_replace( basename( __FILE__), "", plugin_basename( __FILE__ ) ));
@@ -218,7 +218,7 @@ if ( !class_exists( 'SimpleAdsManager' ) ) {
       $whereClause2W = "AND ({$aTable}.ad_weight > 0)";
       
       if(!empty($args['id'])) $pId = "{$pTable}.id = {$args['id']}";
-      else $pId = "{$pTable}.name = {$args['name']}";
+      else $pId = "{$pTable}.name = '{$args['name']}'";
       
       $pSql = "SELECT
                   {$pTable}.id,
