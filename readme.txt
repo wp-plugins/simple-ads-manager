@@ -4,7 +4,7 @@ Donate link: http://www.simplelib.com/
 Tags: ad, adbrite, adgridwork, adify, admin, adpinion, adroll, ads, adsense, adserver, advertisement, advertising, affiliate, banner, banners, chitika, cj, commercial, commission, crispads, google, income, junction, link, manager, media, money, plugin, random, referral, revenue, rotator, seo, server, shoppingads, widget, widgetbucks, yahoo, ypn
 Requires at least: 3.0
 Tested up to: 3.1
-Stable tag: 0.1.3
+Stable tag: 0.2.6
 
 Advertisment rotation system with a flexible logic of displaying advertisements.
 
@@ -21,7 +21,9 @@ Simple Ads Manager is easy to use plugin providing a flexible logic of displayin
 * Outputting ads in any place of theme template using `drawAdsPlace` function
 * Automatic outputting ads in single post/page if allowed
 * Customized limitation of displaying advertisements by types of page
-* Customized limitation of displaying advertisements on single post page by post category (categories) or post ID (IDs)
+* Customized limitation of displaying advertisements on single post page by post ID (IDs)
+* Customized limitation of displaying advertisements on single post page or category archive page by category (categories)
+* Customized limitation of displaying advertisements on single post page or author archive page by author (authors)
 * Schedule of displaying each advertisment if allowed
 * Statistics of hits
 * Statistics of clicks (your own advertisment image mode)  
@@ -30,16 +32,16 @@ Simple Ads Manager is easy to use plugin providing a flexible logic of displayin
 * English
 * Russian
 
-If you have created your own language pack, or have an update of an existing one, you can send __.po__ and __.mo files__ to me (minimus AT simplelib.com) so that I can bundle it into __Simple Ads Manager__ plugin pack.
+If you have created your own language pack, or have an update of an existing one, you can send **.po** and **.mo files** to me (minimus AT simplelib.com) so that I can bundle it into **Simple Ads Manager** plugin pack.
   
-Read more about __Simple Ads Manager__ on the [plugin page](http://www.simplelib.com/?p=480)...
+Read more about **Simple Ads Manager** on the [plugin page](http://www.simplelib.com/?p=480)...
 
 == Installation ==
 
 1. Upload plugin dir to the `/wp-content/plugins/` directory
 1. Activate the plugin through the 'Plugins' menu in WordPress
 1. Change and save plugin settings if needed.
-1. Create _Ads Places_ and define _ads codes_ for each rotating ad of _Ads Place_.
+1. Create *Ads Places* and define *ads codes* for each rotating ad of *Ads Place*.
 
 == Frequently Asked Questions ==
 
@@ -55,6 +57,10 @@ No questions now...
 
 == Changelog ==
 
+= 0.2.6 =
+* Restriction of displaying ads by categories is changed
+* Restriction of displaying ads by authors is added
+* Some codes are changed
 = 0.1.3 =
 * Minor bug (using "drawAdsPlace()" with the attribute "name") are fixed. Thanks to [orangefinch](http://wordpress.org/support/profile/orangefinch).
 = 0.1.2 =
@@ -64,6 +70,10 @@ No questions now...
 
 == Upgrade Notice ==
 
+= 0.2.6 =
+Restriction of displaying ads by categories is changed 
+Restriction of displaying ads by authors is added 
+Some codes are changed 
 = 0.1.3 =
 Minor bug (using "drawAdsPlace()" with the attribute "name") are fixed. Thanks to [orangefinch](http://wordpress.org/support/profile/orangefinch).
 = 0.1.2 =
@@ -73,4 +83,11 @@ Initial upload
 
 == Other Notes ==
 
-This plugin is using jQuery __[AjaxUpload plugin](http://valums.com/ajax-upload/)__.
+This plugin is using jQuery **[AjaxUpload plugin](http://valums.com/ajax-upload/)**.
+
+== Road Map ==
+
+= Road Map for Simple Ads Manager 0.3.X =
+
+1. Serving [Google DFP Small Business](http://www.google.com/dfp/info/sb/index.html) slots
+1. Serving [OpenX OnRamp](http://www.openx.org/publishers/community-ad-server) zones

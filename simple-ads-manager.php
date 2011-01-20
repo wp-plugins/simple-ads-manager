@@ -3,7 +3,7 @@
 Plugin Name: Simple Ads Manager
 Plugin URI: http://www.simplelib.com/?p=480
 Description: "Simple Ads Manager" is easy to use plugin providing a flexible logic of displaying advertisements. Visit <a href="http://www.simplelib.com/">SimpleLib blog</a> for more details.
-Version: 0.1.3
+Version: 0.2.6
 Author: minimus
 Author URI: http://blogcoding.ru
 */
