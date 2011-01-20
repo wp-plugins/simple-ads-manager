@@ -17,6 +17,9 @@ if ( !class_exists( 'SimpleAdsManagerAdmin' && class_exists('SimpleAdsManager') 
 			add_action('admin_menu', array(&$this, 'regAdminPage'));
       add_filter('tiny_mce_version', array(&$this, 'tinyMCEVersion') );
       add_action('init', array(&$this, 'addButtons'));
+      
+      $version = get_option('sam_version', '');
+      if(!empty($version) && ($version !== SAM_VERSION)) parent::updateDB();
     }
     
     function onActivate() {
