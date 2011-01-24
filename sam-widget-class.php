@@ -38,10 +38,10 @@ if(!class_exists('simple_ads_manager_widget') && class_exists('WP_Widget')) {
           $viewPages += SAM_IS_SINGLE;
           $categories = get_the_category($post->ID);
           foreach($categories as $category) 
-            $wcc .= " OR ({$aTable}.ad_cats = 1 AND FIND_IN_SET('{$category->cat_name}', {$aTable}.view_cats))";
+            $wcc .= " OR ({$aTable}.ad_cats = 1 AND FIND_IN_SET('{$category->cat_name}', {$aTable}.view_cats) AND ({$aTable}.view_pages+0 & {$viewPages}))";
           $wci = " OR ({$aTable}.view_type = 2 AND FIND_IN_SET({$post->ID}, {$aTable}.view_id))";
           $author = get_userdata($post->post_author);
-          $wca = " OR ({$aTable}.ad_authors = 1 AND FIND_IN_SET('{$author->display_name}', {$aTable}.view_authors))";
+          $wca = " OR ({$aTable}.ad_authors = 1 AND FIND_IN_SET('{$author->display_name}', {$aTable}.view_authors) AND ({$aTable}.view_pages+0 & {$viewPages}))";
         }
         if(is_page()) $viewPages += SAM_IS_PAGE;
         if(is_attachment()) $viewPages += SAM_IS_ATTACHMENT;
@@ -54,7 +54,7 @@ if(!class_exists('simple_ads_manager_widget') && class_exists('WP_Widget')) {
         if(is_category()) {
           $viewPages += SAM_IS_CATEGORY;
           $cat = get_category(get_query_var('cat'), false);
-          $wcc = " OR ({$aTable}.ad_cats = 1 AND FIND_IN_SET('{$cat->cat_name}', {$aTable}.view_cats))";
+          $wcc = " OR ({$aTable}.ad_cats = 1 AND FIND_IN_SET('{$cat->cat_name}', {$aTable}.view_cats) AND ({$aTable}.view_pages+0 & {$viewPages}))";
         }
         if(is_tag()) $viewPages += SAM_IS_TAG;
         if(is_author()) {
@@ -62,7 +62,7 @@ if(!class_exists('simple_ads_manager_widget') && class_exists('WP_Widget')) {
           
           $viewPages += SAM_IS_AUTHOR;
           $author = $wp_query->get_queried_object();
-          $wca = " OR ({$aTable}.ad_authors = 1 AND FIND_IN_SET('{$author->display_name}', {$aTable}.view_authors))";
+          $wca = " OR ({$aTable}.ad_authors = 1 AND FIND_IN_SET('{$author->display_name}', {$aTable}.view_authors) AND ({$aTable}.view_pages+0 & {$viewPages}))";
         }
         if(is_date()) $viewPages += SAM_IS_DATE;
       }
@@ -101,8 +101,11 @@ if(!class_exists('simple_ads_manager_widget') && class_exists('WP_Widget')) {
       $place = $wpdb->get_row($pSql, ARRAY_A);
       $output = $pSql;
       if((abs($place['ad_count']) == 0) || (abs($place['ad_logic_count']) == 0)) {
-        if($place['patch_source'] == 0) 
-          $output = "<a href='{$place['patch_link']}'><img src='{$place['patch_img']}' /></a>";
+        if($place['patch_source'] == 0) {
+          if(!empty($place['patch_link']) && !empty($place['patch_img'])) 
+            $output = "<a href='{$place['patch_link']}'><img src='{$place['patch_img']}' /></a>";
+          else $output = '';
+        }
         else $output = $place['patch_code'];
       }
       
@@ -131,7 +134,9 @@ if(!class_exists('simple_ads_manager_widget') && class_exists('WP_Widget')) {
         $ad = $wpdb->get_row($aSql, ARRAY_A);
         if($ad['code_mode'] == 0) {
           $outId = ((int) $ad['count_clicks'] == 1) ? " id='a".rand(10, 99)."_".$ad['id']."' class='sam_ad'" : '';
-          $output = "<a href='{$ad['ad_target']}' target='_blank'><img{$outId} src='{$ad['ad_img']}' /></a>";
+          if(!empty($ad['ad_target']) && !empty($ad['ad_img']))
+            $output = "<a href='{$ad['ad_target']}' target='_blank'><img{$outId} src='{$ad['ad_img']}' /></a>";
+          else $output = '';
         }
         else {
           if($ad['code_type'] == 1) {

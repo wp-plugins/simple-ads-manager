@@ -4,7 +4,7 @@ Donate link: http://www.simplelib.com/
 Tags: ad, adbrite, adgridwork, adify, admin, adpinion, adroll, ads, adsense, adserver, advertisement, advertising, affiliate, banner, banners, chitika, cj, commercial, commission, crispads, google, income, junction, link, manager, media, money, plugin, random, referral, revenue, rotator, seo, server, shoppingads, widget, widgetbucks, yahoo, ypn
 Requires at least: 3.0
 Tested up to: 3.1
-Stable tag: 0.2.6
+Stable tag: 0.2.7
 
 Advertisment rotation system with a flexible logic of displaying advertisements.
 
@@ -57,6 +57,8 @@ No questions now...
 
 == Changelog ==
 
+= 0.2.7 =
+* Logical error of SQL query is fixed
 = 0.2.6 =
 * Restriction of displaying ads by categories is changed
 * Restriction of displaying ads by authors is added
@@ -70,6 +72,8 @@ No questions now...
 
 == Upgrade Notice ==
 
+= 0.2.7 =
+Logical error of SQL query is fixed 
 = 0.2.6 =
 Restriction of displaying ads by categories is changed 
 Restriction of displaying ads by authors is added 
