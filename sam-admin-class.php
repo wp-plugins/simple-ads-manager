@@ -17,6 +17,9 @@ if ( !class_exists( 'SimpleAdsManagerAdmin' && class_exists('SimpleAdsManager') 
 			add_action('admin_menu', array(&$this, 'regAdminPage'));
       add_filter('tiny_mce_version', array(&$this, 'tinyMCEVersion') );
       add_action('init', array(&$this, 'addButtons'));
+      
+      $version = get_option('sam_version', '');
+      if(!empty($version) && ($version !== SAM_VERSION)) parent::updateDB();
     }
     
     function onActivate() {
@@ -334,6 +337,8 @@ if ( !class_exists( 'SimpleAdsManagerAdmin' && class_exists('SimpleAdsManager') 
       global $wpdb;
       $tTable = $wpdb->prefix . "terms";
       $ttTable = $wpdb->prefix . "term_taxonomy";
+      $uTable = $wpdb->prefix . "users";
+      $umTable = $wpdb->prefix . "usermeta";
       
       $sql = "SELECT
                 {$tTable}.name
@@ -349,6 +354,22 @@ if ( !class_exists( 'SimpleAdsManagerAdmin' && class_exists('SimpleAdsManager') 
       
       foreach($cats as $value) array_push($terms, $value['name']);
       
+      $sql = "SELECT
+                {$uTable}.user_nicename,
+                {$uTable}.display_name
+              FROM
+                {$uTable}
+              INNER JOIN {$umTable}
+                ON {$uTable}.ID = {$umTable}.user_id
+              WHERE
+                {$umTable}.meta_key = 'wp_user_level' AND
+                {$umTable}.meta_value > 1";
+                
+      $auth = $wpdb->get_results($sql, ARRAY_A);
+      $authors = array();
+      
+      foreach($auth as $value) array_push($authors, $value['display_name']);
+      
       $output = array(
         'uploading' => __('Uploading', SAM_DOMAIN).' ...',
         'uploaded' => __('Uploaded.', SAM_DOMAIN),
@@ -356,7 +377,8 @@ if ( !class_exists( 'SimpleAdsManagerAdmin' && class_exists('SimpleAdsManager') 
         'file' => __('File', SAM_DOMAIN),
         'path' => SAM_AD_IMG,
         'url' => SAM_AD_URL,
-        'cats' => $terms
+        'cats' => $terms,
+        'authors' => $authors
       );
       
       header("Content-type: application/json; charset=UTF-8"); 
@@ -1138,14 +1160,17 @@ if ( !class_exists( 'SimpleAdsManagerAdmin' && class_exists('SimpleAdsManager') 
               'view_type' => $_POST['view_type'],
               'view_pages' => $viewPages,
               'view_id' => $_POST['view_id'],
+              'ad_cats' => $_POST['ad_cats'],
               'view_cats' => $this->removeTrailingComma( $_POST['view_cats'] ),
+              'ad_authors' => $_POST['ad_authors'],
+              'view_authors' => $this->removeTrailingComma( $_POST['view_authors'] ),
               'ad_start_date' => $_POST['ad_start_date'],
               'ad_end_date' => $_POST['ad_end_date'],              
               'ad_schedule' => $_POST['ad_schedule'],
               'ad_weight' => $_POST['ad_weight'],
               'trash' => ($_POST['trash'] === 'true')
             );
-            $formatRow = array( '%d', '%s', '%s', '%d', '%d', '%s', '%s', '%s', '%d', '%d', '%d', '%s', '%s', '%s', '%s', '%d', '%d', '%d', '%d', '%d', '%s', '%d', '%d');
+            $formatRow = array( '%d', '%s', '%s', '%d', '%d', '%s', '%s', '%s', '%d', '%d', '%d', '%s', '%d', '%s', '%d', '%s', '%s', '%s', '%d', '%d', '%d');
             if($itemId === __('Undefined', SAM_DOMAIN)) {
               $wpdb->insert($aTable, $updateRow);
               $item = $wpdb->insert_id;
@@ -1179,7 +1204,10 @@ if ( !class_exists( 'SimpleAdsManagerAdmin' && class_exists('SimpleAdsManager') 
                       view_type, 
                       (view_pages+0) AS view_pages, 
                       view_id,
-                      view_cats, 
+                      ad_cats,
+                      view_cats,
+                      ad_authors,
+                      view_authors, 
                       ad_start_date, 
                       ad_end_date, 
                       ad_schedule, 
@@ -1209,7 +1237,10 @@ if ( !class_exists( 'SimpleAdsManagerAdmin' && class_exists('SimpleAdsManager') 
               'view_type' => 1,
               'view_pages' => 0,
               'view_id' => '',
+              'ad_cats' => 0,
               'view_cats' => '',
+              'ad_authors' => 0,
+              'view_authors' => '',
               'ad_start_date' => '',
               'ad_end_date' => '',              
               'ad_schedule' => 0,
@@ -1457,12 +1488,22 @@ if ( !class_exists( 'SimpleAdsManagerAdmin' && class_exists('SimpleAdsManager') 
                 </p>
                 <div class='clear-line'></div>
                 <p>
-                  <input type='radio' name='view_type' id='view_type_3' value='3' <?php checked(3, $row['view_type']); ?>>
-                  <label for='view_type_2'><strong><?php echo __('Show ad only in single posts of certain categories', SAM_DOMAIN).':'; ?></strong></label>
+                  <input type='checkbox' name='ad_cats' id='ad_cats' value='1' <?php checked(1, $row['ad_cats']); ?>>
+                  <label for='ad_cats'><strong><?php echo __('Show ad only in single posts or categories archives of certain categories', SAM_DOMAIN).':'; ?></strong></label>
                 </p>
                 <div class='radio-content'>
                   <label for='view_cats'><strong><?php echo __('Categories (comma separated)', SAM_DOMAIN).':'; ?></strong></label>
                   <input type='text' name='view_cats' id='view_cats' autocomplete="off" value='<?php echo $row['view_cats']; ?>' style="width:100%">                  
+                </div>
+                <p>
+                <div class='clear-line'></div>
+                <p>
+                  <input type='checkbox' name='ad_authors' id='ad_authors' value='1' <?php checked(1, $row['ad_authors']); ?>>
+                  <label for='ad_authors'><strong><?php echo __('Show ad only in single posts or authors archives of certain authors', SAM_DOMAIN).':'; ?></strong></label>
+                </p>
+                <div class='radio-content'>
+                  <label for='view_authors'><strong><?php echo __('Authors (comma separated)', SAM_DOMAIN).':'; ?></strong></label>
+                  <input type='text' name='view_authors' id='view_authors' autocomplete="off" value='<?php echo $row['view_authors']; ?>' style="width:100%">                  
                 </div>
                 <p>
                   <?php _e('Use this setting to display an ad only in single posts of certain categories. Enter the names of categories, separated by commas.', SAM_DOMAIN); ?>
