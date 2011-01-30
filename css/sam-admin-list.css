@@ -8,3 +8,9 @@
 .untrash a:focus {
   color: #D54E21;
 }
+
+.sam-contextual-help,
+.sam-contextual-help p,
+.sam-contextual-help ul li {
+  font-size: 11px !important;
+}

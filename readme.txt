@@ -1,10 +1,10 @@
 === Simple Ads Manager ===
 Contributors: minimus
 Donate link: http://www.simplelib.com/
-Tags: ad, adbrite, adgridwork, adify, admin, adpinion, adroll, ads, adsense, adserver, advertisement, advertising, affiliate, banner, banners, chitika, cj, commercial, commission, crispads, google, income, junction, link, manager, media, money, plugin, random, referral, revenue, rotator, seo, server, shoppingads, widget, widgetbucks, yahoo, ypn
+Tags: ad, adbrite, adgridwork, adify, admin, adpinion, adroll, ads, adsense, adserver, advertisement, advertising, affiliate, banner, banners, chitika, cj, commercial, commission, crispads, dfp, google, income, junction, link, manager, media, money, plugin, random, referral, revenue, rotator, seo, server, shoppingads, widget, widgetbucks, yahoo, ypn
 Requires at least: 3.0
 Tested up to: 3.1
-Stable tag: 0.2.7
+Stable tag: 0.3.10
 
 Advertisment rotation system with a flexible logic of displaying advertisements.
 
@@ -15,6 +15,7 @@ Simple Ads Manager is easy to use plugin providing a flexible logic of displayin
 = Features =
 * Flexible logic of advertisements rotation based on defined weight of each advertisement in group (Ads Place)
 * Custom default ad for each Ads Place
+* Codes of Google *DoubleClick for Publishers* (DFP) supports
 * Allowed types of ad's codes are HTML, javascript, PHP
 * Outputting ads as widget
 * Outputting ads as shortcodes in any place of single post/page content
@@ -43,6 +44,8 @@ Read more about **Simple Ads Manager** on the [plugin page](http://www.simplelib
 1. Change and save plugin settings if needed.
 1. Create *Ads Places* and define *ads codes* for each rotating ad of *Ads Place*.
 
+Do not upgrade this plugin from Update page! Upgrade it from Plugins page! 
+
 == Frequently Asked Questions ==
 
 No questions now...
@@ -54,11 +57,14 @@ No questions now...
 1. Ad Editor
 1. Ads Place Editor
 1. Simple Ads Manager Settings
+1. Simple Ads Manager Contextual Help
 
 == Changelog ==
 
-= 0.2.7 =
-* Logical error of SQL query is fixed
+= 0.3.10 =
+* Supporting of Google DFP codes is added
+* Contextual Help is added
+* Some codes are optimised
 = 0.2.6 =
 * Restriction of displaying ads by categories is changed
 * Restriction of displaying ads by authors is added
@@ -72,8 +78,10 @@ No questions now...
 
 == Upgrade Notice ==
 
-= 0.2.7 =
-Logical error of SQL query is fixed 
+= 0.3.10 =
+Supporting of Google DFP codes is added 
+Contextual Help is added 
+Some codes are optimised 
 = 0.2.6 =
 Restriction of displaying ads by categories is changed 
 Restriction of displaying ads by authors is added 
@@ -88,10 +96,3 @@ Initial upload
 == Other Notes ==
 
 This plugin is using jQuery **[AjaxUpload plugin](http://valums.com/ajax-upload/)**.
-
-== Road Map ==
-
-= Road Map for Simple Ads Manager 0.3.X =
-
-1. Serving [Google DFP Small Business](http://www.google.com/dfp/info/sb/index.html) slots
-1. Serving [OpenX OnRamp](http://www.openx.org/publishers/community-ad-server) zones
