@@ -20,7 +20,7 @@ if ( !class_exists( 'SimpleAdsManager' ) ) {
 		);
 		
 		function __construct() {
-      define('SAM_VERSION', '0.3.10');
+      define('SAM_VERSION', '0.3.11');
 			define('SAM_DB_VERSION', '0.3');
       define('SAM_PATH', dirname( __FILE__ ));
       define('SAM_URL', WP_PLUGIN_URL . '/' . str_replace( basename( __FILE__), "", plugin_basename( __FILE__ ) ));
@@ -75,7 +75,7 @@ if ( !class_exists( 'SimpleAdsManager' ) ) {
 			$dbVersion = get_option( 'sam_db_version', '' );
       if( $dbVersion != SAM_DB_VERSION ) {
 				if($wpdb->get_var("SHOW TABLES LIKE '$pTable'") != $pTable) {
-					$pSql = "CREATE TABLE '$pTable'(
+					$pSql = "CREATE TABLE $pTable (
 									id INT(11) NOT NULL AUTO_INCREMENT,
 								  name VARCHAR(255) NOT NULL,									
 								  description VARCHAR(255) DEFAULT NULL,
@@ -105,7 +105,7 @@ if ( !class_exists( 'SimpleAdsManager' ) ) {
 				}
 				
 				if($wpdb->get_var("SHOW TABLES LIKE '$aTable'") != $aTable) {
-					$aSql = "CREATE TABLE '$aTable'(
+					$aSql = "CREATE TABLE $aTable (
 									id INT(11) NOT NULL AUTO_INCREMENT,
 									pid INT(11) NOT NULL,
 									name VARCHAR(255) DEFAULT NULL,

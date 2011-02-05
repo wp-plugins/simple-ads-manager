@@ -4,7 +4,7 @@ Donate link: http://www.simplelib.com/
 Tags: ad, adbrite, adgridwork, adify, admin, adpinion, adroll, ads, adsense, adserver, advertisement, advertising, affiliate, banner, banners, chitika, cj, commercial, commission, crispads, dfp, google, income, junction, link, manager, media, money, plugin, random, referral, revenue, rotator, seo, server, shoppingads, widget, widgetbucks, yahoo, ypn
 Requires at least: 3.0
 Tested up to: 3.1
-Stable tag: 0.3.10
+Stable tag: 0.3.11
 
 Advertisment rotation system with a flexible logic of displaying advertisements.
 
@@ -61,6 +61,8 @@ No questions now...
 
 == Changelog ==
 
+= 0.3.11 =
+* Critical bug is fixed
 = 0.3.10 =
 * Supporting of Google DFP codes is added
 * Contextual Help is added
@@ -78,6 +80,8 @@ No questions now...
 
 == Upgrade Notice ==
 
+= 0.3.11 =
+Critical bug is fixed. 
 = 0.3.10 =
 Supporting of Google DFP codes is added 
 Contextual Help is added 
