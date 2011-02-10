@@ -1,7 +1,11 @@
 <?php
 if(!class_exists('simple_ads_manager_widget') && class_exists('WP_Widget')) {
   class simple_ads_manager_widget extends WP_Widget {
+    private $crawler = false;
+    
     function simple_ads_manager_widget() {
+      $this->crawler = $this->isCrawler();
+      
       $widget_ops = array( 'classname' => 'simple_ads_manager_widget', 'description' => __('Ads serviced by Simple Ads Manager.', SAM_DOMAIN));
       $control_ops = array( 'id_base' => 'simple_ads_manager_widget' );
       $this->WP_Widget( 'simple_ads_manager_widget', __('Advertisment', SAM_DOMAIN), $widget_ops, $control_ops );
@@ -12,128 +16,35 @@ if(!class_exists('simple_ads_manager_widget') && class_exists('WP_Widget')) {
       return $options;
     }
     
-    function buildAd( $args = null, $useCodes = false ) {
-      if(is_null($args)) return;
-      if(empty($args['id']) && empty($args['name'])) return;
+    private function isCrawler() {
+      $options = $this->getSettings();
+      $crawler = false;
       
-      $settings = $this->getSettings();
-      if($settings['adCycle'] == 0) $cycle = 1000;
-      else $cycle = $settings['adCycle'];
-      
-      global $wpdb;
-      $pTable = $wpdb->prefix . "sam_places";          
-      $aTable = $wpdb->prefix . "sam_ads";
-      
-      $viewPages = 0;
-      $cats = array();
-      $wcc = '';
-      $wci = '';
-      if(is_home() || is_front_page()) $viewPages += SAM_IS_HOME;
-      if(is_singular()) {
-        $viewPages += SAM_IS_SINGULAR;
-        if(is_single()) {
-          global $post;
-          
-          $viewPages += SAM_IS_SINGLE;
-          $categories = get_the_category($post->ID);
-          foreach($categories as $category) 
-            $wcc .= " OR ({$aTable}.view_type = 3 AND FIND_IN_SET('{$category->cat_name}', {$aTable}.view_cats))";
-          $wci = " OR ({$aTable}.view_type = 2 AND FIND_IN_SET({$post->ID}, {$aTable}.view_id))";
+      if($options['detectBots'] == 1) {
+        switch($options['detectingMode']) {
+          case 'inexact':
+            if($_SERVER["HTTP_USER_AGENT"] == '' ||
+               $_SERVER['HTTP_ACCEPT'] == '' ||
+               $_SERVER['HTTP_ACCEPT_ENCODING'] == '' ||
+               $_SERVER['HTTP_ACCEPT_LANGUAGE'] == '' ||
+               $_SERVER['HTTP_CONNECTION']=='') $crawler == true;
+            break;
+            
+          case 'exact':
+            include_once('browser.php');
+            $browser = new Browser();
+            $crawler = $browser->isRobot();
+            break;
+            
+          case 'more':
+            if(ini_get("browscap")) {
+              $browser = get_browser(null, true);
+              $crawler = $browser['crawler']; 
+            }
+            break;
         }
-        if(is_page()) $viewPages += SAM_IS_PAGE;
-        if(is_attachment()) $viewPages += SAM_IS_ATTACHMENT;
       }
-      if(is_search()) $viewPages += SAM_IS_SEARCH;
-      if(is_404()) $viewPages += SAM_IS_404;
-      if(is_archive()) {
-        $viewPages += SAM_IS_ARCHIVE;
-        if(is_tax()) $viewPages += SAM_IS_TAX;
-        if(is_category()) $viewPages += SAM_IS_CATEGORY;
-        if(is_tag()) $viewPages += SAM_IS_TAG;
-        if(is_author()) $viewPages += SAM_IS_AUTHOR;
-        if(is_date()) $viewPages += SAM_IS_DATE;
-      }
-      
-      $whereClause  = "({$aTable}.view_type = 1)";
-      $whereClause .= " OR ({$aTable}.view_type = 0 AND ({$aTable}.view_pages+0 & {$viewPages}))";
-      $whereClause .= $wcc.$wci;
-      $whereClauseT = " AND (({$aTable}.ad_schedule IS FALSE) OR ({$aTable}.ad_schedule IS TRUE AND (CURDATE() BETWEEN {$aTable}.ad_start_date AND {$aTable}.ad_end_date)))";
-      
-      $whereClauseW = " AND (({$aTable}.ad_weight > 0) AND (({$aTable}.ad_weight_hits*10/({$aTable}.ad_weight*{$cycle})) < 1))";
-      $whereClause2W = "AND ({$aTable}.ad_weight > 0)";
-      
-      if(!empty($args['id'])) $pId = "{$pTable}.id = {$args['id']}";
-      else $pId = "{$pTable}.name = {$args['name']}";
-      
-      $pSql = "SELECT
-                  {$pTable}.id,
-                  {$pTable}.name,                  
-                  {$pTable}.description,
-                  {$pTable}.code_before,
-                  {$pTable}.code_after,
-                  {$pTable}.place_size,
-                  {$pTable}.place_custom_width,
-                  {$pTable}.place_custom_height,
-                  {$pTable}.patch_img,
-                  {$pTable}.patch_link,
-                  {$pTable}.patch_code,                  
-                  {$pTable}.patch_source,
-                  {$pTable}.trash,
-                  (SELECT COUNT(*) FROM {$aTable} WHERE {$aTable}.pid = {$pTable}.id AND {$aTable}.trash IS FALSE) AS ad_count,
-                  (SELECT COUNT(*) FROM {$aTable} WHERE {$aTable}.pid = {$pTable}.id AND {$aTable}.trash IS FALSE AND ({$whereClause}){$whereClauseT}{$whereClause2W}) AS ad_logic_count,
-                  (SELECT COUNT(*) FROM {$aTable} WHERE {$aTable}.pid = {$pTable}.id AND {$aTable}.trash IS FALSE AND ({$whereClause}){$whereClauseT}{$whereClauseW}) AS ad_full_count
-                FROM {$pTable}
-                WHERE {$pId} AND {$pTable}.trash IS FALSE";
-      
-      $place = $wpdb->get_row($pSql, ARRAY_A);
-      $output = $pSql;
-      if((abs($place['ad_count']) == 0) || (abs($place['ad_logic_count']) == 0)) {
-        if($place['patch_source'] == 0) 
-          $output = "<a href='{$place['patch_link']}'><img src='{$place['patch_img']}' /></a>";
-        else $output = $place['patch_code'];
-      }
-      
-      if((abs($place['ad_logic_count']) > 0) && (abs($place['ad_full_count']) == 0)) {
-        $wpdb->update($aTable, array('ad_weight_hits' => 0), array('pid' => $place['id']), array("%d"), array("%d"));
-      }
-      
-      $aSql = "SELECT
-                  {$aTable}.id,
-                  {$aTable}.pid,
-                  {$aTable}.code_mode,
-                  {$aTable}.ad_code,
-                  {$aTable}.ad_img,
-                  {$aTable}.ad_target,
-                  {$aTable}.count_clicks,
-                  {$aTable}.code_type,
-                  {$aTable}.ad_hits,
-                  {$aTable}.ad_weight_hits,
-                  IF({$aTable}.ad_weight, ({$aTable}.ad_weight_hits*10/({$aTable}.ad_weight*{$cycle})), 0) AS ad_cycle
-                FROM {$aTable}
-                WHERE {$aTable}.pid = {$place['id']} AND {$aTable}.trash IS FALSE AND ({$whereClause}){$whereClauseT}{$whereClauseW}
-                ORDER BY ad_cycle
-                LIMIT 1";
-      
-      if(abs($place['ad_logic_count']) > 0) {
-        $ad = $wpdb->get_row($aSql, ARRAY_A);
-        if($ad['code_mode'] == 0) {
-          $outId = ((int) $ad['count_clicks'] == 1) ? " id='a".rand(10, 99)."_".$ad['id']."' class='sam_ad'" : '';
-          $output = "<a href='{$ad['ad_target']}' target='_blank'><img{$outId} src='{$ad['ad_img']}' /></a>";
-        }
-        else {
-          if($ad['code_type'] == 1) {
-            ob_start();
-            eval('?>'.$ad['ad_code'].'<?');
-            $output = ob_get_contents();
-            ob_end_clean();
-          }
-          else $output = $ad['ad_code'];
-        }
-        $wpdb->query("UPDATE {$aTable} SET {$aTable}.ad_hits = {$aTable}.ad_hits+1, {$aTable}.ad_weight_hits = {$aTable}.ad_weight_hits+1 WHERE {$aTable}.id = {$ad['id']}");
-      }
-      
-      if($useCodes) $output = $place['code_before'].$output.$place['code_after'];
-      return $output;
+      return $crawler;
     }
     
     function widget( $args, $instance ) {
@@ -143,7 +54,8 @@ if(!class_exists('simple_ads_manager_widget') && class_exists('WP_Widget')) {
       $hide_style = $instance['hide_style'];
       $place_codes = $instance['place_codes'];
       
-      $content = $this->buildAd(array('id' => $adp_id), $place_codes);
+      $ad = new SamAd(array('id' => $adp_id), $place_codes, $this->crawler);
+      $content = $ad->ad;
       if(!empty($content)) {
         if ( !$hide_style ) {
           echo $before_widget;
