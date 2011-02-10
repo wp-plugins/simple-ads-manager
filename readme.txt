@@ -4,7 +4,7 @@ Donate link: http://www.simplelib.com/
 Tags: ad, adbrite, adgridwork, adify, admin, adpinion, adroll, ads, adsense, adserver, advertisement, advertising, affiliate, banner, banners, chitika, cj, commercial, commission, crispads, dfp, google, income, junction, link, manager, media, money, plugin, random, referral, revenue, rotator, seo, server, shoppingads, widget, widgetbucks, yahoo, ypn
 Requires at least: 3.0
 Tested up to: 3.1
-Stable tag: 0.3.11
+Stable tag: 0.4.15
 
 Advertisment rotation system with a flexible logic of displaying advertisements.
 
@@ -21,13 +21,17 @@ Simple Ads Manager is easy to use plugin providing a flexible logic of displayin
 * Outputting ads as shortcodes in any place of single post/page content
 * Outputting ads in any place of theme template using `drawAdsPlace` function
 * Automatic outputting ads in single post/page if allowed
-* Customized limitation of displaying advertisements by types of page
-* Customized limitation of displaying advertisements on single post page by post ID (IDs)
-* Customized limitation of displaying advertisements on single post page or category archive page by category (categories)
-* Customized limitation of displaying advertisements on single post page or author archive page by author (authors)
+* Customizable limitation of displaying advertisements by types of page
+* Customizable limitation of displaying advertisements on single post page by post ID (IDs)
+* Customizable limitation of displaying advertisements on single post page or category archive page by category (categories)
+* Customizable limitation of displaying advertisements on single post page or author archive page by author (authors)
 * Schedule of displaying each advertisment if allowed
+* Customizable limitation of displaying advertisements by hits
+* Customizable limitation of displaying advertisements by clicks
 * Statistics of hits
-* Statistics of clicks (your own advertisment image mode)  
+* Statistics of clicks (your own advertisment image mode)
+* Customizable accuracy of bots and crawlers detection
+* Counting revenue from ads placement, display ads and clicks on advertisements 
 
 = Available languages =
 * English
@@ -61,8 +65,11 @@ No questions now...
 
 == Changelog ==
 
-= 0.3.11 =
-* Critical bug is fixed
+= 0.4.15 =
+* Detection of Bots and Crawlers with customizable accuracy is added
+* Limitations by hits and clicks are added
+* Pricing by placement, hits and clicks are added
+* Earnings counting is added
 = 0.3.10 =
 * Supporting of Google DFP codes is added
 * Contextual Help is added
@@ -80,8 +87,11 @@ No questions now...
 
 == Upgrade Notice ==
 
-= 0.3.11 =
-Critical bug is fixed. 
+= 0.4.15 =
+Detection of Bots and Crawlers with customizable accuracy is added. 
+Limitations by hits and clicks are added. 
+Pricing by placement, hits and clicks are added. 
+Earnings counting is added. 
 = 0.3.10 =
 Supporting of Google DFP codes is added 
 Contextual Help is added 

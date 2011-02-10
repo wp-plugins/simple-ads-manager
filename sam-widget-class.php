@@ -1,7 +1,11 @@
 <?php
 if(!class_exists('simple_ads_manager_widget') && class_exists('WP_Widget')) {
   class simple_ads_manager_widget extends WP_Widget {
+    private $crawler = false;
+    
     function simple_ads_manager_widget() {
+      $this->crawler = $this->isCrawler();
+      
       $widget_ops = array( 'classname' => 'simple_ads_manager_widget', 'description' => __('Ads serviced by Simple Ads Manager.', SAM_DOMAIN));
       $control_ops = array( 'id_base' => 'simple_ads_manager_widget' );
       $this->WP_Widget( 'simple_ads_manager_widget', __('Advertisment', SAM_DOMAIN), $widget_ops, $control_ops );
@@ -12,6 +16,37 @@ if(!class_exists('simple_ads_manager_widget') && class_exists('WP_Widget')) {
       return $options;
     }
     
+    private function isCrawler() {
+      $options = $this->getSettings();
+      $crawler = false;
+      
+      if($options['detectBots'] == 1) {
+        switch($options['detectingMode']) {
+          case 'inexact':
+            if($_SERVER["HTTP_USER_AGENT"] == '' ||
+               $_SERVER['HTTP_ACCEPT'] == '' ||
+               $_SERVER['HTTP_ACCEPT_ENCODING'] == '' ||
+               $_SERVER['HTTP_ACCEPT_LANGUAGE'] == '' ||
+               $_SERVER['HTTP_CONNECTION']=='') $crawler == true;
+            break;
+            
+          case 'exact':
+            include_once('browser.php');
+            $browser = new Browser();
+            $crawler = $browser->isRobot();
+            break;
+            
+          case 'more':
+            if(ini_get("browscap")) {
+              $browser = get_browser(null, true);
+              $crawler = $browser['crawler']; 
+            }
+            break;
+        }
+      }
+      return $crawler;
+    }
+    
     function widget( $args, $instance ) {
       extract($args);
       $title = apply_filters('widget_title', empty($instance['title']) ? '' : $instance['title']);
@@ -19,7 +54,7 @@ if(!class_exists('simple_ads_manager_widget') && class_exists('WP_Widget')) {
       $hide_style = $instance['hide_style'];
       $place_codes = $instance['place_codes'];
       
-      $ad = new SamAd(array('id' => $adp_id), $place_codes);
+      $ad = new SamAd(array('id' => $adp_id), $place_codes, $this->crawler);
       $content = $ad->ad;
       if(!empty($content)) {
         if ( !$hide_style ) {

@@ -24,12 +24,12 @@ if ( !class_exists( 'SimpleAdsManagerAdmin' && class_exists('SimpleAdsManager') 
       add_action('init', array(&$this, 'addButtons'));
       add_filter('contextual_help', array(&$this, 'help'), 10, 3);
       
-      $version = get_option('sam_version', '');
-      if(!empty($version) && ($version !== SAM_VERSION)) parent::updateDB();
+      $versions = parent::getVersions(true);
+      if(empty($version) || ($versions['sam'] !== SAM_VERSION)) parent::updateDB();
     }
     
     function onActivate() {
-      $settings = parent::getSettings();
+      $settings = parent::getSettings(true);
 			update_option( SAM_OPTIONS_NAME, $settings );
 			parent::updateDB();
     }
@@ -62,6 +62,7 @@ if ( !class_exists( 'SimpleAdsManagerAdmin' && class_exists('SimpleAdsManager') 
       add_settings_section("sam_general_section", __("General Settings", SAM_DOMAIN), array(&$this, "drawGeneralSection"), 'sam-settings');
       add_settings_section("sam_single_section", __("Auto Inserting Settings", SAM_DOMAIN), array(&$this, "drawSingleSection"), 'sam-settings');
       add_settings_section("sam_dfp_section", __("Google DFP Settings", SAM_DOMAIN), array(&$this, "drawDFPSection"), 'sam-settings');
+      add_settings_section("sam_statistic_section", __("Statistics Settings", SAM_DOMAIN), array(&$this, "drawStatisticsSection"), 'sam-settings');
       add_settings_section("sam_layout_section", __("Admin Layout", SAM_DOMAIN), array(&$this, "drawLayoutSection"), 'sam-settings');
 			add_settings_section("sam_deactivate_section", __("Plugin Deactivating", SAM_DOMAIN), array(&$this, "drawDeactivateSection"), 'sam-settings');
 			
@@ -76,6 +77,10 @@ if ( !class_exists( 'SimpleAdsManagerAdmin' && class_exists('SimpleAdsManager') 
       
       add_settings_field('useDFP', __("Allow using Google DoubleClick for Publishers (DFP) rotator codes", SAM_DOMAIN), array(&$this, 'drawCheckboxOption'), 'sam-settings', 'sam_dfp_section', array('label_for' => 'useDFP', 'checkbox' => true));
       add_settings_field('dfpPub', __("Google PDF Pub Code", SAM_DOMAIN), array(&$this, 'drawTextOption'), 'sam-settings', 'sam_dfp_section', array('description' => __('Your Google DFP Pub code. i.e:', SAM_DOMAIN).' ca-pub-0000000000000000.', 'width' => 200));
+      
+      add_settings_field('detectBots', __("Allow Bots and Crawlers detection", SAM_DOMAIN), array(&$this, 'drawCheckboxOption'), 'sam-settings', 'sam_statistic_section', array('label_for' => 'detectBots', 'checkbox' => true));
+      add_settings_field('detectingMode', __("Accuracy of Bots and Crawlers Detection", SAM_DOMAIN), array(&$this, 'drawRadioOption'), 'sam-settings', 'sam_statistic_section', array('description' => __("If bot is detected hits of ads won't be counted. Use with caution! More exact detection requires more server resources.", SAM_DOMAIN), 'options' => array( 'inexact' => __('Inexact detection', SAM_DOMAIN), 'exact' => __('Exact detection', SAM_DOMAIN), 'more' => __('More exact detection', SAM_DOMAIN))));
+      add_settings_field('currency', __("Display of Currency", SAM_DOMAIN), array(&$this, 'drawRadioOption'), 'sam-settings', 'sam_statistic_section', array('description' => __("Define display of currency. Auto - auto detection of currency from blog settings. USD, EUR - Forcing the display of currency to U.S. dollars or Euro.", SAM_DOMAIN), 'options' => array( 'auto' => __('Auto', SAM_DOMAIN), 'usd' => __('USD', SAM_DOMAIN), 'euro' => __('EUR', SAM_DOMAIN))));
       
       add_settings_field('placesPerPage', __("Ads Places per Page", SAM_DOMAIN), array(&$this, 'drawTextOption'), 'sam-settings', 'sam_layout_section', array('description' => __('Ads Places Management grid pagination. How many Ads Places will be shown on one page of grid.', SAM_DOMAIN)));
 			add_settings_field('itemsPerPage', __("Ads per Page", SAM_DOMAIN), array(&$this, 'drawTextOption'), 'sam-settings', 'sam_layout_section', array('description' => __('Ads of Ads Place Management grid pagination. How many Ads will be shown on one page of grid.', SAM_DOMAIN)));
@@ -103,7 +108,7 @@ if ( !class_exists( 'SimpleAdsManagerAdmin' && class_exists('SimpleAdsManager') 
         if($_GET['mode'] == 'item') {
           $contextualHelp = '<div class="sam-contextual-help">';
           $contextualHelp .= '<p>'.__('Enter a <strong>name</strong> and a <strong>description</strong> of the advertisement. These parameters are optional, because don’t influence anything, but help in the visual identification of the ad (do not forget which is which).', SAM_DOMAIN).'</p>';
-          $contextualHelp .= '<p>'.__('<strong>Ad Code</strong> – code can be defined as a combination of the image URL and target page URL, or as HTML code, javascript code, or PHP code (for PHP-code don’t forget to set the checkbox labeled “This code of ad contains PHP script). If you select the first option (image mode) you can keep statistics of clicks and also tools for uploading/selecting the downloaded image banner becomes available to you.', SAM_DOMAIN).'</p>';
+          $contextualHelp .= '<p>'.__('<strong>Ad Code</strong> – code can be defined as a combination of the image URL and target page URL, or as HTML code, javascript code, or PHP code (for PHP-code don’t forget to set the checkbox labeled "This code of ad contains PHP script"). If you select the first option (image mode) you can keep statistics of clicks and also tools for uploading/selecting the downloaded image banner becomes available to you.', SAM_DOMAIN).'</p>';
           $contextualHelp .= '<p>'.__('<strong>Restrictions of advertisement Showing</strong>', SAM_DOMAIN).'</p>';
           $contextualHelp .= '<p>'.__('<em>Ad Weight</em> – coefficient of frequency of show of the advertisement for one cycle of advertisements rotation. 0 – ad is inactive, 1 – minimal activity of this advertisement, 10 – maximal activity of this ad.', SAM_DOMAIN).'</p>';
           $contextualHelp .= '<p>'.__('<em>Restrictions by the type of pages</em> – select restrictions:', SAM_DOMAIN);
@@ -118,8 +123,11 @@ if ( !class_exists( 'SimpleAdsManagerAdmin' && class_exists('SimpleAdsManager') 
           $contextualHelp .= '<li>'.__('Show ad only in single posts or authors archives of certain authors – ad will be shown only on single posts pages or author archive pages of the specified authors', SAM_DOMAIN).'</li>';
           $contextualHelp .= '</ul></p>';
           $contextualHelp .= '<p>'.__('<em>Use the schedule for this ad</em> – if necessary, select checkbox labeled “Use the schedule for this ad” and set start and finish dates of ad campaign.', SAM_DOMAIN).'</p>';
-          $contextualHelp .= '<p><a href="http://www.simplelib.com/?p=480" target="_blank">'.__('Manual', SAM_DOMAIN).'</a><br/>';
-          $contextualHelp .= '<a href="http://forum.simplelib.com/index.php?board=10.0" target="_blank">'.__('Support Forum', SAM_DOMAIN).'</a></p>';
+          $contextualHelp .= '<p>'.__('<em>Use limitation by hits</em> – if necessary, select checkbox labeled “Use limitation by hits” and set hits limit.', SAM_DOMAIN).'</p>';
+          $contextualHelp .= '<p>'.__('<em>Use limitation by clicks</em> – if necessary, select checkbox labeled “Use limitation by clicks” and set clicks limit.', SAM_DOMAIN).'</p>';
+          $contextualHelp .= '<p>'.'<strong>'.__('Prices', SAM_DOMAIN).'</strong>: '.__('Use these parameters to get the statistics of incomes from advertisements placed in your blog. "Price of ad placement per month" - parameter used only for calculating statistic of scheduled ads.', SAM_DOMAIN).'</p>';
+          $contextualHelp .= '<p><a class="button-secondary" href="http://www.simplelib.com/?p=480" target="_blank">'.__('Manual', SAM_DOMAIN).'</a> ';
+          $contextualHelp .= '<a class="button-secondary" href="http://forum.simplelib.com/index.php?board=10.0" target="_blank">'.__('Support Forum', SAM_DOMAIN).'</a></p>';
           $contextualHelp .= '</div>';
         }
         elseif($_GET['mode'] == 'place') {
@@ -135,15 +143,15 @@ if ( !class_exists( 'SimpleAdsManagerAdmin' && class_exists('SimpleAdsManager') 
           $contextualHelp .= '</ul></p>';
           $contextualHelp .= '<p>'.__('If you select the first option (image mode), tools to download/choosing of downloaded image banner become available for you.', SAM_DOMAIN).'</p>';
           $contextualHelp .= '<p>'.__('<strong>Codes</strong> – as Ads Place can be inserted into the page code not only as widget, but as a short code or by using function, you can use code “before” and “after” for centering or alignment of Ads Place on the place of inserting or for something else you need. Use HTML tags.', SAM_DOMAIN);
-          $contextualHelp .= '<p><a href="http://www.simplelib.com/?p=480" target="_blank">'.__('Manual', SAM_DOMAIN).'</a><br/>';
-          $contextualHelp .= '<a href="http://forum.simplelib.com/index.php?board=10.0" target="_blank">'.__('Support Forum', SAM_DOMAIN).'</a></p>';
+          $contextualHelp .= '<p><a class="button-secondary" href="http://www.simplelib.com/?p=480" target="_blank">'.__('Manual', SAM_DOMAIN).'</a> ';
+          $contextualHelp .= '<a class="button-secondary" href="http://forum.simplelib.com/index.php?board=10.0" target="_blank">'.__('Support Forum', SAM_DOMAIN).'</a></p>';
           $contextualHelp .= '</div>';
         }
       }
       elseif($screenId == $this->listPage) {
         $contextualHelp = '<div class="sam-contextual-help">';
-        $contextualHelp .= '<p><a href="http://www.simplelib.com/?p=480" target="_blank">'.__('Manual', SAM_DOMAIN).'</a><br/>';
-        $contextualHelp .= '<a href="http://forum.simplelib.com/index.php?board=10.0" target="_blank">'.__('Support Forum', SAM_DOMAIN).'</a></p>';
+        $contextualHelp .= '<p><a class="button-secondary" href="http://www.simplelib.com/?p=480" target="_blank">'.__('Manual', SAM_DOMAIN).'</a> ';
+        $contextualHelp .= '<a class="button-secondary" href="http://forum.simplelib.com/index.php?board=10.0" target="_blank">'.__('Support Forum', SAM_DOMAIN).'</a></p>';
         $contextualHelp .= '</div>';
       }
       elseif($screenId == $this->settingsPage) {
@@ -153,8 +161,11 @@ if ( !class_exists( 'SimpleAdsManagerAdmin' && class_exists('SimpleAdsManager') 
         $contextualHelp .= '<p>'.__('Not worth it, though it has no special meaning, set this parameter to a value greater than the number of hits your web pages during a month. Optimal, perhaps, is the value to the daily shows website pages.', SAM_DOMAIN).'</p>';
         $contextualHelp .= '<p>'.__('<strong>Auto Inserting Settings</strong> - here you can select the Ads Places and allow the display of their ads before and after the  content of single post.', SAM_DOMAIN).'</p>';
         $contextualHelp .= '<p>'.__("<strong>Google DFP Settings</strong> - if you want to use codes of Google DFP rotator, you must allow it's using and define your pub-code.", SAM_DOMAIN).'</p>';
-        $contextualHelp .= '<p><a href="http://www.simplelib.com/?p=480" target="_blank">'.__('Manual', SAM_DOMAIN).'</a><br/>';
-        $contextualHelp .= '<a href="http://forum.simplelib.com/index.php?board=10.0" target="_blank">'.__('Support Forum', SAM_DOMAIN).'</a></p>';
+        $contextualHelp .= '<p>'.'<strong>'.__('Statistics Settings', SAM_DOMAIN).'</strong>'.'</p>';
+        $contextualHelp .= '<p>'.'<em>'.__('Bots and Crawlers detection', SAM_DOMAIN).'</em>: '.__("For obtaining of more exact indexes of statistics and incomes it is preferable to exclude data about visits of bots and crawlers from the data about all visits of your blog. If enabled and bot or crawler is detected, hits of ads won't be counted. Select accuracy of detection but use with caution - more exact detection requires more server resources.", SAM_DOMAIN).'</p>';
+        $contextualHelp .= '<p>'.'<em>'.__('Display of Currency', SAM_DOMAIN).'</em>: '.__("Define display of currency. Auto - auto detection of currency from blog settings. USD, EUR - Forcing the display of currency to U.S. dollars or Euro.", SAM_DOMAIN).'</p>';
+        $contextualHelp .= '<p><a class="button-secondary" href="http://www.simplelib.com/?p=480" target="_blank">'.__('Manual', SAM_DOMAIN).'</a> ';
+        $contextualHelp .= '<a class="button-secondary" href="http://forum.simplelib.com/index.php?board=10.0" target="_blank">'.__('Support Forum', SAM_DOMAIN).'</a></p>';
         $contextualHelp .= '</div>';
       }
       return $contextualHelp;
@@ -454,8 +465,9 @@ if ( !class_exists( 'SimpleAdsManagerAdmin' && class_exists('SimpleAdsManager') 
         'cats' => $terms,
         'authors' => $authors
       );
+      $charset = get_bloginfo('charset');
       
-      header("Content-type: application/json; charset=UTF-8"); 
+      header("Content-type: application/json; charset=$charset"); 
       exit(json_encode($output));
     }
     
@@ -546,6 +558,10 @@ if ( !class_exists( 'SimpleAdsManagerAdmin' && class_exists('SimpleAdsManager') 
     function drawDFPSection() {
       echo '<p>'.__('Adjust parameters of your Google DFP account.', SAM_DOMAIN).'</p>';
     }
+    
+    function drawStatisticsSection() {
+      echo '<p>'.__('Adjust parameters of plugin statistics.', SAM_DOMAIN).'</p>';
+    }
 		
 		function drawLayoutSection() {
 			echo '<p>'.__('This options define layout for Ads Managin Pages.', SAM_DOMAIN).'</p>';
@@ -594,10 +610,28 @@ if ( !class_exists( 'SimpleAdsManagerAdmin' && class_exists('SimpleAdsManager') 
         </select>
       <?php
     }
+    
+    function drawRadioOption( $id, $args ) {
+      $options = $args['options'];
+      $settings = parent::getSettings();
+      
+      foreach ($options as $key => $option) {
+      ?>
+        <input type="radio" 
+          id="<?php echo $id.'_'.$key; ?>" 
+          name="<?php echo SAM_OPTIONS_NAME.'['.$id.']'; ?>" 
+          value="<?php echo $key; ?>" 
+          <?php checked($key, $settings[$id]); ?> 
+          <?php if($key == 'more') disabled('', ini_get("browscap")); ?> />
+        <label for="<?php echo $id.'_'.$key; ?>"> 
+          <?php echo $option;?>
+        </label>&nbsp;&nbsp;&nbsp;&nbsp;        
+      <?php
+      }
+    }
 		
 		function samAdminPage() {
       if(!is_dir(SAM_AD_IMG)) mkdir(SAM_AD_IMG);
-      //echo $this->buildAd(array('id' => 1));
       ?>
 			<div class="wrap">
 				<?php screen_icon("options-general"); ?>
@@ -606,10 +640,11 @@ if ( !class_exists( 'SimpleAdsManagerAdmin' && class_exists('SimpleAdsManager') 
 				if(isset($_GET['settings-updated'])) $updated = $_GET['settings-updated'];
         elseif(isset($_GET['updated'])) $updated = $_GET['updated'];
 				if($updated === 'true') {
-				?>
-				<div class="updated"><p><strong><?php _e("Simple Ads Manager Settings Updated.", SAM_DOMAIN); ?></strong></p></div>
+          parent::getSettings(true);
+				  ?>
+				  <div class="updated"><p><strong><?php _e("Simple Ads Manager Settings Updated.", SAM_DOMAIN); ?></strong></p></div>
 				<?php } else { ?>
-				<div class="clear"></div>
+				  <div class="clear"></div>
 				<?php } ?>
 				<form action="options.php" method="post">
 					<?php settings_fields('samOptions'); ?>
@@ -730,21 +765,23 @@ if ( !class_exists( 'SimpleAdsManagerAdmin' && class_exists('SimpleAdsManager') 
 		<thead>
 			<tr>
 				<th id="t-idg" class="manage-column column-title" style="width:5%;" scope="col"><?php _e('ID', SAM_DOMAIN); ?></th>
-				<th id="t-name" class="manage-column column-title" style="width:41%;" scope="col"><?php _e('Place Name', SAM_DOMAIN);?></th>
-        <th id="t-size" class="manage-column column-title" style="width:20%;" scope="col"><?php _e('Size', SAM_DOMAIN); ?></th>
+				<th id="t-name" class="manage-column column-title" style="width:31%;" scope="col"><?php _e('Place Name', SAM_DOMAIN);?></th>
+        <th id="t-size" class="manage-column column-title" style="width:15%;" scope="col"><?php _e('Size', SAM_DOMAIN); ?></th>
         <th id="t-size" class="manage-column column-title" style="width:7%;" scope="col"><?php _e('Hits', SAM_DOMAIN); ?></th>
         <th id="t-size" class="manage-column column-title" style="width:7%;" scope="col"><?php _e('Total Hits', SAM_DOMAIN); ?></th>
-        <th id="tp-items" class="manage-column column-title" style="width:10%;" scope="col"><div class="vers"><?php _e('Total Ads', SAM_DOMAIN); ?></div></th>				
+        <th id="tp-items" class="manage-column column-title" style="width:10%;" scope="col"><div class="vers"><?php _e('Total Ads', SAM_DOMAIN); ?></div></th>
+        <th id="tp-earnings" class="manage-column column-title" style="width:15%;" scope="col"><div class="vers"><?php _e('Earnings', SAM_DOMAIN); ?></div></th>				
 			</tr>
 		</thead>
 		<tfoot>
 			<tr>
 				<th id="b-idg" class="manage-column column-title" style="width:5%;" scope="col"><?php _e('ID', SAM_DOMAIN); ?></th>
-				<th id="b-name" class="manage-column column-title" style="width:41%;" scope="col"><?php _e('Place Name', SAM_DOMAIN);?></th>
-				<th id="b-size" class="manage-column column-title" style="width:20%;" scope="col"><?php _e('Size', SAM_DOMAIN); ?></th>
+				<th id="b-name" class="manage-column column-title" style="width:31%;" scope="col"><?php _e('Place Name', SAM_DOMAIN);?></th>
+				<th id="b-size" class="manage-column column-title" style="width:15%;" scope="col"><?php _e('Size', SAM_DOMAIN); ?></th>
         <th id="t-size" class="manage-column column-title" style="width:7%;" scope="col"><?php _e('Hits', SAM_DOMAIN); ?></th>
         <th id="t-size" class="manage-column column-title" style="width:7%;" scope="col"><?php _e('Total Hits', SAM_DOMAIN); ?></th>
 				<th id="bp-items" class="manage-column column-title" style="width:10%;" scope="col"><div class="vers"><?php _e('Total Ads', SAM_DOMAIN); ?></div></th>
+        <th id="bp-earnings" class="manage-column column-title" style="width:15%;" scope="col"><div class="vers"><?php _e('Earnings', SAM_DOMAIN); ?></div></th>
 			</tr>
 		</tfoot>
 		<tbody>
@@ -757,7 +794,10 @@ if ( !class_exists( 'SimpleAdsManagerAdmin' && class_exists('SimpleAdsManager') 
                       $pTable.place_custom_width, 
                       $pTable.place_custom_height,
                       $pTable.patch_hits,
-                      (IFNULL((SELECT sum($aTable.ad_hits) FROM $aTable WHERE $aTable.pid = $pTable.id), 0) + $pTable.patch_hits) as total_ad_hits, 
+                      (IFNULL((SELECT sum($aTable.ad_hits) FROM $aTable WHERE $aTable.pid = $pTable.id), 0) + $pTable.patch_hits) as total_ad_hits,
+                      (IFNULL((SELECT SUM(IF(cpm > 0, ad_hits*cpm/1000, 0)) FROM wp_sam_ads WHERE wp_sam_ads.pid = wp_sam_places.id), 0)) AS e_cpm,
+                      (IFNULL((SELECT SUM(IF(cpc > 0, ad_clicks*cpc, 0)) FROM wp_sam_ads WHERE wp_sam_ads.pid = wp_sam_places.id), 0)) AS e_cpc,
+                      (IFNULL((SELECT SUM(IF(ad_schedule AND per_month > 0, DATEDIFF(CURDATE(), ad_start_date)*per_month/30, 0)) FROM wp_sam_ads WHERE wp_sam_ads.pid = wp_sam_places.id), 0)) AS e_month, 
                       $pTable.trash, 
                       (SELECT COUNT(*) FROM $aTable WHERE $aTable.pid = $pTable.id) AS items 
                     FROM $pTable".
@@ -772,9 +812,24 @@ if ( !class_exists( 'SimpleAdsManagerAdmin' && class_exists('SimpleAdsManager') 
         <th class="author column-author"><?php _e('There are no data ...', SAM_DOMAIN).$pTable; ?></th>
 			</tr>
 				<?php } else {
-					foreach($places as $row) {
-						//$aItems = $wpdb->get_var($wpdb->prepare('SELECT COUNT(*) FROM '.$aTable.' WHERE (trash = FALSE) AND (pid = '.$row['id'].')'));
-            $apSize = $this->getAdSize($row['place_size'], $row['place_custom_width'], $row['place_custom_height']);
+					switch($options['currency']) {
+            case 'auto': $lang = str_replace('-', '_', get_bloginfo('language')); break;
+            case 'usd' : $lang = 'en_US'; break;
+            case 'euro': $lang = 'de_DE'; break;
+            default: $lang = str_replace('-', '_', get_bloginfo('language'));
+          }          
+          $codeset = get_bloginfo('charset');
+          setlocale(LC_MONETARY, $lang.'.'.$codeset);
+          foreach($places as $row) {
+						$apSize = $this->getAdSize($row['place_size'], $row['place_custom_width'], $row['place_custom_height']);
+            $eMonth = round(floatval($row['e_month']), 2);
+            $eCPM = round(floatval($row['e_cpm']), 2);
+            $eCPC = round(floatval($row['e_cpc']), 2);
+            $eTotal = $eMonth + $eCPC + $eCPM;
+            $earnings = $eMonth ? __('Placement', SAM_DOMAIN).": ".money_format('%.2n', $eMonth)." <br/>" : '';
+            $earnings .= $eCPM ? __('Hits', SAM_DOMAIN).": ".money_format('%.2n', $eCPM)." <br/>" : '';
+            $earnings .= $eCPC ? __('Clicks', SAM_DOMAIN).": ".money_format('%.2n', $eCPC)." <br/>" : '';
+            $earnings .= $eTotal ? "<strong>".__('Total', SAM_DOMAIN).": ".money_format('%.2n', $eTotal)." </strong>" : __('N/A', SAM_DOMAIN);
 				?>
 			<tr id="<?php echo $row['id'];?>" class="<?php echo (($i & 1) ? 'alternate' : ''); ?> author-self status-publish iedit" valign="top">
 				<th class="post-title column-title"><?php echo $row['id']; ?></th>
@@ -801,6 +856,7 @@ if ( !class_exists( 'SimpleAdsManagerAdmin' && class_exists('SimpleAdsManager') 
         <td class="post-title column-title"><div class="post-com-count-wrapper" style="text-align: center;"><?php echo $row['patch_hits'];?></div></td>
         <td class="post-title column-title"><div class="post-com-count-wrapper" style="text-align: center;"><?php echo $row['total_ad_hits'];?></div></td>
 				<td class="post-title column-title"><div class="post-com-count-wrapper" style="text-align: center;"><?php echo $row['items'];?></div></td>
+        <td class="post-title column-title"><div class='earnings'><?php echo $earnings;?></div></td>
 			</tr>
 				<?php $i++; }}?>
 		</tbody>
@@ -833,15 +889,15 @@ if ( !class_exists( 'SimpleAdsManagerAdmin' && class_exists('SimpleAdsManager') 
           if(!is_null($item)) {
 						if($iaction === 'delete') $wpdb->update( $aTable, array( 'trash' => true ), array( 'id' => $iitem ), array( '%d' ), array( '%d' ) );
 						elseif($iaction === 'untrash') $wpdb->update( $aTable, array( 'trash' => false ), array( 'id' => $iitem ), array( '%d' ), array( '%d' ) );
-            elseif($iaction === 'kill') $wpdb->query("DELETE FROM {$aTable} WHERE id={$iitem}");
+            elseif($iaction === 'kill') $wpdb->query("DELETE FROM $aTable WHERE id = $iitem");
 					}
-          if($iaction === 'kill-em-all') $wpdb->query("DELETE FROM {$aTable} WHERE trash=true");
+          if($iaction === 'kill-em-all') $wpdb->query("DELETE FROM $aTable WHERE trash=true");
 					$trash_num = $wpdb->get_var($wpdb->prepare('SELECT COUNT(*) FROM '.$aTable.' WHERE (trash = TRUE) AND (pid = '.$item.')'));
 					$active_num = $wpdb->get_var($wpdb->prepare('SELECT COUNT(*) FROM '.$aTable.' WHERE (trash = FALSE) AND (pid = '.$item.')'));
 					if(is_null($active_num)) $active_num = 0;
 					if(is_null($trash_num)) $trash_num = 0;
 					$all_num = $trash_num + $active_num;
-					$places = $wpdb->get_row("SELECT id, name, trash FROM ".$pTable." WHERE id = ".$item, ARRAY_A);
+					$places = $wpdb->get_row("SELECT id, name, trash FROM $pTable WHERE id = $item", ARRAY_A);
 
 					$total = (($mode !== 'all') ? (($mode === 'trash') ? $trash_num : $active_num) : $all_num);
 					$start = $offset = ( $apage - 1 ) * $items_per_page;
@@ -892,27 +948,58 @@ if ( !class_exists( 'SimpleAdsManagerAdmin' && class_exists('SimpleAdsManager') 
 		<thead>
 			<tr>
 				<th id="t-id" class="manage-column column-title" style="width:5%;" scope="col"><?php _e('ID', SAM_DOMAIN); ?></th>
-				<th id="t-ad" class='manage-column column-title' style="width:65%;" scope="col"><?php _e('Advertisement', SAM_DOMAIN); ?></th>
+				<th id="t-ad" class='manage-column column-title' style="width:55%;" scope="col"><?php _e('Advertisement', SAM_DOMAIN); ?></th>
 				<th id="t-act" class="manage-column column-title" style="width:10%;" scope="col"><?php _e('Activity', SAM_DOMAIN);?></th>
 				<th id="t-hits" class="manage-column column-title" style="width:10%;" scope="col"><?php _e('Hits', SAM_DOMAIN);?></th>
 				<th id="t-clicks" class="manage-column column-title" style="width:10%;" scope="col"><?php _e('Clicks', SAM_DOMAIN);?></th>
+        <th id="t-earnings" class="manage-column column-title" style="width:10%;" scope="col"><?php _e('Earnings', SAM_DOMAIN);?></th>
 			</tr>
 		</thead>
 		<tfoot>
 			<tr>
 				<th id="b-id" class="manage-column column-title" style="width:5%;" scope="col"><?php _e('ID', SAM_DOMAIN); ?></th>
-				<th id="b-ad" class='manage-column column-title' style="width:65%;" scope="col"><?php _e('Advertisement', SAM_DOMAIN); ?></th>
+				<th id="b-ad" class='manage-column column-title' style="width:55%;" scope="col"><?php _e('Advertisement', SAM_DOMAIN); ?></th>
 				<th id="b-act" class="manage-column column-title" style="width:10%;" scope="col"><?php _e('Activity', SAM_DOMAIN);?></th>
 				<th id="b-hits" class="manage-column column-title" style="width:10%;" scope="col"><?php _e('Hits', SAM_DOMAIN);?></th>
 				<th id="b-clicks" class="manage-column column-title" style="width:10%;" scope="col"><?php _e('Clicks', SAM_DOMAIN);?></th>
+        <th id="b-earnings" class="manage-column column-title" style="width:10%;" scope="col"><?php _e('Earnings', SAM_DOMAIN);?></th>
 			</tr>
 		</tfoot>
 		<tbody>
 				<?php
 					if($mode !== 'all')
-						$items = $wpdb->get_results("SELECT id, pid, name, description, ad_hits, ad_clicks, ad_weight, trash FROM ".$aTable.' WHERE (pid = '.$item.') AND (trash = '.(($mode === 'trash') ? 'TRUE' : 'FALSE').')'.' LIMIT '.$offset.', '.$items_per_page, ARRAY_A);
+            $aSql = "SELECT 
+                      id, 
+                      pid, 
+                      name, 
+                      description, 
+                      ad_hits, 
+                      ad_clicks, 
+                      ad_weight,
+                      (IF(ad_schedule AND per_month > 0, DATEDIFF(CURDATE(), ad_start_date)*per_month/30, 0)) AS e_month,
+                      (cpm * ad_hits / 1000) AS e_cpm,
+                      (cpc * ad_clicks) AS e_cpc, 
+                      trash 
+                     FROM $aTable 
+                     WHERE (pid = $item) AND (trash = ".(($mode === 'trash') ? 'TRUE' : 'FALSE').")
+                     LIMIT $offset, $items_per_page";
 					else
-						$items = $wpdb->get_results("SELECT id, pid, name, description, ad_hits, ad_clicks, ad_weight, trash FROM ".$aTable." WHERE pid = ".$item.' LIMIT '.$offset.', '.$items_per_page, ARRAY_A);
+						$aSql = "SELECT 
+                      id, 
+                      pid, 
+                      name, 
+                      description, 
+                      ad_hits, 
+                      ad_clicks, 
+                      ad_weight,
+                      (IF(ad_schedule AND per_month > 0, DATEDIFF(CURDATE(), ad_start_date)*per_month/30, 0)) AS e_month,
+                      (cpm * ad_hits / 1000) AS e_cpm,
+                      (cpc * ad_clicks) AS e_cpc, 
+                      trash 
+                     FROM $aTable 
+                     WHERE pid = $item 
+                     LIMIT $offset, $items_per_page";
+          $items = $wpdb->get_results($aSql, ARRAY_A);
 					$i = 0;
 					if(!is_array($items) || empty($items)) {
 				?>
@@ -923,9 +1010,25 @@ if ( !class_exists( 'SimpleAdsManagerAdmin' && class_exists('SimpleAdsManager') 
 				<?php 
           } 
           else {
-					  foreach($items as $row) {
+					  switch($options['currency']) {
+              case 'auto': $lang = str_replace('-', '_', get_bloginfo('language')); break;
+              case 'usd' : $lang = 'en_US'; break;
+              case 'euro': $lang = 'de_DE'; break;
+              default: $lang = str_replace('-', '_', get_bloginfo('language'));
+            }          
+            $codeset = get_bloginfo('charset');
+            setlocale(LC_MONETARY, $lang.'.'.$codeset);
+            foreach($items as $row) {
 						  if($row['ad_weight'] > 0) $activity = __('Yes', SAM_DOMAIN);
               else $activity = __('No', SAM_DOMAIN);
+              $eMonth = round(floatval($row['e_month']), 2);
+              $eCPM = round(floatval($row['e_cpm']), 2);
+              $eCPC = round(floatval($row['e_cpc']), 2);
+              $eTotal = $eMonth + $eCPC + $eCPM;
+              $earnings = $eMonth ? __('Placement', SAM_DOMAIN).": ".money_format('%.2n', $eMonth)." <br/>" : '';
+              $earnings .= $eCPM ? __('Hits', SAM_DOMAIN).": ".money_format('%.2n', $eCPM)." <br/>" : '';
+              $earnings .= $eCPC ? __('Clicks', SAM_DOMAIN).": ".money_format('%.2n', $eCPC)." <br/>" : '';
+              $earnings .= $eTotal ? "<strong>".__('Total', SAM_DOMAIN).": ".money_format('%.2n', $eTotal)." </strong>" : __('N/A', SAM_DOMAIN);
 				?>
 			<tr id="<?php echo $row['id'];?>" class="<?php echo (($i & 1) ? 'alternate' : ''); ?> author-self status-publish iedit" valign="top">
 				<th class="post-title column-title"><?php echo $row['id']; ?></th>
@@ -944,6 +1047,7 @@ if ( !class_exists( 'SimpleAdsManagerAdmin' && class_exists('SimpleAdsManager') 
         <td class="post-title column-title"><?php echo $activity; ?></td>
 				<td class="post-title column-title"><?php echo $row['ad_hits'];?></td>
 				<td class="post-title column-title"><?php echo $row['ad_clicks'];?></td>
+        <td class="post-title column-title"><div class='earnings'><?php echo $earnings;?></div></td>
 			</tr>
 				<?php $i++; }}?>
 		</tbody>
@@ -1315,9 +1419,16 @@ if ( !class_exists( 'SimpleAdsManagerAdmin' && class_exists('SimpleAdsManager') 
               'ad_end_date' => $_POST['ad_end_date'],              
               'ad_schedule' => $_POST['ad_schedule'],
               'ad_weight' => $_POST['ad_weight'],
+              'limit_hits' => $_POST['limit_hits'],
+              'hits_limit' => $_POST['hits_limit'],
+              'limit_clicks' => $_POST['limit_clicks'],
+              'clicks_limit' => $_POST['clicks_limit'],
+              'cpm' => $_POST['cpm'],
+              'cpc' => $_POST['cpc'],
+              'per_month' => $_POST['per_month'],
               'trash' => ($_POST['trash'] === 'true')
             );
-            $formatRow = array( '%d', '%s', '%s', '%d', '%d', '%s', '%s', '%s', '%d', '%d', '%d', '%s', '%d', '%s', '%d', '%s', '%s', '%s', '%d', '%d', '%d');
+            $formatRow = array( '%d', '%s', '%s', '%d', '%d', '%s', '%s', '%s', '%d', '%d', '%d', '%s', '%d', '%s', '%d', '%s', '%s', '%s', '%d', '%d', '%d', '%d', '%d', '%d', '%d', '%d', '%d', '%d');
             if($itemId === __('Undefined', SAM_DOMAIN)) {
               $wpdb->insert($aTable, $updateRow);
               $item = $wpdb->insert_id;
@@ -1357,13 +1468,20 @@ if ( !class_exists( 'SimpleAdsManagerAdmin' && class_exists('SimpleAdsManager') 
                       view_authors, 
                       ad_start_date, 
                       ad_end_date, 
-                      ad_schedule, 
+                      ad_schedule,
+                      limit_hits,
+                      hits_limit,
+                      limit_clicks,
+                      clicks_limit, 
                       ad_hits, 
                       ad_clicks, 
                       ad_weight, 
-                      ad_weight_hits, 
+                      ad_weight_hits,
+                      cpm,
+                      cpc,
+                      per_month, 
                       trash 
-                  FROM ".$aTable." WHERE id = ".$item, 
+                  FROM $aTable WHERE id = $item", 
               ARRAY_A);
               
             if($row['ad_size'] === 'custom') $aSize = $this->getAdSize($row['ad_size'], $row['ad_custom_width'], $row['ad_custom_height']);
@@ -1391,10 +1509,17 @@ if ( !class_exists( 'SimpleAdsManagerAdmin' && class_exists('SimpleAdsManager') 
               'ad_start_date' => '',
               'ad_end_date' => '',              
               'ad_schedule' => 0,
+              'limit_hits' => 0,
+              'hits_limit' => 0,
+              'limit_clicks' => 0,
+              'clicks_limit' => 0,
               'ad_hits' => 0,
               'ad_clicks' => 0,
               'ad_weight' => 10,
               'ad_weight_hits' => 0,
+              'cpm' => 0.0,
+              'cpc' => 0.0,
+              'per_month' => 0.0,
               'trash' => 0
             );
             $aSize = array(
@@ -1621,7 +1746,6 @@ if ( !class_exists( 'SimpleAdsManagerAdmin' && class_exists('SimpleAdsManager') 
                     <label for='is_date'><?php _e('Date Archive Pages (any date-based archive pages, i.e. a monthly, yearly, daily or time-based archive)', SAM_DOMAIN); ?></label><br/>
                   </div>
                 </div>
-                <div class='clear-line'></div>
                 <p>
                   <input type='radio' name='view_type' id='view_type_2' value='2' <?php checked(2, $row['view_type']); ?>>
                   <label for='view_type_2'><strong><?php echo __('Show ad only in certain posts', SAM_DOMAIN).':'; ?></strong></label>
@@ -1643,6 +1767,8 @@ if ( !class_exists( 'SimpleAdsManagerAdmin' && class_exists('SimpleAdsManager') 
                   <input type='text' name='view_cats' id='view_cats' autocomplete="off" value='<?php echo $row['view_cats']; ?>' style="width:100%">                  
                 </div>
                 <p>
+                  <?php _e('Use this setting to display an ad only in single posts or categories archives of certain categories. Enter the names of categories, separated by commas.', SAM_DOMAIN); ?>
+                </p>
                 <div class='clear-line'></div>
                 <p>
                   <input type='checkbox' name='ad_authors' id='ad_authors' value='1' <?php checked(1, $row['ad_authors']); ?>>
@@ -1653,21 +1779,76 @@ if ( !class_exists( 'SimpleAdsManagerAdmin' && class_exists('SimpleAdsManager') 
                   <input type='text' name='view_authors' id='view_authors' autocomplete="off" value='<?php echo $row['view_authors']; ?>' style="width:100%">                  
                 </div>
                 <p>
-                  <?php _e('Use this setting to display an ad only in single posts of certain categories. Enter the names of categories, separated by commas.', SAM_DOMAIN); ?>
+                  <?php _e('Use this setting to display an ad only in single posts or authors archives of certain authors. Enter the names of authors, separated by commas.', SAM_DOMAIN); ?>
                 </p>
                 <div class='clear-line'></div>
                 <p>
                   <input type='checkbox' name='ad_schedule' id='ad_schedule' value='1' <?php checked(1, $row['ad_schedule']); ?>>
-                  <label for='ad_schedule'><?php _e('Use the schedule for this ad', SAM_DOMAIN); ?></label>
+                  <label for='ad_schedule'><strong><?php _e('Use the schedule for this ad', SAM_DOMAIN); ?></strong></label>
                 </p>
                 <p>
-                  <label for='ad_start_date'><strong><?php echo __('Campaign Start Date', SAM_DOMAIN).':' ?></strong></label>
+                  <label for='ad_start_date'><?php echo __('Campaign Start Date', SAM_DOMAIN).':' ?></label>
                   <input type='text' name='ad_start_date' id='ad_start_date' value='<?php echo $row['ad_start_date']; ?>'>
                 </p>
                 <p>
-                  <label for='ad_end_date'><strong><?php echo __('Campaign End Date', SAM_DOMAIN).':' ?></strong></label>
+                  <label for='ad_end_date'><?php echo __('Campaign End Date', SAM_DOMAIN).':' ?></label>
                   <input type='text' name='ad_end_date' id='ad_end_date' value='<?php echo $row['ad_end_date']; ?>'>
+                </p>
+                <p>
+                  <?php _e('Use these parameters for displaying ad during the certain period of time.', SAM_DOMAIN); ?>
+                </p>
+                <div class='clear-line'></div>
+                <p>
+                  <input type='checkbox' name='limit_hits' id='limit_hits' value='1' <?php checked(1, $row['limit_hits']); ?>>
+                  <label for='limit_hits'><strong><?php _e('Use limitation by hits', SAM_DOMAIN); ?></strong></label>
+                </p>
+                <p>
+                  <label for='hits_limit'><?php echo __('Hits Limit', SAM_DOMAIN).':' ?></label>
+                  <input type='text' name='hits_limit' id='hits_limit' value='<?php echo $row['hits_limit']; ?>'>
+                </p>
+                <p>
+                  <?php _e('Use this parameter for limiting displaying of ad by hits.', SAM_DOMAIN); ?>
+                </p><div class='clear-line'></div>
+                <p>
+                  <input type='checkbox' name='limit_clicks' id='limit_clicks' value='1' <?php checked(1, $row['limit_clicks']); ?>>
+                  <label for='limit_clicks'><strong><?php _e('Use limitation by clicks', SAM_DOMAIN); ?></strong></label>
+                </p>
+                <p>
+                  <label for='clicks_limit'><?php echo __('Clicks Limit', SAM_DOMAIN).':' ?></label>
+                  <input type='text' name='clicks_limit' id='clicks_limit' value='<?php echo $row['clicks_limit']; ?>'>
+                </p>
+                <p>
+                  <?php _e('Use this parameter for limiting displaying of ad by clicks.', SAM_DOMAIN); ?>
                 </p>                
+              </div>
+            </div>
+          </div>
+          <div id="contents" class="meta-box-sortables ui-sortable">
+            <div id="codediv" class="postbox ">
+              <div class="handlediv" title="<?php _e('Click to toggle', SAM_DOMAIN); ?>"><br/></div>
+              <h3 class="hndle"><span><?php _e('Prices', SAM_DOMAIN);?></span></h3>
+              <div class="inside">
+                <p>
+                  <label for='per_month'><strong><?php echo __('Price of ad placement per month', SAM_DOMAIN).':' ?></strong></label>
+                  <input type='text' name='per_month' id='per_month' value='<?php echo $row['per_month']; ?>'>
+                </p>
+                <p>
+                  <?php _e('Tthis parameter used only for scheduled ads.', SAM_DOMAIN) ?>
+                </p>
+                <p>
+                  <label for='cpm'><strong><?php echo __('Price per Thousand Hits', SAM_DOMAIN).':' ?></strong></label>
+                  <input type='text' name='cpm' id='cpm' value='<?php echo $row['cpm']; ?>'>
+                </p>
+                <p>
+                  <?php _e('Not only humans visit your blog, bots and crawlers too. In order not to deceive an advertiser, you must enable the detection of bots and crawlers.', SAM_DOMAIN); ?>
+                </p>
+                <p>
+                  <label for='cpc'><strong><?php echo __('Price per Click', SAM_DOMAIN).':' ?></strong></label>
+                  <input type='text' name='cpc' id='cpc' value='<?php echo $row['cpc']; ?>'>
+                </p>
+                <p>
+                  <?php _e('To calculate the earnings on clicks, you must enable counting of clicks for that ad.', SAM_DOMAIN); ?>
+                </p>
               </div>
             </div>
           </div>

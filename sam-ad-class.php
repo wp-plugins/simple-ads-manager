@@ -3,11 +3,13 @@ if(!class_exists('SamAd')) {
   class SamAd {
     private $args = array();
     private $useCodes = false;
+    private $crawler = false;
     public $ad = '';
     
-    public function __construct($args = null, $useCodes = false) {
+    public function __construct($args = null, $useCodes = false, $crawler = false) {
       $this->args = $args;
       $this->useCodes = $useCodes;
+      $this->crawler = $crawler;
       $this->ad = $this->buildAd($this->args, $this->useCodes);
     }
     
@@ -71,10 +73,12 @@ if(!class_exists('SamAd')) {
         if(is_date()) $viewPages += SAM_IS_DATE;
       }
       
-      $whereClause  = "({$aTable}.view_type = 1)";
+      $whereClause  = "($aTable.view_type = 1)";
       $whereClause .= " OR ({$aTable}.view_type = 0 AND ({$aTable}.view_pages+0 & {$viewPages}))";
       $whereClause .= $wcc.$wci.$wca;
-      $whereClauseT = " AND (({$aTable}.ad_schedule IS FALSE) OR ({$aTable}.ad_schedule IS TRUE AND (CURDATE() BETWEEN {$aTable}.ad_start_date AND {$aTable}.ad_end_date)))";
+      $whereClauseT = " AND IF($aTable.ad_schedule, CURDATE() BETWEEN $aTable.ad_start_date AND $aTable.ad_end_date, TRUE)";
+      $whereClauseT .= " AND IF($aTable.limit_hits = 1, $aTable.hits_limit > $aTable.ad_hits, TRUE)";
+      $whereClauseT .= " AND IF($aTable.limit_clicks = 1, $aTable.clicks_limit > $aTable.ad_clicks, TRUE)";
       
       $whereClauseW = " AND (({$aTable}.ad_weight > 0) AND (({$aTable}.ad_weight_hits*10/({$aTable}.ad_weight*{$cycle})) < 1))";
       $whereClause2W = "AND ({$aTable}.ad_weight > 0)";
@@ -115,14 +119,16 @@ if(!class_exists('SamAd')) {
           if($useCodes) $output = $place['code_before'].$output.$place['code_after'];
         }
         else $output = '';
-        $wpdb->query("UPDATE {$pTable} SET {$pTable}.patch_hits = {$pTable}.patch_hits+1 WHERE {$pTable}.id = {$place['id']}");
+        if(!$this->crawler)
+          $wpdb->query("UPDATE {$pTable} SET {$pTable}.patch_hits = {$pTable}.patch_hits+1 WHERE {$pTable}.id = {$place['id']}");
         return $output;
       }
       
       if(($place['patch_source'] == 1) && (abs($place['patch_adserver']) == 1)) {
         $output = $place['patch_code'];
         if($useCodes) $output = $place['code_before'].$output.$place['code_after'];
-        $wpdb->query("UPDATE {$pTable} SET {$pTable}.patch_hits = {$pTable}.patch_hits+1 WHERE {$pTable}.id = {$place['id']}");
+        if(!$this->crawler)
+          $wpdb->query("UPDATE {$pTable} SET {$pTable}.patch_hits = {$pTable}.patch_hits+1 WHERE {$pTable}.id = {$place['id']}");
         return $output;
       }
       
@@ -133,7 +139,8 @@ if(!class_exists('SamAd')) {
           else $output = '';
         }
         else $output = $place['patch_code'];
-        $wpdb->query("UPDATE {$pTable} SET {$pTable}.patch_hits = {$pTable}.patch_hits+1 WHERE {$pTable}.id = {$place['id']}");
+        if(!$this->crawler)
+          $wpdb->query("UPDATE {$pTable} SET {$pTable}.patch_hits = {$pTable}.patch_hits+1 WHERE {$pTable}.id = {$place['id']}");
       }
       
       if((abs($place['ad_logic_count']) > 0) && (abs($place['ad_full_count']) == 0)) {
@@ -174,7 +181,8 @@ if(!class_exists('SamAd')) {
           }
           else $output = $ad['ad_code'];
         }
-        $wpdb->query("UPDATE {$aTable} SET {$aTable}.ad_hits = {$aTable}.ad_hits+1, {$aTable}.ad_weight_hits = {$aTable}.ad_weight_hits+1 WHERE {$aTable}.id = {$ad['id']}");
+        if(!$this->crawler)
+          $wpdb->query("UPDATE {$aTable} SET {$aTable}.ad_hits = {$aTable}.ad_hits+1, {$aTable}.ad_weight_hits = {$aTable}.ad_weight_hits+1 WHERE {$aTable}.id = {$ad['id']}");
       }
       
       if($useCodes) $output = $place['code_before'].$output.$place['code_after'];

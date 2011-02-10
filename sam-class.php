@@ -1,6 +1,10 @@
 <?php
 if ( !class_exists( 'SimpleAdsManager' ) ) {
   class SimpleAdsManager {
+    private $samOptions = array();
+    private $samVersions = array('sam' => null, 'db' => null);
+    private $crawler = false;
+    
     private $defaultSettings = array(
       'adCycle' => 1000,
       'placesPerPage' => 10,
@@ -15,13 +19,16 @@ if ( !class_exists( 'SimpleAdsManager' ) ) {
       'apAdsId' => 0,
       'apUseCodes' => 1,
       'useDFP' => 0,
+      'detectBots' => 0,
+      'detectingMode' => 'inexact',
+      'currency' => 'auto',
       'dfpPub' => '',
       'dfpBlocks' => array()
 		);
 		
 		function __construct() {
-      define('SAM_VERSION', '0.3.11');
-			define('SAM_DB_VERSION', '0.3.1');
+      define('SAM_VERSION', '0.4.15');
+			define('SAM_DB_VERSION', '0.4');
       define('SAM_PATH', dirname( __FILE__ ));
       define('SAM_URL', WP_PLUGIN_URL . '/' . str_replace( basename( __FILE__), "", plugin_basename( __FILE__ ) ));
       define('SAM_IMG_URL', SAM_URL.'images/');
@@ -49,21 +56,40 @@ if ( !class_exists( 'SimpleAdsManager' ) ) {
       add_action('template_redirect', array(&$this, 'headerScripts'));
       add_action('wp_head', array(&$this, 'headerCodes'));
       
-      add_shortcode('sam', array(&$this, 'doShortcode'));
-      
+      add_shortcode('sam', array(&$this, 'doShortcode'));      
       add_filter('the_content', array(&$this, 'addContentAds'), 8);
+      
+      $this->getSettings(true);
+      $this->getVersions(true);
+      $this->crawler = $this->isCrawler();
     }
 		
-		function getSettings() {
-			$pluginOptions = get_option(SAM_OPTIONS_NAME, '');
-			$options = $this->defaultSettings;
-			if ($pluginOptions !== '') {
-				foreach($pluginOptions as $key => $option) {
-					$options[$key] = $option;
-				}
-			}
-			return $options;
+		function getSettings($force = false) {
+			if($force) {
+        $pluginOptions = get_option(SAM_OPTIONS_NAME, '');
+			  $options = $this->defaultSettings;
+			  if ($pluginOptions !== '') {
+				  foreach($pluginOptions as $key => $option) {
+					  $options[$key] = $option;
+				  }
+			  }
+			  $this->samOptions = $options;        
+      }
+      else $options = $this->samOptions;
+      return $options; 
 		}
+    
+    function getVersions($force = false) {
+      $versions = array('sam' => null, 'db' => null);
+      if($force) {
+        $versions['sam'] = get_option( 'sam_version', '' );
+        $versions['db'] = get_option( 'sam_db_version', '' );
+        $this->samVersions = $versions;
+      }
+      else $versions = $this->samVersions;
+      
+      return $versions;
+    }
 		
 		function updateDB() {
 			global $wpdb;
@@ -72,35 +98,36 @@ if ( !class_exists( 'SimpleAdsManager' ) ) {
 			
 			require_once(ABSPATH . 'wp-admin/includes/upgrade.php');
 			
-			$dbVersion = get_option( 'sam_db_version', '' );
+			$versions = $this->getVersions(true);
+      $dbVersion = $versions['db'];
       if( $dbVersion != SAM_DB_VERSION ) {
 				if($wpdb->get_var("SHOW TABLES LIKE '$pTable'") != $pTable) {
 					$pSql = "CREATE TABLE $pTable (
-									id INT(11) NOT NULL AUTO_INCREMENT,
-								  name VARCHAR(255) NOT NULL,									
-								  description VARCHAR(255) DEFAULT NULL,
-								  code_before VARCHAR(255) DEFAULT NULL,
-								  code_after VARCHAR(255) DEFAULT NULL,
-								  place_size VARCHAR(25) DEFAULT NULL,
-								  place_custom_width INT(11) DEFAULT NULL,
-								  place_custom_height INT(11) DEFAULT NULL,
-									patch_img VARCHAR(255) DEFAULT NULL,
-									patch_link VARCHAR(255) DEFAULT NULL,
-                  patch_code TEXT DEFAULT NULL,
-                  patch_adserver TINYINT(1) DEFAULT 0,
-                  patch_dfp VARCHAR(255) DEFAULT NULL,									
-								  patch_source TINYINT(1) DEFAULT 0,
-                  patch_hits INT(11) DEFAULT 0,
-								  trash TINYINT(1) DEFAULT 0,
-								  PRIMARY KEY (id)
-									)";
+									  id INT(11) NOT NULL AUTO_INCREMENT,
+								    name VARCHAR(255) NOT NULL,									
+								    description VARCHAR(255) DEFAULT NULL,
+								    code_before VARCHAR(255) DEFAULT NULL,
+								    code_after VARCHAR(255) DEFAULT NULL,
+								    place_size VARCHAR(25) DEFAULT NULL,
+								    place_custom_width INT(11) DEFAULT NULL,
+								    place_custom_height INT(11) DEFAULT NULL,
+									  patch_img VARCHAR(255) DEFAULT NULL,
+									  patch_link VARCHAR(255) DEFAULT NULL,
+                    patch_code TEXT DEFAULT NULL,
+                    patch_adserver TINYINT(1) DEFAULT 0,
+                    patch_dfp VARCHAR(255) DEFAULT NULL,									
+								    patch_source TINYINT(1) DEFAULT 0,
+                    patch_hits INT(11) DEFAULT 0,
+								    trash TINYINT(1) DEFAULT 0,
+								    PRIMARY KEY (id)
+									 )";
 					dbDelta($pSql);
 				}
 				elseif($dbVersion == '0.1' || $dbVersion == '0.2') {
-					$pSql = 'ALTER TABLE '.$pTable.'
+					$pSql = "ALTER TABLE $pTable 
 										 ADD COLUMN patch_dfp VARCHAR(255) DEFAULT NULL,
                      ADD COLUMN patch_adserver TINYINT(1) DEFAULT 0,
-                     ADD COLUMN patch_hits INT(11) DEFAULT 0;';
+                     ADD COLUMN patch_hits INT(11) DEFAULT 0;";
 					$wpdb->query($pSql);
 				}
 				
@@ -126,31 +153,57 @@ if ( !class_exists( 'SimpleAdsManager' ) ) {
                   ad_schedule TINYINT(1) DEFAULT 0,
                   ad_start_date DATE DEFAULT NULL,
                   ad_end_date DATE DEFAULT NULL,
+                  limit_hits TINYINT(1) DEFAULT 0,
+                  hits_limit INT(11) DEFAULT 0,
+                  limit_clicks TINYINT(1) DEFAULT 0,
+                  clicks_limit INT(11) DEFAULT 0,
                   ad_hits INT(11) DEFAULT 0,
                   ad_clicks INT(11) DEFAULT 0,
                   ad_weight INT(11) DEFAULT 10,
                   ad_weight_hits INT(11) DEFAULT 0,
+                  cpm DECIMAL(10,2) UNSIGNED DEFAULT 0.00,
+                  cpc DECIMAL(10,2) UNSIGNED DEFAULT 0.00,
+                  per_month DECIMAL(10,2) UNSIGNED DEFAULT 0.00,
 								  trash TINYINT(1) NOT NULL DEFAULT 0,
 								  PRIMARY KEY (id, pid)
 								)";
 					dbDelta($aSql);
 				}
 				elseif($dbVersion == '0.1') {
-					$aSql = 'ALTER TABLE '.$aTable.'
+					$aSql = "ALTER TABLE $aTable 
 					           ADD COLUMN ad_cats TINYINT(1) DEFAULT 0,
                      ADD COLUMN ad_authors TINYINT(1) DEFAULT 0,
-                     ADD COLUMN view_authors VARCHAR(255) DEFAULT NULL;';
+                     ADD COLUMN view_authors VARCHAR(255) DEFAULT NULL,
+                     ADD COLUMN limit_hits TINYINT(1) DEFAULT 0,
+                     ADD COLUMN hits_limit INT(11) DEFAULT 0,
+                     ADD COLUMN limit_clicks TINYINT(1) DEFAULT 0,
+                     ADD COLUMN clicks_limit INT(11) DEFAULT 0,
+                     ADD COLUMN cpm DECIMAL(10,2) UNSIGNED DEFAULT 0.00,
+                     ADD COLUMN cpc DECIMAL(10,2) UNSIGNED DEFAULT 0.00,
+                     ADD COLUMN per_month DECIMAL(10,2) UNSIGNED DEFAULT 0.00;";
 					$wpdb->query($aSql);
-          $aSqlU = "UPDATE LOW_PRIORITY {$aTable}
-                      SET {$aTable}.ad_cats = 1, 
-                          {$aTable}.view_type = 0,
-                          {$aTable}.view_pages = 4
-                      WHERE {$aTable}.view_type = 3;";
+          $aSqlU = "UPDATE LOW_PRIORITY $aTable 
+                      SET $aTable.ad_cats = 1, 
+                          $aTable.view_type = 0,
+                          $aTable.view_pages = 4
+                      WHERE $aTable.view_type = 3;";
           $wpdb->query($aSqlU);
 				}
+        elseif($dbVersion == '0.2' || $dbVersion == '0.3' || $dbVersion == '0.3.1') {
+          $aSql = "ALTER TABLE $aTable
+                      ADD COLUMN limit_hits TINYINT(1) DEFAULT 0,
+                      ADD COLUMN hits_limit INT(11) DEFAULT 0,
+                      ADD COLUMN limit_clicks TINYINT(1) DEFAULT 0,
+                      ADD COLUMN clicks_limit INT(11) DEFAULT 0,
+                      ADD COLUMN cpm DECIMAL(10,2) UNSIGNED DEFAULT 0.00,
+                      ADD COLUMN cpc DECIMAL(10,2) UNSIGNED DEFAULT 0.00,
+                      ADD COLUMN per_month DECIMAL(10,2) UNSIGNED DEFAULT 0.00;";
+          $wpdb->query($aSql);
+        }
 				update_option('sam_db_version', SAM_DB_VERSION);
       }
 			update_option('sam_version', SAM_VERSION);
+      $this->getVersions(true);
 		}
     
     function checkViewPages( $value, $page ) {
@@ -212,16 +265,47 @@ if ( !class_exists( 'SimpleAdsManager' ) ) {
       
       if($error) exit($error);
     }
+    
+    private function isCrawler() {
+      $options = $this->getSettings();
+      $crawler = false;
+      
+      if($options['detectBots'] == 1) {
+        switch($options['detectingMode']) {
+          case 'inexact':
+            if($_SERVER["HTTP_USER_AGENT"] == '' ||
+               $_SERVER['HTTP_ACCEPT'] == '' ||
+               $_SERVER['HTTP_ACCEPT_ENCODING'] == '' ||
+               $_SERVER['HTTP_ACCEPT_LANGUAGE'] == '' ||
+               $_SERVER['HTTP_CONNECTION']=='') $crawler == true;
+            break;
+            
+          case 'exact':
+            include_once('browser.php');
+            $browser = new Browser();
+            $crawler = $browser->isRobot();
+            break;
+            
+          case 'more':
+            if(ini_get("browscap")) {
+              $browser = get_browser(null, true);
+              $crawler = $browser['crawler']; 
+            }
+            break;
+        }
+      }
+      return $crawler;
+    }
 		
 		function buildAd( $args = null, $useCodes = false ) {
-      $ad = new SamAd($args, $useCodes);
+      $ad = new SamAd($args, $useCodes, $this->crawler);
       $output = $ad->ad;
       return $output;
     }
     
     function doShortcode( $atts ) {
-      extract(shortcode_atts( array( 'id' => '', 'name' => '', 'codes' => ''), $atts ));
-      $ad = new SamAd(array('id' => $id, 'name' => $name), ($codes == 'true'));
+      extract(shortcode_atts( array( 'id' => '', 'name' => '', 'codes' => ''), $atts ));      
+      $ad = new SamAd(array('id' => $id, 'name' => $name), ($codes == 'true'), $this->crawler);
       return $ad->ad;
     }
     
