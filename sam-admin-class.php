@@ -795,9 +795,9 @@ if ( !class_exists( 'SimpleAdsManagerAdmin' && class_exists('SimpleAdsManager') 
                       $pTable.place_custom_height,
                       $pTable.patch_hits,
                       (IFNULL((SELECT sum($aTable.ad_hits) FROM $aTable WHERE $aTable.pid = $pTable.id), 0) + $pTable.patch_hits) as total_ad_hits,
-                      (IFNULL((SELECT SUM(IF(cpm > 0, ad_hits*cpm/1000, 0)) FROM wp_sam_ads WHERE wp_sam_ads.pid = wp_sam_places.id), 0)) AS e_cpm,
-                      (IFNULL((SELECT SUM(IF(cpc > 0, ad_clicks*cpc, 0)) FROM wp_sam_ads WHERE wp_sam_ads.pid = wp_sam_places.id), 0)) AS e_cpc,
-                      (IFNULL((SELECT SUM(IF(ad_schedule AND per_month > 0, DATEDIFF(CURDATE(), ad_start_date)*per_month/30, 0)) FROM wp_sam_ads WHERE wp_sam_ads.pid = wp_sam_places.id), 0)) AS e_month, 
+                      (IFNULL((SELECT SUM(IF(cpm > 0, ad_hits*cpm/1000, 0)) FROM $aTable WHERE $aTable.pid = $pTable.id), 0)) AS e_cpm,
+                      (IFNULL((SELECT SUM(IF(cpc > 0, ad_clicks*cpc, 0)) FROM $aTable WHERE $aTable.pid = $pTable.id), 0)) AS e_cpc,
+                      (IFNULL((SELECT SUM(IF(ad_schedule AND per_month > 0, DATEDIFF(CURDATE(), ad_start_date)*per_month/30, 0)) FROM $aTable WHERE $aTable.pid = $pTable.id), 0)) AS e_month, 
                       $pTable.trash, 
                       (SELECT COUNT(*) FROM $aTable WHERE $aTable.pid = $pTable.id) AS items 
                     FROM $pTable".

@@ -4,7 +4,7 @@ Donate link: http://www.simplelib.com/
 Tags: ad, adbrite, adgridwork, adify, admin, adpinion, adroll, ads, adsense, adserver, advertisement, advertising, affiliate, banner, banners, chitika, cj, commercial, commission, crispads, dfp, google, income, junction, link, manager, media, money, plugin, random, referral, revenue, rotator, seo, server, shoppingads, widget, widgetbucks, yahoo, ypn
 Requires at least: 3.0
 Tested up to: 3.1
-Stable tag: 0.4.15
+Stable tag: 0.4.16
 
 Advertisment rotation system with a flexible logic of displaying advertisements.
 
@@ -65,6 +65,8 @@ No questions now...
 
 == Changelog ==
 
+= 0.4.16 =
+* Ads management bug for Wordpress database with non "wp_" prefix are fixed
 = 0.4.15 =
 * Detection of Bots and Crawlers with customizable accuracy is added
 * Limitations by hits and clicks are added
@@ -87,6 +89,8 @@ No questions now...
 
 == Upgrade Notice ==
 
+= 0.4.16 =
+Ads management bug for Wordpress database with non "wp_" prefix are fixed
 = 0.4.15 =
 Detection of Bots and Crawlers with customizable accuracy is added. 
 Limitations by hits and clicks are added. 
