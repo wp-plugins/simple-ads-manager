@@ -191,7 +191,7 @@ if ( !class_exists( 'SimpleAdsManagerAdmin' && class_exists('SimpleAdsManager') 
                       ADD COLUMN x_view_authors VARCHAR(255) DEFAULT NULL;";
           $wpdb->query($aSql);
         }
-        elseif($dbVersion == '0.4') {
+        elseif($dbVersion == '0.4' || $dbVersion == '0.5') {
           $aSql = "ALTER TABLE $aTable
                       ADD COLUMN x_id TINYINT(1) DEFAULT 0,
                       ADD COLUMN x_view_id VARCHAR(255) DEFAULT NULL,
