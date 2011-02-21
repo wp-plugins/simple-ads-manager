@@ -3,7 +3,7 @@
 Plugin Name: Simple Ads Manager
 Plugin URI: http://www.simplelib.com/?p=480
 Description: "Simple Ads Manager" is easy to use plugin providing a flexible logic of displaying advertisements. Visit <a href="http://www.simplelib.com/">SimpleLib blog</a> for more details.
-Version: 0.4.16
+Version: 0.5.20
 Author: minimus
 Author URI: http://blogcoding.ru
 */
@@ -44,13 +44,33 @@ else {
 include_once('sam-widget-class.php');
 if(class_exists('simple_ads_manager_widget')) 
   add_action('widgets_init', create_function('', 'return register_widget("simple_ads_manager_widget");'));
+if(class_exists('simple_ads_manager_zone_widget')) 
+  add_action('widgets_init', create_function('', 'return register_widget("simple_ads_manager_zone_widget");'));
+if(class_exists('simple_ads_manager_ad_widget')) 
+  add_action('widgets_init', create_function('', 'return register_widget("simple_ads_manager_ad_widget");'));
 
 if(class_exists("SimpleAdsManagerAdmin") || class_exists("SimpleAdsManager")) {
+  function drawAd($args = null, $codes = false) {
+    global $samObject;
+    
+    if(is_null($args)) echo '';
+    if(is_object($samObject)) echo $samObject->buildSingleAd($args);
+    else echo '';
+  }
+  
   function drawAdsPlace($args = null, $codes = false) {
     global $samObject;
     
     if(is_null($args)) echo '';
     if(is_object($samObject)) echo $samObject->buildAd($args, $codes);
+    else echo '';
+  }
+  
+  function drawAdsZone($args = null, $codes = false) {
+    global $samObject;
+    
+    if(is_null($args)) echo '';
+    if(is_object($samObject)) echo $samObject->buildAdZone($args, $codes);
     else echo '';
   }
 }

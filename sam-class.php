@@ -27,8 +27,8 @@ if ( !class_exists( 'SimpleAdsManager' ) ) {
 		);
 		
 		function __construct() {
-      define('SAM_VERSION', '0.4.16');
-			define('SAM_DB_VERSION', '0.4');
+      define('SAM_VERSION', '0.5.20');
+			define('SAM_DB_VERSION', '0.5');
       define('SAM_PATH', dirname( __FILE__ ));
       define('SAM_URL', WP_PLUGIN_URL . '/' . str_replace( basename( __FILE__), "", plugin_basename( __FILE__ ) ));
       define('SAM_IMG_URL', SAM_URL.'images/');
@@ -56,7 +56,9 @@ if ( !class_exists( 'SimpleAdsManager' ) ) {
       add_action('template_redirect', array(&$this, 'headerScripts'));
       add_action('wp_head', array(&$this, 'headerCodes'));
       
-      add_shortcode('sam', array(&$this, 'doShortcode'));      
+      add_shortcode('sam-ad', array(&$this, 'doAdShortcode'));
+      add_shortcode('sam', array(&$this, 'doShortcode'));
+      add_shortcode('sam-zone', array(&$this, 'doZoneShortcode'));      
       add_filter('the_content', array(&$this, 'addContentAds'), 8);
       
       $this->getSettings(true);
@@ -90,121 +92,6 @@ if ( !class_exists( 'SimpleAdsManager' ) ) {
       
       return $versions;
     }
-		
-		function updateDB() {
-			global $wpdb;
-			$pTable = $wpdb->prefix . "sam_places";					
-			$aTable = $wpdb->prefix . "sam_ads";
-			
-			require_once(ABSPATH . 'wp-admin/includes/upgrade.php');
-			
-			$versions = $this->getVersions(true);
-      $dbVersion = $versions['db'];
-      if( $dbVersion != SAM_DB_VERSION ) {
-				if($wpdb->get_var("SHOW TABLES LIKE '$pTable'") != $pTable) {
-					$pSql = "CREATE TABLE $pTable (
-									  id INT(11) NOT NULL AUTO_INCREMENT,
-								    name VARCHAR(255) NOT NULL,									
-								    description VARCHAR(255) DEFAULT NULL,
-								    code_before VARCHAR(255) DEFAULT NULL,
-								    code_after VARCHAR(255) DEFAULT NULL,
-								    place_size VARCHAR(25) DEFAULT NULL,
-								    place_custom_width INT(11) DEFAULT NULL,
-								    place_custom_height INT(11) DEFAULT NULL,
-									  patch_img VARCHAR(255) DEFAULT NULL,
-									  patch_link VARCHAR(255) DEFAULT NULL,
-                    patch_code TEXT DEFAULT NULL,
-                    patch_adserver TINYINT(1) DEFAULT 0,
-                    patch_dfp VARCHAR(255) DEFAULT NULL,									
-								    patch_source TINYINT(1) DEFAULT 0,
-                    patch_hits INT(11) DEFAULT 0,
-								    trash TINYINT(1) DEFAULT 0,
-								    PRIMARY KEY (id)
-									 )";
-					dbDelta($pSql);
-				}
-				elseif($dbVersion == '0.1' || $dbVersion == '0.2') {
-					$pSql = "ALTER TABLE $pTable 
-										 ADD COLUMN patch_dfp VARCHAR(255) DEFAULT NULL,
-                     ADD COLUMN patch_adserver TINYINT(1) DEFAULT 0,
-                     ADD COLUMN patch_hits INT(11) DEFAULT 0;";
-					$wpdb->query($pSql);
-				}
-				
-				if($wpdb->get_var("SHOW TABLES LIKE '$aTable'") != $aTable) {
-					$aSql = "CREATE TABLE $aTable (
-									id INT(11) NOT NULL AUTO_INCREMENT,
-									pid INT(11) NOT NULL,
-									name VARCHAR(255) DEFAULT NULL,
-								  description VARCHAR(255) DEFAULT NULL,
-									code_type TINYINT(1) NOT NULL DEFAULT 0,
-                  code_mode TINYINT(1) NOT NULL DEFAULT 1,
-								  ad_code TEXT DEFAULT NULL,
-								  ad_img TEXT DEFAULT NULL,
-                  ad_target TEXT DEFAULT NULL,
-                  count_clicks TINYINT(1) NOT NULL DEFAULT 0,
-								  view_type INT(11) DEFAULT 1,
-									view_pages SET('isHome', 'isSingular', 'isSingle', 'isPage', 'isAttachment', 'isSearch', 'is404', 'isArchive', 'isTax', 'isCategory', 'isTag', 'isAuthor', 'isDate') DEFAULT NULL,
-                  view_id VARCHAR(255) DEFAULT NULL,
-                  ad_cats TINYINT(1) DEFAULT 0,
-                  view_cats VARCHAR(255) DEFAULT NULL,
-                  ad_authors TINYINT(1) DEFAULT 0,
-                  view_authors VARCHAR(255) DEFAULT NULL,
-                  ad_schedule TINYINT(1) DEFAULT 0,
-                  ad_start_date DATE DEFAULT NULL,
-                  ad_end_date DATE DEFAULT NULL,
-                  limit_hits TINYINT(1) DEFAULT 0,
-                  hits_limit INT(11) DEFAULT 0,
-                  limit_clicks TINYINT(1) DEFAULT 0,
-                  clicks_limit INT(11) DEFAULT 0,
-                  ad_hits INT(11) DEFAULT 0,
-                  ad_clicks INT(11) DEFAULT 0,
-                  ad_weight INT(11) DEFAULT 10,
-                  ad_weight_hits INT(11) DEFAULT 0,
-                  cpm DECIMAL(10,2) UNSIGNED DEFAULT 0.00,
-                  cpc DECIMAL(10,2) UNSIGNED DEFAULT 0.00,
-                  per_month DECIMAL(10,2) UNSIGNED DEFAULT 0.00,
-								  trash TINYINT(1) NOT NULL DEFAULT 0,
-								  PRIMARY KEY (id, pid)
-								)";
-					dbDelta($aSql);
-				}
-				elseif($dbVersion == '0.1') {
-					$aSql = "ALTER TABLE $aTable 
-					           ADD COLUMN ad_cats TINYINT(1) DEFAULT 0,
-                     ADD COLUMN ad_authors TINYINT(1) DEFAULT 0,
-                     ADD COLUMN view_authors VARCHAR(255) DEFAULT NULL,
-                     ADD COLUMN limit_hits TINYINT(1) DEFAULT 0,
-                     ADD COLUMN hits_limit INT(11) DEFAULT 0,
-                     ADD COLUMN limit_clicks TINYINT(1) DEFAULT 0,
-                     ADD COLUMN clicks_limit INT(11) DEFAULT 0,
-                     ADD COLUMN cpm DECIMAL(10,2) UNSIGNED DEFAULT 0.00,
-                     ADD COLUMN cpc DECIMAL(10,2) UNSIGNED DEFAULT 0.00,
-                     ADD COLUMN per_month DECIMAL(10,2) UNSIGNED DEFAULT 0.00;";
-					$wpdb->query($aSql);
-          $aSqlU = "UPDATE LOW_PRIORITY $aTable 
-                      SET $aTable.ad_cats = 1, 
-                          $aTable.view_type = 0,
-                          $aTable.view_pages = 4
-                      WHERE $aTable.view_type = 3;";
-          $wpdb->query($aSqlU);
-				}
-        elseif($dbVersion == '0.2' || $dbVersion == '0.3' || $dbVersion == '0.3.1') {
-          $aSql = "ALTER TABLE $aTable
-                      ADD COLUMN limit_hits TINYINT(1) DEFAULT 0,
-                      ADD COLUMN hits_limit INT(11) DEFAULT 0,
-                      ADD COLUMN limit_clicks TINYINT(1) DEFAULT 0,
-                      ADD COLUMN clicks_limit INT(11) DEFAULT 0,
-                      ADD COLUMN cpm DECIMAL(10,2) UNSIGNED DEFAULT 0.00,
-                      ADD COLUMN cpc DECIMAL(10,2) UNSIGNED DEFAULT 0.00,
-                      ADD COLUMN per_month DECIMAL(10,2) UNSIGNED DEFAULT 0.00;";
-          $wpdb->query($aSql);
-        }
-				update_option('sam_db_version', SAM_DB_VERSION);
-      }
-			update_option('sam_version', SAM_VERSION);
-      $this->getVersions(true);
-		}
     
     function checkViewPages( $value, $page ) {
       return ( ($value & $page) > 0 );
@@ -248,7 +135,7 @@ if ( !class_exists( 'SimpleAdsManager' ) ) {
       if(isset($_POST['sam_ad_id'])) {
         $adId = $_POST['sam_ad_id'];
         $aId = explode('_', $adId);
-        $id = $aId[1];
+        $id = (integer) $aId[1];
       }
       else $id = 0;
       if(isset($_POST['_ajax_nonce']))  $nonce = $_POST['_ajax_nonce'];
@@ -258,8 +145,9 @@ if ( !class_exists( 'SimpleAdsManager' ) ) {
         global $wpdb;
         $aTable = $wpdb->prefix . "sam_ads";  
         
-        $wpdb->query("UPDATE {$aTable} SET {$aTable}.ad_clicks = {$aTable}.ad_clicks+1 WHERE {$aTable}.id = {$id}");
-        $error = 'id: '.$id;
+        $result = $wpdb->query("UPDATE $aTable SET $aTable.ad_clicks = $aTable.ad_clicks+1 WHERE $aTable.id = $id;");
+        if($result) $error = 'ok';
+        else $error = 'error';
       }
       else $error = 'error';
       
@@ -297,15 +185,72 @@ if ( !class_exists( 'SimpleAdsManager' ) ) {
       return $crawler;
     }
 		
-		function buildAd( $args = null, $useCodes = false ) {
+		/**
+    * Outputs the Single Ad.
+    *
+    * Returns Single Ad content.
+    *
+    * @since 0.1.1
+    *
+    * @param array $args 'id' array element: id of ad, 'name' array elemnt: name of ad
+    * @param bool|array $useCodes If bool codes 'before' and 'after' from Ads Place record are used. If array codes 'before' and 'after' from array are used
+    * @return string value of Ad content
+    */
+    function buildSingleAd( $args = null, $useCodes = false ) {
       $ad = new SamAd($args, $useCodes, $this->crawler);
       $output = $ad->ad;
       return $output;
     }
     
+    /**
+    * Outputs Ads Place content.
+    *
+    * Returns Ads Place content.
+    *
+    * @since 0.1.1
+    *
+    * @param array $args 'id' array element: id of Ads Place, 'name' array elemnt: name of Ads Place
+    * @param bool|array $useCodes If bool codes 'before' and 'after' from Ads Place record are used. If array codes 'before' and 'after' from array are used
+    * @return string value of Ads Place content
+    */
+    function buildAd( $args = null, $useCodes = false ) {
+      $ad = new SamAdPlace($args, $useCodes, $this->crawler);
+      $output = $ad->ad;
+      return $output;
+    }
+    
+    /**
+    * Outputs Ads Zone content.
+    *
+    * Returns Ads Zone content.
+    *
+    * @since 0.1.1
+    *
+    * @param array $args 'id' array element: id of Ads Zone, 'name' array elemnt: name of Ads Zone
+    * @param bool|array $useCodes If bool codes 'before' and 'after' from Ads Place record are used. If array codes 'before' and 'after' from array are used
+    * @return string value of Ads Zone content
+    */
+    function buildAdZone( $args = null, $useCodes = false ) {
+      $ad = new SamAdPlaceZone($args, $useCodes, $this->crawler);
+      $output = $ad->ad;
+      return $output;
+    }
+    
+    function doAdShortcode($atts) {
+      extract(shortcode_atts( array( 'id' => '', 'name' => '', 'codes' => ''), $atts ));
+      $ad = new SamAd(array('id' => $id, 'name' => $name), ($codes == 'true'), $this->crawler);
+      return $ad->ad;
+    }
+    
     function doShortcode( $atts ) {
       extract(shortcode_atts( array( 'id' => '', 'name' => '', 'codes' => ''), $atts ));      
-      $ad = new SamAd(array('id' => $id, 'name' => $name), ($codes == 'true'), $this->crawler);
+      $ad = new SamAdPlace(array('id' => $id, 'name' => $name), ($codes == 'true'), $this->crawler);
+      return $ad->ad;
+    }
+    
+    function doZoneShortcode($atts) {
+      extract(shortcode_atts( array( 'id' => '', 'name' => '', 'codes' => ''), $atts ));
+      $ad = new SamAdPlaceZone(array('id' => $id, 'name' => $name), ($codes == 'true'), $this->crawler);
       return $ad->ad;
     }
     

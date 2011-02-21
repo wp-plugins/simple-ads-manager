@@ -4,6 +4,10 @@ if ( !class_exists( 'SimpleAdsManagerAdmin' && class_exists('SimpleAdsManager') 
     private $editPage;
     private $settingsPage;
     private $listPage;
+    private $editZone;
+    private $listZone;
+    private $editBlock;
+    private $listBlock;
     
     function __construct() {
       parent::__construct();
@@ -25,18 +29,19 @@ if ( !class_exists( 'SimpleAdsManagerAdmin' && class_exists('SimpleAdsManager') 
       add_filter('contextual_help', array(&$this, 'help'), 10, 3);
       
       $versions = parent::getVersions(true);
-      if(empty($version) || ($versions['sam'] !== SAM_VERSION)) parent::updateDB();
+      if(empty($version) || ($versions['sam'] !== SAM_VERSION)) self::updateDB();
     }
     
     function onActivate() {
       $settings = parent::getSettings(true);
 			update_option( SAM_OPTIONS_NAME, $settings );
-			parent::updateDB();
+			self::updateDB();
     }
     
     function onDeactivate() {
       global $wpdb;
-			$pTable = $wpdb->prefix . "sam_places";					
+			$zTable = $wpdb->prefix . "sam_zones";
+      $pTable = $wpdb->prefix . "sam_places";					
 			$aTable = $wpdb->prefix . "sam_ads";
 			$settings = parent::getSettings();
 			
@@ -46,15 +51,208 @@ if ( !class_exists( 'SimpleAdsManagerAdmin' && class_exists('SimpleAdsManager') 
 				delete_option('sam_db_version');
 			}
 			if($settings['deleteDB'] == 1) {
-				$sql = 'DROP TABLE IF EXISTS '.$pTable;
-				$wpdb->query($sql);
-				$sql = 'DROP TABLE IF EXISTS '.$aTable;
-				$wpdb->query($sql);
+				$sql = 'DROP TABLE IF EXISTS ';
+        $wpdb->query($sql.$zTable);
+				$wpdb->query($sql.$pTable);
+				$wpdb->query($sql.$aTable);
 				delete_option('sam_db_version');
 			}
       if($settings['deleteFolder'] == 1) {
         if(is_dir(SAM_AD_IMG)) rmdir(SAM_AD_IMG);
       }
+    }
+    
+    function updateDB() {
+      global $wpdb;
+      $pTable = $wpdb->prefix . "sam_places";          
+      $aTable = $wpdb->prefix . "sam_ads";
+      $zTable = $wpdb->prefix . "sam_zones";
+      $bTable = $wpdb->prefix . "sam_blocks";
+      
+      require_once(ABSPATH . 'wp-admin/includes/upgrade.php');
+      
+      $versions = $this->getVersions(true);
+      $dbVersion = $versions['db'];
+      if( $dbVersion != SAM_DB_VERSION ) {
+        if($wpdb->get_var("SHOW TABLES LIKE '$pTable'") != $pTable) {
+          $pSql = "CREATE TABLE $pTable (
+                    id INT(11) NOT NULL AUTO_INCREMENT,
+                    name VARCHAR(255) NOT NULL,                  
+                    description VARCHAR(255) DEFAULT NULL,
+                    code_before VARCHAR(255) DEFAULT NULL,
+                    code_after VARCHAR(255) DEFAULT NULL,
+                    place_size VARCHAR(25) DEFAULT NULL,
+                    place_custom_width INT(11) DEFAULT NULL,
+                    place_custom_height INT(11) DEFAULT NULL,
+                    patch_img VARCHAR(255) DEFAULT NULL,
+                    patch_link VARCHAR(255) DEFAULT NULL,
+                    patch_code TEXT DEFAULT NULL,
+                    patch_adserver TINYINT(1) DEFAULT 0,
+                    patch_dfp VARCHAR(255) DEFAULT NULL,                  
+                    patch_source TINYINT(1) DEFAULT 0,
+                    patch_hits INT(11) DEFAULT 0,
+                    trash TINYINT(1) DEFAULT 0,
+                    PRIMARY KEY (id)
+                   )";
+          dbDelta($pSql);
+        }
+        elseif($dbVersion == '0.1' || $dbVersion == '0.2') {
+          $pSql = "ALTER TABLE $pTable 
+                     ADD COLUMN patch_dfp VARCHAR(255) DEFAULT NULL,
+                     ADD COLUMN patch_adserver TINYINT(1) DEFAULT 0,
+                     ADD COLUMN patch_hits INT(11) DEFAULT 0;";
+          $wpdb->query($pSql);
+        }
+        
+        if($wpdb->get_var("SHOW TABLES LIKE '$aTable'") != $aTable) {
+          $aSql = "CREATE TABLE $aTable (
+                  id INT(11) NOT NULL AUTO_INCREMENT,
+                  pid INT(11) NOT NULL,
+                  name VARCHAR(255) DEFAULT NULL,
+                  description VARCHAR(255) DEFAULT NULL,
+                  code_type TINYINT(1) NOT NULL DEFAULT 0,
+                  code_mode TINYINT(1) NOT NULL DEFAULT 1,
+                  ad_code TEXT DEFAULT NULL,
+                  ad_img TEXT DEFAULT NULL,
+                  ad_target TEXT DEFAULT NULL,
+                  count_clicks TINYINT(1) NOT NULL DEFAULT 0,
+                  view_type INT(11) DEFAULT 1,
+                  view_pages SET('isHome', 'isSingular', 'isSingle', 'isPage', 'isAttachment', 'isSearch', 'is404', 'isArchive', 'isTax', 'isCategory', 'isTag', 'isAuthor', 'isDate') DEFAULT NULL,
+                  view_id VARCHAR(255) DEFAULT NULL,
+                  ad_cats TINYINT(1) DEFAULT 0,
+                  view_cats VARCHAR(255) DEFAULT NULL,
+                  ad_authors TINYINT(1) DEFAULT 0,
+                  view_authors VARCHAR(255) DEFAULT NULL,
+                  x_id TINYINT(1) DEFAULT 0,
+                  x_view_id VARCHAR(255) DEFAULT NULL,
+                  x_cats TINYINT(1) DEFAULT 0,
+                  x_view_cats VARCHAR(255) DEFAULT NULL,
+                  x_authors TINYINT(1) DEFAULT 0,
+                  x_view_authors VARCHAR(255) DEFAULT NULL,
+                  ad_schedule TINYINT(1) DEFAULT 0,
+                  ad_start_date DATE DEFAULT NULL,
+                  ad_end_date DATE DEFAULT NULL,
+                  limit_hits TINYINT(1) DEFAULT 0,
+                  hits_limit INT(11) DEFAULT 0,
+                  limit_clicks TINYINT(1) DEFAULT 0,
+                  clicks_limit INT(11) DEFAULT 0,
+                  ad_hits INT(11) DEFAULT 0,
+                  ad_clicks INT(11) DEFAULT 0,
+                  ad_weight INT(11) DEFAULT 10,
+                  ad_weight_hits INT(11) DEFAULT 0,
+                  cpm DECIMAL(10,2) UNSIGNED DEFAULT 0.00,
+                  cpc DECIMAL(10,2) UNSIGNED DEFAULT 0.00,
+                  per_month DECIMAL(10,2) UNSIGNED DEFAULT 0.00,
+                  trash TINYINT(1) NOT NULL DEFAULT 0,
+                  PRIMARY KEY (id, pid)
+                )";
+          dbDelta($aSql);
+        }
+        elseif($dbVersion == '0.1') {
+          $aSql = "ALTER TABLE $aTable 
+                      ADD COLUMN ad_cats TINYINT(1) DEFAULT 0,
+                      ADD COLUMN ad_authors TINYINT(1) DEFAULT 0,
+                      ADD COLUMN view_authors VARCHAR(255) DEFAULT NULL,
+                      ADD COLUMN limit_hits TINYINT(1) DEFAULT 0,
+                      ADD COLUMN hits_limit INT(11) DEFAULT 0,
+                      ADD COLUMN limit_clicks TINYINT(1) DEFAULT 0,
+                      ADD COLUMN clicks_limit INT(11) DEFAULT 0,
+                      ADD COLUMN cpm DECIMAL(10,2) UNSIGNED DEFAULT 0.00,
+                      ADD COLUMN cpc DECIMAL(10,2) UNSIGNED DEFAULT 0.00,
+                      ADD COLUMN per_month DECIMAL(10,2) UNSIGNED DEFAULT 0.00,
+                      ADD COLUMN x_id TINYINT(1) DEFAULT 0,
+                      ADD COLUMN x_view_id VARCHAR(255) DEFAULT NULL,
+                      ADD COLUMN x_cats TINYINT(1) DEFAULT 0,
+                      ADD COLUMN x_view_cats VARCHAR(255) DEFAULT NULL,
+                      ADD COLUMN x_authors TINYINT(1) DEFAULT 0,
+                      ADD COLUMN x_view_authors VARCHAR(255) DEFAULT NULL;";
+          $wpdb->query($aSql);
+          $aSqlU = "UPDATE LOW_PRIORITY $aTable 
+                      SET $aTable.ad_cats = 1, 
+                          $aTable.view_type = 0,
+                          $aTable.view_pages = 4
+                      WHERE $aTable.view_type = 3;";
+          $wpdb->query($aSqlU);
+        }
+        elseif($dbVersion == '0.2' || $dbVersion == '0.3' || $dbVersion == '0.3.1') {
+          $aSql = "ALTER TABLE $aTable
+                      ADD COLUMN limit_hits TINYINT(1) DEFAULT 0,
+                      ADD COLUMN hits_limit INT(11) DEFAULT 0,
+                      ADD COLUMN limit_clicks TINYINT(1) DEFAULT 0,
+                      ADD COLUMN clicks_limit INT(11) DEFAULT 0,
+                      ADD COLUMN cpm DECIMAL(10,2) UNSIGNED DEFAULT 0.00,
+                      ADD COLUMN cpc DECIMAL(10,2) UNSIGNED DEFAULT 0.00,
+                      ADD COLUMN per_month DECIMAL(10,2) UNSIGNED DEFAULT 0.00,
+                      ADD COLUMN x_id TINYINT(1) DEFAULT 0,
+                      ADD COLUMN x_view_id VARCHAR(255) DEFAULT NULL,
+                      ADD COLUMN x_cats TINYINT(1) DEFAULT 0,
+                      ADD COLUMN x_view_cats VARCHAR(255) DEFAULT NULL,
+                      ADD COLUMN x_authors TINYINT(1) DEFAULT 0,
+                      ADD COLUMN x_view_authors VARCHAR(255) DEFAULT NULL;";
+          $wpdb->query($aSql);
+        }
+        elseif($dbVersion == '0.4') {
+          $aSql = "ALTER TABLE $aTable
+                      ADD COLUMN x_id TINYINT(1) DEFAULT 0,
+                      ADD COLUMN x_view_id VARCHAR(255) DEFAULT NULL,
+                      ADD COLUMN x_cats TINYINT(1) DEFAULT 0,
+                      ADD COLUMN x_view_cats VARCHAR(255) DEFAULT NULL,
+                      ADD COLUMN x_authors TINYINT(1) DEFAULT 0,
+                      ADD COLUMN x_view_authors VARCHAR(255) DEFAULT NULL;";
+        }
+        
+        if($wpdb->get_var("SHOW TABLES LIKE '$zTable'") != $zTable) {
+          $zSql = "CREATE TABLE $zTable (
+                    id INT(11) NOT NULL AUTO_INCREMENT,
+                    name VARCHAR(255) NOT NULL,                  
+                    description VARCHAR(255) DEFAULT NULL,
+                    z_default INT(11) DEFAULT 0,
+                    z_home INT(11) DEFAULT 0,
+                    z_singular INT(11) DEFAULT 0,
+                    z_single INT(11) DEFAULT 0,
+                    z_page INT(11) DEFAULT 0,
+                    z_attachment INT(11) DEFAULT 0,
+                    z_search INT(11) DEFAULT 0,
+                    z_404 INT(11) DEFAULT 0,
+                    z_archive INT(11) DEFAULT 0,
+                    z_tax INT(11) DEFAULT 0,
+                    z_category INT(11) DEFAULT 0,
+                    z_cats LONGTEXT DEFAULT NULL,
+                    z_tag INT(11) DEFAULT 0,
+                    z_author INT(11) DEFAULT 0,
+                    z_authors LONGTEXT DEFAULT NULL,
+                    z_date INT(11) DEFAULT 0,
+                    trash TINYINT(1) DEFAULT 0,
+                    PRIMARY KEY (id)
+                  );";
+          dbDelta($zSql);
+        }
+        
+        /*if($wpdb->get_var("SHOW TABLES LIKE '$bTable'") != $bTable) {
+          $bSql = "CREATE TABLE $bTable (
+                      id INT(11) NOT NULL AUTO_INCREMENT,
+                      name VARCHAR(255) NOT NULL,                  
+                      description VARCHAR(255) DEFAULT NULL,
+                      b_lines INT(11) DEFAULT 2,
+                      b_cols INT(11) DEFAULT 2,
+                      block_data LONGTEXT DEFAULT NULL,
+                      b_margin VARCHAR(30) DEFAULT '5px 5px 5px 5px',
+                      b_padding VARCHAR(30) DEFAULT '5px 5px 5px 5px',
+                      b_background VARCHAR(30) DEFAULT '#FFFFFF',
+                      b_border VARCHAR(30) DEFAULT '0px solid #333333',
+                      i_margin VARCHAR(30) DEFAULT '5px 5px 5px 5px',
+                      i_padding VARCHAR(30) DEFAULT '5px 5px 5px 5px',
+                      i_background VARCHAR(30) DEFAULT '#FFFFFF',
+                      i_border VARCHAR(30) DEFAULT '0px solid #333333',
+                      trash TINYINT(1) DEFAULT 0,
+                      PRIMARY KEY (id)
+                  );";
+          dbDelta($bSql);
+        }*/
+        update_option('sam_db_version', SAM_DB_VERSION);
+      }
+      update_option('sam_version', SAM_VERSION);
+      $this->getVersions(true);
     }
 		
 		function initSettings() {
@@ -76,7 +274,7 @@ if ( !class_exists( 'SimpleAdsManagerAdmin' && class_exists('SimpleAdsManager') 
       add_settings_field('apUseCodes', __("Allow using predefined Ads Place HTML codes (before and after codes)", SAM_DOMAIN), array(&$this, 'drawCheckboxOption'), 'sam-settings', 'sam_single_section', array('label_for' => 'apUseCodes', 'checkbox' => true));
       
       add_settings_field('useDFP', __("Allow using Google DoubleClick for Publishers (DFP) rotator codes", SAM_DOMAIN), array(&$this, 'drawCheckboxOption'), 'sam-settings', 'sam_dfp_section', array('label_for' => 'useDFP', 'checkbox' => true));
-      add_settings_field('dfpPub', __("Google PDF Pub Code", SAM_DOMAIN), array(&$this, 'drawTextOption'), 'sam-settings', 'sam_dfp_section', array('description' => __('Your Google DFP Pub code. i.e:', SAM_DOMAIN).' ca-pub-0000000000000000.', 'width' => 200));
+      add_settings_field('dfpPub', __("Google DFP Pub Code", SAM_DOMAIN), array(&$this, 'drawTextOption'), 'sam-settings', 'sam_dfp_section', array('description' => __('Your Google DFP Pub code. i.e:', SAM_DOMAIN).' ca-pub-0000000000000000.', 'width' => 200));
       
       add_settings_field('detectBots', __("Allow Bots and Crawlers detection", SAM_DOMAIN), array(&$this, 'drawCheckboxOption'), 'sam-settings', 'sam_statistic_section', array('label_for' => 'detectBots', 'checkbox' => true));
       add_settings_field('detectingMode', __("Accuracy of Bots and Crawlers Detection", SAM_DOMAIN), array(&$this, 'drawRadioOption'), 'sam-settings', 'sam_statistic_section', array('description' => __("If bot is detected hits of ads won't be counted. Use with caution! More exact detection requires more server resources.", SAM_DOMAIN), 'options' => array( 'inexact' => __('Inexact detection', SAM_DOMAIN), 'exact' => __('Exact detection', SAM_DOMAIN), 'more' => __('More exact detection', SAM_DOMAIN))));
@@ -96,9 +294,17 @@ if ( !class_exists( 'SimpleAdsManagerAdmin' && class_exists('SimpleAdsManager') 
 			$menuPage = add_object_page(__('Ads', SAM_DOMAIN), __('Ads', SAM_DOMAIN), 8, 'sam-list', array(&$this, 'samTablePage'), WP_PLUGIN_URL.'/simple-ads-manager/images/sam-icon.png');
 			$this->listPage = add_submenu_page('sam-list', __('Ads List', SAM_DOMAIN), __('Ads Places', SAM_DOMAIN), 8, 'sam-list', array(&$this, 'samTablePage'));
 			add_action('admin_print_styles-'.$this->listPage, array(&$this, 'adminListStyles'));
-      $this->editPage = add_submenu_page('sam-list', __('Ads Editor', SAM_DOMAIN), __('New Place', SAM_DOMAIN), 8, 'sam-edit', array(&$this, 'samEditPage'));
+      $this->editPage = add_submenu_page('sam-list', __('Ad Editor', SAM_DOMAIN), __('New Place', SAM_DOMAIN), 8, 'sam-edit', array(&$this, 'samEditPage'));
       add_action('admin_print_styles-'.$this->editPage, array(&$this, 'adminEditStyles'));
       add_action('admin_print_scripts-'.$this->editPage, array(&$this, 'adminEditScripts'));
+      $this->listZone = add_submenu_page('sam-list', __('Ads Zones List', SAM_DOMAIN), __('Ads Zones', SAM_DOMAIN), 8, 'sam-zone-list', array(&$this, 'samZoneListPage'));
+      add_action('admin_print_styles-'.$this->listZone, array(&$this, 'adminListStyles'));
+      $this->editZone = add_submenu_page('sam-list', __('Ads Zone Editor', SAM_DOMAIN), __('New Zone', SAM_DOMAIN), 8, 'sam-zone-edit', array(&$this, 'samZoneEditPage'));
+      add_action('admin_print_styles-'.$this->editZone, array(&$this, 'adminEditStyles'));
+      //$this->listBlock = add_submenu_page('sam-list', __('Ads Blocks List', SAM_DOMAIN), __('Ads Blocks', SAM_DOMAIN), 8, 'sam-block-list', array(&$this, 'samBlockListPage'));
+      //add_action('admin_print_styles-'.$this->listBlock, array(&$this, 'adminListStyles'));
+      //$this->editBlock = add_submenu_page('sam-list', __('Ads Block Editor', SAM_DOMAIN), __('New Block', SAM_DOMAIN), 8, 'sam-block-edit', array(&$this, 'samBlockEditPage'));
+      //add_action('admin_print_styles-'.$this->editBlock, array(&$this, 'adminEditStyles'));
 			$this->settingsPage = add_submenu_page('sam-list', __('Simple Ads Manager Settings', SAM_DOMAIN), __('Settings', SAM_DOMAIN), 8, 'sam-settings', array(&$this, 'samAdminPage'));
       add_action('admin_print_styles-'.$this->settingsPage, array(&$this, 'adminSettingsStyles'));
 		}
@@ -173,7 +379,7 @@ if ( !class_exists( 'SimpleAdsManagerAdmin' && class_exists('SimpleAdsManager') 
     
     function adminEditStyles() {
       wp_enqueue_style('adminEditLayout', SAM_URL.'css/sam-admin-edit.css', false, SAM_VERSION);
-      wp_enqueue_style('jquery-ui-css', SAM_URL.'css/jquery-ui-1.8.6.custom.css', false, '1.8.6');
+      wp_enqueue_style('jquery-ui-css', SAM_URL.'css/jquery-ui-1.8.9.custom.css', false, '1.8.9');
       wp_enqueue_style('ColorPickerCSS', SAM_URL.'css/colorpicker.css');
     }
     
@@ -191,16 +397,16 @@ if ( !class_exists( 'SimpleAdsManagerAdmin' && class_exists('SimpleAdsManager') 
         $lc = str_replace('_', '-', $loc);
       else $lc = substr($loc, 0, 2);
       wp_enqueue_script('jquery');
-      wp_enqueue_script('jquery-ui', SAM_URL.'js/jquery-ui-1.8.6.custom.min.js', array('jquery'), '1.8.6');
+      wp_enqueue_script('jquery-ui', SAM_URL.'js/jquery-ui-1.8.9.custom.min.js', array('jquery'), '1.8.9');
       if(file_exists(SAM_PATH.'/js/i18n/jquery.ui.datepicker-'.$lc.'.js'))
-        wp_enqueue_script('jquery-ui-locale', SAM_URL.'js/i18n/jquery.ui.datepicker-'.$lc.'.js', array('jquery'), '1.8.6');
+        wp_enqueue_script('jquery-ui-locale', SAM_URL.'js/i18n/jquery.ui.datepicker-'.$lc.'.js', array('jquery'), '1.8.9');
       wp_enqueue_script('ColorPicker', SAM_URL.'js/colorpicker.js', array('jquery'));
       wp_enqueue_script('AjaxUpload', SAM_URL.'js/ajaxupload.js', array('jquery'), '3.9');
       wp_enqueue_script('adminEditScript', SAM_URL.'js/sam-admin-edit.js', array('jquery', 'jquery-ui', 'ColorPicker'), SAM_VERSION);
     }
 
     /**
-    * Outputs the name of Ads Place.
+    * Outputs the name of Ads Place Size.
     *
     * Returns full Ads Place Size name.
     *
@@ -362,6 +568,23 @@ if ( !class_exists( 'SimpleAdsManagerAdmin' && class_exists('SimpleAdsManager') 
       <?php
 
     }
+    
+    function drawPlacesSelector($places = null, $current = -1, $default = false) {
+      if(!is_null($places) && is_array($places)) {      
+        if(is_null($current) && !$default) $current = -1;
+        if(!$default) {
+          ?>
+            <option value="-1" <?php selected(-1, $current); ?> ><?php echo ' - '.__('Default', SAM_DOMAIN).' - '; ?></option>
+            <option value="0" <?php selected(0, $current); ?> ><?php echo ' - '.__('None', SAM_DOMAIN).' - '; ?></option>
+          <?php
+        }
+        foreach($places as $value) {
+          ?>
+            <option value="<?php echo $value['id']; ?>" <?php selected($value['id'], $current); ?> ><?php echo $value['name']; ?></option>
+          <?php
+        }
+      }
+    }
 		
 		public function getCategories($valueType = 'array') {
       global $wpdb;
@@ -369,15 +592,15 @@ if ( !class_exists( 'SimpleAdsManagerAdmin' && class_exists('SimpleAdsManager') 
       $ttTable = $wpdb->prefix . "term_taxonomy";
       
       $sql = "SELECT
-                {$tTable}.term_id,
-                {$tTable}.name,
-                {$ttTable}.taxonomy
+                $tTable.term_id,
+                $tTable.name,
+                $ttTable.taxonomy
               FROM
-                {$tTable}
-              INNER JOIN {$ttTable}
-                ON {$tTable}.term_id = {$ttTable}.term_id
+                $tTable
+              INNER JOIN $ttTable
+                ON $tTable.term_id = $ttTable.term_id
               WHERE
-                {$ttTable}.taxonomy = 'category'";
+                $ttTable.taxonomy = 'category'";
                 
       $cats = $wpdb->get_results($sql, ARRAY_A);
       if($valueType == 'array') $output = $cats;
@@ -389,6 +612,58 @@ if ( !class_exists( 'SimpleAdsManagerAdmin' && class_exists('SimpleAdsManager') 
         }
       }
       return $output;
+    }
+    
+    function getTax($type = 'category') {
+      if(empty($type)) return;
+      
+      global $wpdb;
+      $tTable = $wpdb->prefix . "terms";
+      $ttTable = $wpdb->prefix . "term_taxonomy";
+      
+      $sql = "SELECT
+                $tTable.term_id,
+                $tTable.name,
+                $tTable.slug,
+                $ttTable.taxonomy
+              FROM
+                $tTable
+              INNER JOIN $ttTable
+                ON $tTable.term_id = $ttTable.term_id
+              WHERE
+                $ttTable.taxonomy = '$type' AND $tTable.term_id <> 1;";
+      
+      $taxonomies = $wpdb->get_results($sql, ARRAY_A);
+      
+      $output = array();
+      foreach($taxonomies as $tax) {
+        array_push($output, array('name' => $tax['name'], 'slug' => $tax['slug']));
+      }
+      return $output;
+    }
+    
+    function getAuthors() {
+      global $wpdb;
+      $uTable = $wpdb->prefix . "users";
+      $umTable = $wpdb->prefix . "usermeta";
+      
+      $sql = "SELECT
+                $uTable.id,
+                $uTable.user_nicename,
+                $uTable.display_name
+              FROM
+                $uTable
+              INNER JOIN $umTable
+                ON $uTable.ID = $umTable.user_id
+              WHERE
+                $umTable.meta_key = 'wp_user_level' AND
+                $umTable.meta_value > 1;";
+                
+      $auth = $wpdb->get_results($sql, ARRAY_A);
+      $authors = array();
+      foreach($auth as $value) $authors[$value['display_name']] = $value['id'];
+      
+      return $authors;
     }
     
     function getFilesList($dir, $exclude = null) {
@@ -425,14 +700,11 @@ if ( !class_exists( 'SimpleAdsManagerAdmin' && class_exists('SimpleAdsManager') 
       $uTable = $wpdb->prefix . "users";
       $umTable = $wpdb->prefix . "usermeta";
       
-      $sql = "SELECT
-                {$tTable}.name
-              FROM
-                {$tTable}
-              INNER JOIN {$ttTable}
-                ON {$tTable}.term_id = {$ttTable}.term_id
-              WHERE
-                {$ttTable}.taxonomy = 'category'";
+      $sql = "SELECT $tTable.name
+              FROM $tTable
+              INNER JOIN $ttTable
+                ON $tTable.term_id = $ttTable.term_id
+              WHERE $ttTable.taxonomy = 'category';";
                 
       $cats = $wpdb->get_results($sql, ARRAY_A);
       $terms = array();
@@ -440,15 +712,15 @@ if ( !class_exists( 'SimpleAdsManagerAdmin' && class_exists('SimpleAdsManager') 
       foreach($cats as $value) array_push($terms, $value['name']);
       
       $sql = "SELECT
-                {$uTable}.user_nicename,
-                {$uTable}.display_name
+                $uTable.user_nicename,
+                $uTable.display_name
               FROM
-                {$uTable}
-              INNER JOIN {$umTable}
-                ON {$uTable}.ID = {$umTable}.user_id
+                $uTable
+              INNER JOIN $umTable
+                ON $uTable.ID = $umTable.user_id
               WHERE
-                {$umTable}.meta_key = 'wp_user_level' AND
-                {$umTable}.meta_value > 1";
+                $umTable.meta_key = 'wp_user_level' AND
+                $umTable.meta_value > 1;";
                 
       $auth = $wpdb->get_results($sql, ARRAY_A);
       $authors = array();
@@ -770,7 +1042,7 @@ if ( !class_exists( 'SimpleAdsManagerAdmin' && class_exists('SimpleAdsManager') 
         <th id="t-size" class="manage-column column-title" style="width:7%;" scope="col"><?php _e('Hits', SAM_DOMAIN); ?></th>
         <th id="t-size" class="manage-column column-title" style="width:7%;" scope="col"><?php _e('Total Hits', SAM_DOMAIN); ?></th>
         <th id="tp-items" class="manage-column column-title" style="width:10%;" scope="col"><div class="vers"><?php _e('Total Ads', SAM_DOMAIN); ?></div></th>
-        <th id="tp-earnings" class="manage-column column-title" style="width:15%;" scope="col"><div class="vers"><?php _e('Earnings', SAM_DOMAIN); ?></div></th>				
+        <th id="tp-earnings" class="manage-column column-title" style="width:15%;" scope="col"><?php _e('Earnings', SAM_DOMAIN); ?></th>				
 			</tr>
 		</thead>
 		<tfoot>
@@ -781,7 +1053,7 @@ if ( !class_exists( 'SimpleAdsManagerAdmin' && class_exists('SimpleAdsManager') 
         <th id="t-size" class="manage-column column-title" style="width:7%;" scope="col"><?php _e('Hits', SAM_DOMAIN); ?></th>
         <th id="t-size" class="manage-column column-title" style="width:7%;" scope="col"><?php _e('Total Hits', SAM_DOMAIN); ?></th>
 				<th id="bp-items" class="manage-column column-title" style="width:10%;" scope="col"><div class="vers"><?php _e('Total Ads', SAM_DOMAIN); ?></div></th>
-        <th id="bp-earnings" class="manage-column column-title" style="width:15%;" scope="col"><div class="vers"><?php _e('Earnings', SAM_DOMAIN); ?></div></th>
+        <th id="bp-earnings" class="manage-column column-title" style="width:15%;" scope="col"><?php _e('Earnings', SAM_DOMAIN); ?></th>
 			</tr>
 		</tfoot>
 		<tbody>
@@ -1078,6 +1350,302 @@ if ( !class_exists( 'SimpleAdsManagerAdmin' && class_exists('SimpleAdsManager') 
           break;
       }
 		}
+    
+    function samZoneListPage() {
+      global $wpdb;
+      $zTable = $wpdb->prefix . "sam_zones";
+      
+      if(isset($_GET['mode'])) $mode = $_GET['mode'];
+      else $mode = 'active';
+      if(isset($_GET["action"])) $action = $_GET['action'];
+      else $action = 'zones';
+      if(isset($_GET['item'])) $item = $_GET['item'];
+      else $item = null;
+      if(isset($_GET['iaction'])) $iaction = $_GET['iaction'];
+      else $iaction = null;
+      if(isset($_GET['iitem'])) $iitem = $_GET['iitem'];
+      else $iitem = null;
+      if(isset($_GET['apage'])) $apage = abs( (int) $_GET['apage'] );
+      else $apage = 1;
+
+      $options = $this->getSettings();
+      $places_per_page = $options['placesPerPage'];
+      $items_per_page = $options['itemsPerPage'];
+      
+      if(!is_null($item)) {
+        if($iaction === 'delete') $wpdb->update( $zTable, array( 'trash' => true ), array( 'id' => $item ), array( '%d' ), array( '%d' ) );
+        elseif($iaction === 'untrash') $wpdb->update( $zTable, array( 'trash' => false ), array( 'id' => $item ), array( '%d' ), array( '%d' ) );
+        elseif($iaction === 'kill') $wpdb->query("DELETE FROM $zTable WHERE id=$item");
+      }
+      if($iaction === 'kill-em-all') $wpdb->query("DELETE FROM $zTable WHERE trash=true");
+      $trash_num = $wpdb->get_var($wpdb->prepare("SELECT COUNT(*) FROM $zTable WHERE trash = TRUE"));
+      $active_num = $wpdb->get_var($wpdb->prepare("SELECT COUNT(*) FROM $zTable WHERE trash = FALSE"));
+      if(is_null($active_num)) $active_num = 0;
+      if(is_null($trash_num)) $trash_num = 0;
+      $all_num = $trash_num + $active_num;
+      $total = (($mode !== 'all') ? (($mode === 'trash') ? $trash_num : $active_num) : $all_num);
+      $start = $offset = ( $apage - 1 ) * $places_per_page;
+
+      $page_links = paginate_links( array(
+        'base' => add_query_arg( 'apage', '%#%' ),
+        'format' => '',
+        'prev_text' => __('&laquo;'),
+        'next_text' => __('&raquo;'),
+        'total' => ceil($total / $places_per_page),
+        'current' => $apage
+      ));
+      ?>
+<div class='wrap'>
+  <div class="icon32" style="background: url('<?php echo SAM_IMG_URL.'sam-list.png' ?>') no-repeat transparent; "><br/></div>
+  <h2><?php _e('Managing Ads Zones', SAM_DOMAIN); ?></h2>
+  <ul class="subsubsub">
+    <li><a <?php if($mode === 'all') echo 'class="current"';?> href="<?php echo admin_url('admin.php'); ?>?page=sam-zone-list&action=zones&mode=all"><?php _e('All', SAM_DOMAIN); ?></a> (<?php echo $all_num; ?>) | </li>
+    <li><a <?php if($mode === 'active') echo 'class="current"';?> href="<?php echo admin_url('admin.php'); ?>?page=sam-zone-list&action=zones&mode=active"><?php _e('Active', SAM_DOMAIN); ?></a> (<?php echo $active_num; ?>) | </li>
+    <li><a <?php if($mode === 'trash') echo 'class="current"';?> href="<?php echo admin_url('admin.php'); ?>?page=sam-zone-list&action=zones&mode=trash"><?php _e('Trash', SAM_DOMAIN); ?></a> (<?php echo $trash_num; ?>)</li>
+  </ul>
+  <div class="tablenav">
+    <div class="alignleft">
+      <?php if($mode === 'trash') {?>
+      <a class="button-secondary" href="<?php echo admin_url('admin.php'); ?>?page=sam-zone-list&action=zones&mode=trash&iaction=kill-em-all"><?php _e('Clear Trash', SAM_DOMAIN); ?></a>
+      <?php } else { ?>
+      <a class="button-secondary" href="<?php echo admin_url('admin.php'); ?>?page=sam-zone-edit&action=new&mode=zone"><?php _e('Add New Zone', SAM_DOMAIN); ?></a>
+      <?php } ?>
+    </div>
+    <div class="tablenav-pages">
+      <?php $page_links_text = sprintf( '<span class="displaying-num">' . __( 'Displaying %s&#8211;%s of %s', SAM_DOMAIN ) . '</span>%s',
+        number_format_i18n( $start + 1 ),
+        number_format_i18n( min( $apage * $places_per_page, $total ) ),
+        '<span class="total-type-count">' . number_format_i18n( $total ) . '</span>',
+        $page_links
+      ); echo $page_links_text; ?>
+    </div>
+  </div>
+  <div class="clear"></div>
+  <table class="widefat fixed" cellpadding="0">
+    <thead>
+      <tr>
+        <th id="t-idg" class="manage-column column-title" style="width:5%;" scope="col"><?php _e('ID', SAM_DOMAIN); ?></th>
+        <th id="t-name" class="manage-column column-title" style="width:95%;" scope="col"><?php _e('Zone Name', SAM_DOMAIN);?></th>        
+      </tr>
+    </thead>
+    <tfoot>
+      <tr>
+        <th id="b-idg" class="manage-column column-title" style="width:5%;" scope="col"><?php _e('ID', SAM_DOMAIN); ?></th>
+        <th id="b-name" class="manage-column column-title" style="width:95%;" scope="col"><?php _e('Zone Name', SAM_DOMAIN);?></th>
+      </tr>
+    </tfoot>
+    <tbody>
+      <?php
+      $zSql = "SELECT 
+                  $zTable.id, 
+                  $zTable.name, 
+                  $zTable.description,
+                  $zTable.trash 
+                FROM $zTable".
+                (($mode !== 'all') ? " WHERE $zTable.trash = ".(($mode === 'trash') ? 'TRUE' : 'FALSE') : '').
+                " LIMIT $offset, $places_per_page";
+      $zones = $wpdb->get_results($zSql, ARRAY_A);          
+      $i = 0;
+      if(!is_array($zones) || empty ($zones)) {
+      ?>
+      <tr id="g0" class="alternate author-self status-publish iedit" valign="top">
+        <th class="post-title column-title">0</th>
+        <th class="author column-author"><?php _e('There are no data ...', SAM_DOMAIN).$pTable; ?></th>
+      </tr>
+        <?php } else {
+          foreach($zones as $row) {            
+        ?>
+      <tr id="<?php echo $row['id'];?>" class="<?php echo (($i & 1) ? 'alternate' : ''); ?> author-self status-publish iedit" valign="top">
+        <th class="post-title column-title"><?php echo $row['id']; ?></th>
+        <td class="post-title column-title">
+          <strong style='display: inline;'><a href="<?php echo admin_url('admin.php'); ?>?page=sam-zone-edit&action=edit&mode=zone&item=<?php echo $row['id']; ?>"><?php echo $row['name'];?></a><?php echo ((($row['trash'] == true) && ($mode === 'all')) ? '<span class="post-state"> - '.__('in Trash', SAM_DOMAIN).'</span>' : ''); ?></strong><br/><?php echo $row['description'];?>
+          <div class="row-actions">
+            <span class="edit"><a href="<?php echo admin_url('admin.php'); ?>?page=sam-zone-edit&action=edit&mode=zone&item=<?php echo $row['id']; ?>" title="<?php _e('Edit Zone', SAM_DOMAIN) ?>"><?php _e('Edit', SAM_DOMAIN); ?></a> | </span>
+            <?php 
+            if($row['trash'] == true) { 
+              ?>
+              <span class="untrash"><a href="<?php echo admin_url('admin.php'); ?>?page=sam-zone-list&action=zones&mode=<?php echo $mode ?>&iaction=untrash&item=<?php echo $row['id'] ?>" title="<?php _e('Restore this Zone from the Trash', SAM_DOMAIN) ?>"><?php _e('Restore', SAM_DOMAIN); ?></a> | </span>
+              <span class="delete"><a href="<?php echo admin_url('admin.php'); ?>?page=sam-zone-list&action=zones&mode=<?php echo $mode ?>&iaction=kill&item=<?php echo $row['id'] ?>" title="<?php _e('Remove this Zone permanently', SAM_DOMAIN) ?>"><?php _e('Remove permanently', SAM_DOMAIN); ?></a></span>
+            <?php 
+            } 
+            else { 
+              ?>
+              <span class="delete"><a href="<?php echo admin_url('admin.php'); ?>?page=sam-zone-list&action=zones&mode=<?php echo $mode ?>&iaction=delete&item=<?php echo $row['id'] ?>" title="<?php _e('Move this Zone to the Trash', SAM_DOMAIN) ?>"><?php _e('Delete', SAM_DOMAIN); ?></a></span>
+            <?php } ?>
+          </div>
+        </td>
+      </tr>
+        <?php $i++; }}?>
+    </tbody>
+  </table>
+  <div class="tablenav">
+    <div class="alignleft">
+      <?php if($mode === 'trash') {?>
+      <a class="button-secondary" href="<?php echo admin_url('admin.php'); ?>?page=sam-zone-list&action=zones&mode=trash&iaction=kill-em-all"><?php _e('Clear Trash', SAM_DOMAIN); ?></a>
+      <?php } else { ?>
+      <a class="button-secondary" href="<?php echo admin_url('admin.php'); ?>?page=sam-zone-edit&action=new&mode=zone"><?php _e('Add New Zone', SAM_DOMAIN); ?></a>      
+      <?php } ?>
+    </div>
+    <div class="tablenav-pages">
+      <?php $page_links_text = sprintf( '<span class="displaying-num">' . __( 'Displaying %s&#8211;%s of %s', SAM_DOMAIN ) . '</span>%s',
+        number_format_i18n( $start + 1 ),
+        number_format_i18n( min( $apage * $places_per_page, $total ) ),
+        '<span class="total-type-count">' . number_format_i18n( $total ) . '</span>',
+        $page_links
+      ); echo $page_links_text; ?>
+    </div>
+  </div>
+</div>      
+      <?php
+    }
+    
+    /*function samBlockListPage() {
+      global $wpdb;
+      $bTable = $wpdb->prefix . "sam_blocks";
+      
+      if(isset($_GET['mode'])) $mode = $_GET['mode'];
+      else $mode = 'active';
+      if(isset($_GET["action"])) $action = $_GET['action'];
+      else $action = 'blocks';
+      if(isset($_GET['item'])) $item = $_GET['item'];
+      else $item = null;
+      if(isset($_GET['iaction'])) $iaction = $_GET['iaction'];
+      else $iaction = null;
+      if(isset($_GET['iitem'])) $iitem = $_GET['iitem'];
+      else $iitem = null;
+      if(isset($_GET['apage'])) $apage = abs( (int) $_GET['apage'] );
+      else $apage = 1;
+
+      $options = $this->getSettings();
+      $places_per_page = $options['placesPerPage'];
+      $items_per_page = $options['itemsPerPage'];
+      
+      if(!is_null($item)) {
+        if($iaction === 'delete') $wpdb->update( $bTable, array( 'trash' => true ), array( 'id' => $item ), array( '%d' ), array( '%d' ) );
+        elseif($iaction === 'untrash') $wpdb->update( $bTable, array( 'trash' => false ), array( 'id' => $item ), array( '%d' ), array( '%d' ) );
+        elseif($iaction === 'kill') $wpdb->query("DELETE FROM $bTable WHERE id=$item");
+      }
+      if($iaction === 'kill-em-all') $wpdb->query("DELETE FROM $bTable WHERE trash=true");
+      $trash_num = $wpdb->get_var($wpdb->prepare("SELECT COUNT(*) FROM $bTable WHERE trash = TRUE"));
+      $active_num = $wpdb->get_var($wpdb->prepare("SELECT COUNT(*) FROM $bTable WHERE trash = FALSE"));
+      if(is_null($active_num)) $active_num = 0;
+      if(is_null($trash_num)) $trash_num = 0;
+      $all_num = $trash_num + $active_num;
+      $total = (($mode !== 'all') ? (($mode === 'trash') ? $trash_num : $active_num) : $all_num);
+      $start = $offset = ( $apage - 1 ) * $places_per_page;
+
+      $page_links = paginate_links( array(
+        'base' => add_query_arg( 'apage', '%#%' ),
+        'format' => '',
+        'prev_text' => __('&laquo;'),
+        'next_text' => __('&raquo;'),
+        'total' => ceil($total / $places_per_page),
+        'current' => $apage
+      ));
+      ?>
+<div class='wrap'>
+  <div class="icon32" style="background: url('<?php echo SAM_IMG_URL.'sam-list.png' ?>') no-repeat transparent; "><br/></div>
+  <h2><?php _e('Managing Ads Blocks', SAM_DOMAIN); ?></h2>
+  <ul class="subsubsub">
+    <li><a <?php if($mode === 'all') echo 'class="current"';?> href="<?php echo admin_url('admin.php'); ?>?page=sam-block-list&action=blocks&mode=all"><?php _e('All', SAM_DOMAIN); ?></a> (<?php echo $all_num; ?>) | </li>
+    <li><a <?php if($mode === 'active') echo 'class="current"';?> href="<?php echo admin_url('admin.php'); ?>?page=sam-block-list&action=blocks&mode=active"><?php _e('Active', SAM_DOMAIN); ?></a> (<?php echo $active_num; ?>) | </li>
+    <li><a <?php if($mode === 'trash') echo 'class="current"';?> href="<?php echo admin_url('admin.php'); ?>?page=sam-block-list&action=blocks&mode=trash"><?php _e('Trash', SAM_DOMAIN); ?></a> (<?php echo $trash_num; ?>)</li>
+  </ul>
+  <div class="tablenav">
+    <div class="alignleft">
+      <?php if($mode === 'trash') {?>
+      <a class="button-secondary" href="<?php echo admin_url('admin.php'); ?>?page=sam-block-list&action=blocks&mode=trash&iaction=kill-em-all"><?php _e('Clear Trash', SAM_DOMAIN); ?></a>
+      <?php } else { ?>
+      <a class="button-secondary" href="<?php echo admin_url('admin.php'); ?>?page=sam-block-edit&action=new&mode=block"><?php _e('Add New Block', SAM_DOMAIN); ?></a>
+      <?php } ?>
+    </div>
+    <div class="tablenav-pages">
+      <?php $page_links_text = sprintf( '<span class="displaying-num">' . __( 'Displaying %s&#8211;%s of %s', SAM_DOMAIN ) . '</span>%s',
+        number_format_i18n( $start + 1 ),
+        number_format_i18n( min( $apage * $places_per_page, $total ) ),
+        '<span class="total-type-count">' . number_format_i18n( $total ) . '</span>',
+        $page_links
+      ); echo $page_links_text; ?>
+    </div>
+  </div>
+  <div class="clear"></div>
+  <table class="widefat fixed" cellpadding="0">
+    <thead>
+      <tr>
+        <th id="t-idg" class="manage-column column-title" style="width:5%;" scope="col"><?php _e('ID', SAM_DOMAIN); ?></th>
+        <th id="t-name" class="manage-column column-title" style="width:95%;" scope="col"><?php _e('Block Name', SAM_DOMAIN);?></th>        
+      </tr>
+    </thead>
+    <tfoot>
+      <tr>
+        <th id="b-idg" class="manage-column column-title" style="width:5%;" scope="col"><?php _e('ID', SAM_DOMAIN); ?></th>
+        <th id="b-name" class="manage-column column-title" style="width:95%;" scope="col"><?php _e('Block Name', SAM_DOMAIN);?></th>
+      </tr>
+    </tfoot>
+    <tbody>
+      <?php
+      $bSql = "SELECT 
+                  $bTable.id, 
+                  $bTable.name, 
+                  $bTable.description,
+                  $bTable.trash 
+                FROM $bTable".
+                (($mode !== 'all') ? " WHERE $bTable.trash = ".(($mode === 'trash') ? 'TRUE' : 'FALSE') : '').
+                " LIMIT $offset, $places_per_page";
+      $blocks = $wpdb->get_results($bSql, ARRAY_A);          
+      $i = 0;
+      if(!is_array($blocks) || empty ($blocks)) {
+      ?>
+      <tr id="g0" class="alternate author-self status-publish iedit" valign="top">
+        <th class="post-title column-title">0</th>
+        <th class="author column-author"><?php _e('There are no data ...', SAM_DOMAIN).$pTable; ?></th>
+      </tr>
+        <?php } else {
+          foreach($blocks as $row) {            
+        ?>
+      <tr id="<?php echo $row['id'];?>" class="<?php echo (($i & 1) ? 'alternate' : ''); ?> author-self status-publish iedit" valign="top">
+        <th class="post-title column-title"><?php echo $row['id']; ?></th>
+        <td class="post-title column-title">
+          <strong style='display: inline;'><a href="<?php echo admin_url('admin.php'); ?>?page=sam-block-edit&action=edit&mode=block&item=<?php echo $row['id']; ?>"><?php echo $row['name'];?></a><?php echo ((($row['trash'] == true) && ($mode === 'all')) ? '<span class="post-state"> - '.__('in Trash', SAM_DOMAIN).'</span>' : ''); ?></strong><br/><?php echo $row['description'];?>
+          <div class="row-actions">
+            <span class="edit"><a href="<?php echo admin_url('admin.php'); ?>?page=sam-block-edit&action=edit&mode=block&item=<?php echo $row['id']; ?>" title="<?php _e('Edit Zone', SAM_DOMAIN) ?>"><?php _e('Edit', SAM_DOMAIN); ?></a> | </span>
+            <?php 
+            if($row['trash'] == true) { 
+              ?>
+              <span class="untrash"><a href="<?php echo admin_url('admin.php'); ?>?page=sam-block-list&action=blocks&mode=<?php echo $mode ?>&iaction=untrash&item=<?php echo $row['id'] ?>" title="<?php _e('Restore this Block from the Trash', SAM_DOMAIN) ?>"><?php _e('Restore', SAM_DOMAIN); ?></a> | </span>
+              <span class="delete"><a href="<?php echo admin_url('admin.php'); ?>?page=sam-block-list&action=blocks&mode=<?php echo $mode ?>&iaction=kill&item=<?php echo $row['id'] ?>" title="<?php _e('Remove this Block permanently', SAM_DOMAIN) ?>"><?php _e('Remove permanently', SAM_DOMAIN); ?></a></span>
+            <?php 
+            } 
+            else { 
+              ?>
+              <span class="delete"><a href="<?php echo admin_url('admin.php'); ?>?page=sam-block-list&action=blocks&mode=<?php echo $mode ?>&iaction=delete&item=<?php echo $row['id'] ?>" title="<?php _e('Move this Block to the Trash', SAM_DOMAIN) ?>"><?php _e('Delete', SAM_DOMAIN); ?></a></span>
+            <?php } ?>
+          </div>
+        </td>
+      </tr>
+        <?php $i++; }}?>
+    </tbody>
+  </table>
+  <div class="tablenav">
+    <div class="alignleft">
+      <?php if($mode === 'trash') {?>
+      <a class="button-secondary" href="<?php echo admin_url('admin.php'); ?>?page=sam-block-list&action=blocks&mode=trash&iaction=kill-em-all"><?php _e('Clear Trash', SAM_DOMAIN); ?></a>
+      <?php } else { ?>
+      <a class="button-secondary" href="<?php echo admin_url('admin.php'); ?>?page=sam-block-edit&action=new&mode=block"><?php _e('Add New Block', SAM_DOMAIN); ?></a>      
+      <?php } ?>
+    </div>
+    <div class="tablenav-pages">
+      <?php $page_links_text = sprintf( '<span class="displaying-num">' . __( 'Displaying %s&#8211;%s of %s', SAM_DOMAIN ) . '</span>%s',
+        number_format_i18n( $start + 1 ),
+        number_format_i18n( min( $apage * $places_per_page, $total ) ),
+        '<span class="total-type-count">' . number_format_i18n( $total ) . '</span>',
+        $page_links
+      ); echo $page_links_text; ?>
+    </div>
+  </div>
+</div>      
+      <?php
+    }*/
 		
 		function samEditPage() {
 			global $wpdb;
@@ -1261,8 +1829,7 @@ if ( !class_exists( 'SimpleAdsManagerAdmin' && class_exists('SimpleAdsManager') 
 								<p>
 									<?php $this->adSizes($row['place_size']); ?>
 								</p>
-								<p><?php _e('You can enter any HTML codes here for the further withdrawal of their before and after the code of Ads Place.', SAM_DOMAIN); ?></p>
-                <p>
+								<p>
                   <label for="place_custom_width"><?php echo __('Custom Width', SAM_DOMAIN).':'; ?></label>
 									<input id="place_custom_width" type="text" tabindex="3" name="place_custom_width" value="<?php echo $row['place_custom_width']; ?>" style="width:20%" />
                 </p>
@@ -1415,6 +1982,12 @@ if ( !class_exists( 'SimpleAdsManagerAdmin' && class_exists('SimpleAdsManager') 
               'view_cats' => $this->removeTrailingComma( $_POST['view_cats'] ),
               'ad_authors' => $_POST['ad_authors'],
               'view_authors' => $this->removeTrailingComma( $_POST['view_authors'] ),
+              'x_id' => $_POST['x_id'],
+              'x_view_id' => $_POST['x_view_id'],
+              'x_cats' => $_POST['x_cats'],
+              'x_view_cats' => $this->removeTrailingComma($_POST['x_view_cats']),
+              'x_authors' => $_POST['x_authors'],
+              'x_view_authors' => $this->removeTrailingComma($_POST['x_view_authors']),
               'ad_start_date' => $_POST['ad_start_date'],
               'ad_end_date' => $_POST['ad_end_date'],              
               'ad_schedule' => $_POST['ad_schedule'],
@@ -1428,7 +2001,7 @@ if ( !class_exists( 'SimpleAdsManagerAdmin' && class_exists('SimpleAdsManager') 
               'per_month' => $_POST['per_month'],
               'trash' => ($_POST['trash'] === 'true')
             );
-            $formatRow = array( '%d', '%s', '%s', '%d', '%d', '%s', '%s', '%s', '%d', '%d', '%d', '%s', '%d', '%s', '%d', '%s', '%s', '%s', '%d', '%d', '%d', '%d', '%d', '%d', '%d', '%d', '%d', '%d');
+            $formatRow = array( '%d', '%s', '%s', '%d', '%d', '%s', '%s', '%s', '%d', '%d', '%d', '%s', '%d', '%s', '%d', '%s', '%d', '%s', '%d', '%s', '%d', '%s', '%s', '%s', '%d', '%d', '%d', '%d', '%d', '%d', '%d', '%d', '%d', '%d');
             if($itemId === __('Undefined', SAM_DOMAIN)) {
               $wpdb->insert($aTable, $updateRow);
               $item = $wpdb->insert_id;
@@ -1456,16 +2029,22 @@ if ( !class_exists( 'SimpleAdsManagerAdmin' && class_exists('SimpleAdsManager') 
                       ad_img, 
                       ad_target,
                       count_clicks, 
-                      (SELECT place_size FROM ".$pTable." WHERE ".$pTable.".id = ".$aTable.".pid) AS ad_size,
-                      (SELECT place_custom_width FROM ".$pTable." WHERE ".$pTable.".id = ".$aTable.".pid) AS ad_custom_width,
-                      (SELECT place_custom_height FROM ".$pTable." WHERE ".$pTable.".id = ".$aTable.".pid) AS ad_custom_height, 
+                      (SELECT place_size FROM $pTable WHERE $pTable.id = $aTable.pid) AS ad_size,
+                      (SELECT place_custom_width FROM $pTable WHERE $pTable.id = $aTable.pid) AS ad_custom_width,
+                      (SELECT place_custom_height FROM $pTable WHERE $pTable.id = $aTable.pid) AS ad_custom_height, 
                       view_type, 
                       (view_pages+0) AS view_pages, 
                       view_id,
                       ad_cats,
                       view_cats,
                       ad_authors,
-                      view_authors, 
+                      view_authors,
+                      x_id,
+                      x_view_id,
+                      x_cats,
+                      x_view_cats,
+                      x_authors,
+                      x_view_authors, 
                       ad_start_date, 
                       ad_end_date, 
                       ad_schedule,
@@ -1485,7 +2064,7 @@ if ( !class_exists( 'SimpleAdsManagerAdmin' && class_exists('SimpleAdsManager') 
               ARRAY_A);
               
             if($row['ad_size'] === 'custom') $aSize = $this->getAdSize($row['ad_size'], $row['ad_custom_width'], $row['ad_custom_height']);
-            else $aSize = $this->getAdSize ($row['ad_size']);  
+            else $aSize = $this->getAdSize($row['ad_size']);  
           }
           else {
             $row = array(
@@ -1506,6 +2085,12 @@ if ( !class_exists( 'SimpleAdsManagerAdmin' && class_exists('SimpleAdsManager') 
               'view_cats' => '',
               'ad_authors' => 0,
               'view_authors' => '',
+              'x_id' => 0,
+              'x_view_id' => '',
+              'x_cats' => 0,
+              'x_view_cats' => '',
+              'x_authors' => 0,
+              'x_view_authors' => '',
               'ad_start_date' => '',
               'ad_end_date' => '',              
               'ad_schedule' => 0,
@@ -1748,14 +2333,37 @@ if ( !class_exists( 'SimpleAdsManagerAdmin' && class_exists('SimpleAdsManager') 
                 </div>
                 <p>
                   <input type='radio' name='view_type' id='view_type_2' value='2' <?php checked(2, $row['view_type']); ?>>
-                  <label for='view_type_2'><strong><?php echo __('Show ad only in certain posts', SAM_DOMAIN).':'; ?></strong></label>
+                  <label for='view_type_2'><strong><?php echo __('Show ad only in certain posts/pages', SAM_DOMAIN).':'; ?></strong></label>
                 </p>
                 <div class='radio-content'>
-                  <label for='view_id'><strong><?php echo __('Posts IDs (comma separated)', SAM_DOMAIN).':'; ?></strong></label>
-                  <input type='text' name='view_id' id='view_id' value='<?php echo $row['view_id']; ?>'>                  
+                  <p>
+                    <label for='view_id'><strong><?php echo __('Posts/Pages IDs (comma separated)', SAM_DOMAIN).':'; ?></strong></label>
+                    <input type='text' name='view_id' id='view_id' value='<?php echo $row['view_id']; ?>' style='width: 100%;'>
+                  </p>                  
                 </div>
                 <p>
-                  <?php _e('Use this setting to display an ad only in certain posts. Enter the ID of posts, separated by commas.', SAM_DOMAIN); ?>
+                  <?php _e('Use this setting to display an ad only in certain posts/pages. Enter the IDs of posts/pages, separated by commas.', SAM_DOMAIN); ?>
+                </p>
+              </div>
+            </div>
+          </div>
+          <div id="contents" class="meta-box-sortables ui-sortable">
+            <div id="codediv" class="postbox ">
+              <div class="handlediv" title="<?php _e('Click to toggle', SAM_DOMAIN); ?>"><br/></div>
+              <h3 class="hndle"><span><?php _e('Extended restrictions of advertisements showing', SAM_DOMAIN);?></span></h3>
+              <div class="inside"> 
+                <p>
+                  <input type='checkbox' name='x_id' id='x_id' value='1' <?php checked(1, $row['x_id']); ?>>
+                  <label for='x_id'><strong><?php echo __('Do not show ad on certain posts/pages', SAM_DOMAIN).':'; ?></strong></label>
+                </p>
+                <div class='radio-content'>
+                  <p>
+                    <label for='x_view_id'><strong><?php echo __('Posts/Pages IDs (comma separated)', SAM_DOMAIN).':'; ?></strong></label>
+                    <input type='text' name='x_view_id' id='x_view_id' value='<?php echo $row['x_view_id']; ?>' style='width: 100%;'>
+                  </p>                  
+                </div>
+                <p>
+                  <?php _e('Use this setting to not display an ad on certain posts/pages. Enter the IDs of posts/pages, separated by commas.', SAM_DOMAIN); ?>
                 </p>
                 <div class='clear-line'></div>
                 <p>
@@ -1769,6 +2377,23 @@ if ( !class_exists( 'SimpleAdsManagerAdmin' && class_exists('SimpleAdsManager') 
                 <p>
                   <?php _e('Use this setting to display an ad only in single posts or categories archives of certain categories. Enter the names of categories, separated by commas.', SAM_DOMAIN); ?>
                 </p>
+                <div class='sam-warning'>
+                  <p>
+                    <?php _e('This display logic parameter will be applied only when you use the "Show ad on all pages of blog" and "Show your ad only on the pages of this type" modes. Otherwise, it will be ignored.', SAM_DOMAIN); ?>
+                  </p>
+                </div>
+                <div class='clear-line'></div>
+                <p>
+                  <input type='checkbox' name='x_cats' id='x_cats' value='1' <?php checked(1, $row['x_cats']); ?>>
+                  <label for='ad_cats'><strong><?php echo __('Do not show ad in single posts or categories archives of certain categories', SAM_DOMAIN).':'; ?></strong></label>
+                </p>
+                <div class='radio-content'>
+                  <label for='x_view_cats'><strong><?php echo __('Categories (comma separated)', SAM_DOMAIN).':'; ?></strong></label>
+                  <input type='text' name='x_view_cats' id='x_view_cats' autocomplete="off" value='<?php echo $row['x_view_cats']; ?>' style="width:100%">                  
+                </div>
+                <p>
+                  <?php _e('Use this setting to not display an ad in single posts or categories archives of certain categories. Enter the names of categories, separated by commas.', SAM_DOMAIN); ?>
+                </p>
                 <div class='clear-line'></div>
                 <p>
                   <input type='checkbox' name='ad_authors' id='ad_authors' value='1' <?php checked(1, $row['ad_authors']); ?>>
@@ -1780,6 +2405,23 @@ if ( !class_exists( 'SimpleAdsManagerAdmin' && class_exists('SimpleAdsManager') 
                 </div>
                 <p>
                   <?php _e('Use this setting to display an ad only in single posts or authors archives of certain authors. Enter the names of authors, separated by commas.', SAM_DOMAIN); ?>
+                </p>
+                <div class='sam-warning'>
+                  <p>
+                    <?php _e('This display logic parameter will be applied only when you use the "Show ad on all pages of blog" and "Show your ad only on the pages of this type" modes. Otherwise, it will be ignored.', SAM_DOMAIN); ?>
+                  </p>
+                </div>
+                <div class='clear-line'></div>
+                <p>
+                  <input type='checkbox' name='x_authors' id='x_authors' value='1' <?php checked(1, $row['x_authors']); ?>>
+                  <label for='x_authors'><strong><?php echo __('Do not show ad in single posts or authors archives of certain authors', SAM_DOMAIN).':'; ?></strong></label>
+                </p>
+                <div class='radio-content'>
+                  <label for='x_view_authors'><strong><?php echo __('Authors (comma separated)', SAM_DOMAIN).':'; ?></strong></label>
+                  <input type='text' name='x_view_authors' id='x_view_authors' autocomplete="off" value='<?php echo $row['x_view_authors']; ?>' style="width:100%">                  
+                </div>
+                <p>
+                  <?php _e('Use this setting to not display an ad in single posts or authors archives of certain authors. Enter the names of authors, separated by commas.', SAM_DOMAIN); ?>
                 </p>
                 <div class='clear-line'></div>
                 <p>
@@ -1852,6 +2494,19 @@ if ( !class_exists( 'SimpleAdsManagerAdmin' && class_exists('SimpleAdsManager') 
               </div>
             </div>
           </div>
+          <?php if($action !== 'new') { ?>
+          <div id="sources" class="meta-box-sortables ui-sortable">
+            <div id="codediv" class="postbox ">
+              <div class="handlediv" title="<?php _e('Click to toggle', SAM_DOMAIN); ?>"><br/></div>
+              <h3 class="hndle"><span><?php _e('Ad Preview', SAM_DOMAIN);?></span></h3>
+              <div class="inside">
+                <div class='ad-example'>
+                  <?php echo $this->buildSingleAd(array('id' => (integer) $row['id']), true); ?>
+                </div>
+              </div>
+            </div>
+          </div>
+          <?php } ?>
         </div>
       </div>
     </div>
@@ -1862,6 +2517,377 @@ if ( !class_exists( 'SimpleAdsManagerAdmin' && class_exists('SimpleAdsManager') 
           
 			}
 		}
+      
+    function samZoneEditPage() {
+      global $wpdb;
+      $zTable = $wpdb->prefix . "sam_zones";
+      $pTable = $wpdb->prefix . "sam_places";
+      
+      $options = parent::getSettings();
+      $cats = $this->getTax();
+      $authors = $this->getAuthors();
+      $uCats = array();
+      $uAuthors = array();
+      
+      if(isset($_GET['action'])) $action = $_GET['action'];
+      else $action = 'new';
+      if(isset($_GET['mode'])) $mode = $_GET['mode'];
+      else $mode = 'zone';
+      if(isset($_GET['item'])) $item = $_GET['item'];
+      else $item = null;
+      if(isset($_GET['zone'])) $zone = $_GET['zone'];
+      else $zone = null;
+      
+      $updated = false;
+          
+      if(isset($_POST['update_zone'])) {
+        $zoneId = $_POST['zone_id'];
+        foreach($cats as $cat) {
+          if(isset($_POST['z_cats_'.$cat['slug']])) {
+            $value = (integer) $_POST['z_cats_'.$cat['slug']];
+            $uCats[$cat['slug']] = $value;
+          }          
+        }
+        foreach($authors as $key => $author) {
+          if(isset($_POST['z_authors_'.$author])) $uAuthors[$author] = $_POST['z_authors_'.$author];
+        }
+        $updateRow = array(
+          'name' => $_POST['zone_name'],
+          'description' => $_POST['description'],
+          'z_default' => $_POST['z_default'],
+          'z_home' => $_POST['z_home'],
+          'z_singular' => $_POST['z_singular'],
+          'z_single' => $_POST['z_single'],
+          'z_page' => $_POST['z_page'],
+          'z_attachment' => $_POST['z_attachment'],
+          'z_search' => $_POST['z_search'],
+          'z_404' => $_POST['z_404'],
+          'z_archive' => $_POST['z_archive'],
+          'z_tax' => $_POST['z_tax'],
+          'z_category' => $_POST['z_category'],
+          'z_cats' => serialize($uCats),
+          'z_tag' => $_POST['z_tag'],
+          'z_author' => $_POST['z_author'],
+          'z_authors' => serialize($uAuthors),
+          'z_date' => $_POST['z_date'],
+          'trash' => ($_POST['trash'] === 'true')
+        );
+        $formatRow = array( '%s', '%s', '%d', '%d', '%d', '%d', '%d', '%d', '%d', '%d', '%d', '%d', '%d', '%s', '%d', '%d', '%s', '%d', '%d');
+        if($zoneId === __('Undefined', SAM_DOMAIN)) {
+          $wpdb->insert($zTable, $updateRow);
+          $updated = true;
+          $item = $wpdb->insert_id;
+        }
+        else {
+          if(is_null($item)) $item = $zoneId;
+          $wpdb->update($zTable, $updateRow, array( 'id' => $item ), $formatRow, array( '%d' ));
+          $updated = true;
+        }
+        ?>
+<div class="updated"><p><strong><?php _e("Ads Zone Data Updated.", SAM_DOMAIN);?></strong></p></div>
+        <?php
+      }
+      
+      $zSql = "SELECT 
+                  id, 
+                  name, 
+                  description, 
+                  z_default, 
+                  z_home, 
+                  z_singular, 
+                  z_single, 
+                  z_page, 
+                  z_attachment, 
+                  z_search, 
+                  z_404, 
+                  z_archive, 
+                  z_tax, 
+                  z_category,
+                  z_cats,
+                  z_tag,
+                  z_author,
+                  z_authors,
+                  z_date, 
+                  trash 
+                FROM $zTable 
+                WHERE id = $item;";      
+      
+      $pSql = "SELECT id, name FROM $pTable WHERE $pTable.trash IS FALSE;";
+      $places = $wpdb->get_results($pSql, ARRAY_A);
+      $sCats = array();
+      $sAuthors = array();
+      
+      if($action !== 'new') {
+        $row = $wpdb->get_row($zSql, ARRAY_A);
+        $zCats = unserialize($row['z_cats']);
+        $zAuthors = unserialize($row['z_authors']);
+        foreach($cats as $cat) {
+          $val = (!is_null($zCats[$cat['slug']])) ? $zCats[$cat['slug']] : -1;
+          array_push($sCats, array('name' => $cat['name'], 'slug' => $cat['slug'], 'val' => $val));
+        }
+        foreach($authors as $key => $author) {
+          $val = (!is_null($zAuthors[$author])) ? $zAuthors[$author] : -1;
+          array_push($sAuthors, array('id' => $author, 'name' => $key, 'val' => $val));
+        }
+      }
+      else {
+        if($updated) {
+          $row = $wpdb->get_row($zSql, ARRAY_A);
+          $zCats = unserialize($row['z_cats']);          
+          $zAuthors = unserialize($row['z_authors']);
+          foreach($cats as $cat) {
+            $val = (!is_null($zCats[$cat['slug']])) ? $zCats[$cat['slug']] : -1;
+            array_push($sCats, array('name' => $cat['name'], 'slug' => $cat['slug'], 'val' => $val));
+          }
+          foreach($authors as $key => $author) {
+            $val = (!is_null($zAuthors[$author])) ? $zAuthors[$author] : -1;
+            array_push($sAuthors, array('id' => $author, 'name' => $key, 'val' => $val));
+          }
+        }
+        else {
+          $row = array(
+            'id' => __('Undefined', SAM_DOMAIN),
+            'name' => '',
+            'description' => '',
+            'z_default' => 0,
+            'z_home' => -1,
+            'z_singular' => -1,
+            'z_single' => -1,
+            'z_page' => -1,
+            'z_attachment' => -1,
+            'z_search' => -1,
+            'z_404' => -1,
+            'z_archive' => -1,
+            'z_tax' => -1,
+            'z_category' => -1,
+            'z_tag' => -1,
+            'z_author' => -1,
+            'z_date' => -1,
+            'trash' => false
+          );
+          foreach($cats as $cat) array_push($sCats, array('name' => $cat['name'], 'slug' => $cat['slug'], 'val' => -1));
+          foreach($authors as $key => $author) array_push($sAuthors, array('id' => $author, 'name' => $key, 'val' => -1));
+        }
+      }
+      ?>
+<div class="wrap">
+  <form method="post" action="<?php echo $_SERVER["REQUEST_URI"]; ?>">
+    <div class="icon32" style="background: url('<?php echo SAM_IMG_URL.'sam-editor.png'; ?>') no-repeat transparent; "><br/></div>
+    <h2><?php echo ( ( ($action === 'new') && ( $row['id'] === __('Undefined', SAM_DOMAIN) ) ) ? __('New Ads Zone', SAM_DOMAIN) : __('Edit Ads Zone', SAM_DOMAIN).' ('.$item.')' ); ?></h2>
+    <div class="metabox-holder has-right-sidebar" id="poststuff">
+      <div id="side-info-column" class="inner-sidebar">
+        <div class="meta-box-sortables ui-sortable">
+          <div id="submitdiv" class="postbox ">
+            <div class="handlediv" title="<?php _e('Click to toggle', SAM_DOMAIN); ?>"><br/></div>
+            <h3 class="hndle"><span><?php _e('Status', SAM_DOMAIN);?></span></h3>
+            <div class="inside">
+              <div id="submitpost" class="submitbox">
+                <div id="minor-publishing">
+                  <div id="minor-publishing-actions">
+                    <div id="save-action"> </div>
+                    <div id="preview-action">
+                      <a id="post-preview" class="preview button" href='<?php echo admin_url('admin.php'); ?>?page=sam-zone-list'><?php _e('Back to Zones List', SAM_DOMAIN) ?></a>
+                    </div>
+                    <div class="clear"></div>
+                  </div>
+                  <div id="misc-publishing-actions">
+                    <div class="misc-pub-section">
+                      <label for="place_id_stat"><?php echo __('Ads Zone ID', SAM_DOMAIN).':'; ?></label>
+                      <span id="place_id_stat" class="post-status-display"><?php echo $row['id']; ?></span>
+                      <input type="hidden" id="zone_id" name="zone_id" value="<?php echo $row['id']; ?>" />
+                      <input type='hidden' name='editor_mode' id='editor_mode' value='zone'>
+                    </div>
+                    <div class="misc-pub-section">
+                      <label for="trash_no"><input type="radio" id="trash_no" value="false" name="trash" <?php if (!$row['trash']) { echo 'checked="checked"'; }?> >  <?php _e('Is Active', SAM_DOMAIN); ?></label><br/>
+                      <label for="trash_yes"><input type="radio" id="trash_yes" value="true" name="trash" <?php if ($row['trash']) { echo 'checked="checked"'; }?> >  <?php _e('Is In Trash', SAM_DOMAIN); ?></label>
+                    </div>
+                  </div>
+                  <div class="clear"></div>
+                </div>
+                <div id="major-publishing-actions">
+                  <div id="delete-action">
+                    <a class="submitdelete deletion" href='<?php echo admin_url('admin.php'); ?>?page=sam-list'><?php _e('Cancel', SAM_DOMAIN) ?></a>
+                  </div>
+                  <div id="publishing-action">
+                    <input type="submit" class='button-primary' name="update_zone" value="<?php _e('Save', SAM_DOMAIN) ?>" />
+                  </div>
+                  <div class="clear"></div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div id="post-body">
+        <div id="post-body-content">
+          <div id="titlediv">
+            <div id="titlewrap">
+              <label class="screen-reader-text" for="title"><?php _e('Name', SAM_DOMAIN); ?></label>
+              <input id="title" type="text" autocomplete="off" tabindex="1" size="30" name="zone_name" value="<?php echo $row['name']; ?>" />
+            </div>
+          </div>
+          <div class="meta-box-sortables ui-sortable">
+            <div id="descdiv" class="postbox ">
+              <div class="handlediv" title="<?php _e('Click to toggle', SAM_DOMAIN); ?>"><br/></div>
+              <h3 class="hndle"><span><?php _e('Description', SAM_DOMAIN);?></span></h3>
+              <div class="inside">
+                <p><?php _e('Enter description of this Ads Zone.', SAM_DOMAIN);?></p>
+                <p>
+                  <label for="description"><?php echo __('Description', SAM_DOMAIN).':'; ?></label>
+                  <textarea id="description" class="code" tabindex="2" name="description" style="width:100%" ><?php echo $row['description']; ?></textarea>
+                </p>
+                <p><?php _e('This description is not used anywhere and is added solely for the convenience of managing advertisements.', SAM_DOMAIN); ?></p>
+              </div>
+            </div>
+          </div>
+          <div class="meta-box-sortables ui-sortable">
+            <div id="sizediv" class="postbox ">
+              <div class="handlediv" title="<?php _e('Click to toggle', SAM_DOMAIN); ?>"><br/></div>
+              <h3 class="hndle"><span><?php _e('Ads Zone Settings', SAM_DOMAIN);?></span></h3>
+              <div class="inside">
+                <p>
+                  <label for='z_default'><?php echo __('Default Ads Place', SAM_DOMAIN).': '; ?></label>
+                  <select id='z_default' name='z_default'>
+                    <?php $this->drawPlacesSelector($places, $row['z_default'], true); ?>
+                  </select>
+                </p>
+                <p>
+                  <?php _e('Select the Ads Place by default. This Ads Place will be displayed in the event that for the page of a given type the Ads Place value is set to "Default".', SAM_DOMAIN); ?>
+                </p>
+                <div class='clear-line'></div>
+                <p>
+                  <label for='z_home'><?php echo __('Home Page Ads Place', SAM_DOMAIN).': '; ?></label>
+                  <select id='z_home' name='z_home'>
+                    <?php $this->drawPlacesSelector($places, $row['z_home'], false); ?>
+                  </select>
+                </p>
+                <p>
+                  <label for='z_singular'><?php echo __('Default Ads Place for Singular Pages', SAM_DOMAIN).': '; ?></label>
+                  <select id='z_singular' name='z_singular'>
+                    <?php $this->drawPlacesSelector($places, $row['z_singular'], false); ?>
+                  </select>
+                </p>
+                <div class='sub-content'>
+                  <p>
+                    <label for='z_single'><?php echo __('Single Post Ads Place', SAM_DOMAIN).': '; ?></label>
+                    <select id='z_single' name='z_single'>
+                      <?php $this->drawPlacesSelector($places, $row['z_single'], false); ?>
+                    </select>
+                  </p>
+                  <p>
+                    <label for='z_page'><?php echo __('Page Ads Place', SAM_DOMAIN).': '; ?></label>
+                    <select id='z_page' name='z_page'>
+                      <?php $this->drawPlacesSelector($places, $row['z_page'], false); ?>
+                    </select>
+                  </p>
+                  <p>
+                    <label for='z_attachment'><?php echo __('Attachment Ads Place', SAM_DOMAIN).': '; ?></label>
+                    <select id='z_attachment' name='z_attachment'>
+                      <?php $this->drawPlacesSelector($places, $row['z_attachment'], false); ?>
+                    </select>
+                  </p>
+                </div>
+                <p>
+                  <label for='z_search'><?php echo __('Search Pages Ads Place', SAM_DOMAIN).': '; ?></label>
+                  <select id='z_search' name='z_search'>
+                    <?php $this->drawPlacesSelector($places, $row['z_search'], false); ?>
+                  </select>
+                </p>
+                <p>
+                  <label for='z_404'><?php echo __('404 Page Ads Place', SAM_DOMAIN).': '; ?></label>
+                  <select id='z_404' name='z_404'>
+                    <?php $this->drawPlacesSelector($places, $row['z_404'], false); ?>
+                  </select>
+                </p>
+                <p>
+                  <label for='z_archive'><?php echo __('Default Ads Place for Archive Pages', SAM_DOMAIN).': '; ?></label>
+                  <select id='z_archive' name='z_archive'>
+                    <?php $this->drawPlacesSelector($places, $row['z_archive'], false); ?>
+                  </select>
+                </p>
+                <div class='sub-content'>
+                  <p>
+                    <label for='z_tax'><?php echo __('Default Ads Place for Taxonomies Pages', SAM_DOMAIN).': '; ?></label>
+                    <select id='z_tax' name='z_tax'>
+                      <?php $this->drawPlacesSelector($places, $row['z_tax'], false); ?>
+                    </select>
+                  </p>
+                  <div class='sub-content-level-2'>
+                    <p>
+                      <label for='z_category'><?php echo __('Default Ads Place for Category Archive Pages', SAM_DOMAIN).': '; ?></label>
+                      <select id='z_category' name='z_category'>
+                        <?php $this->drawPlacesSelector($places, $row['z_category'], false); ?>
+                      </select>
+                    </p>
+                    <?php 
+                    if(count($sCats) > 1) {
+                      ?>
+                    <div class='sub-content'>  
+                      <?php
+                      foreach($sCats as $cat) {
+                        ?>
+                      <p>
+                        <label for='<?php echo 'z_cats_'.$cat['slug']; ?>'><?php echo __('Ads Place for Category', SAM_DOMAIN).' "<strong>'.$cat['name'].'</strong>": '; ?></label>
+                        <select id='<?php echo 'z_cats_'.$cat['slug']; ?>' name='<?php echo 'z_cats_'.$cat['slug']; ?>'>
+                          <?php $this->drawPlacesSelector($places, $cat['val'], false); ?>
+                        </select>
+                      </p>      
+                        <?php
+                      }
+                      ?>
+                    </div>
+                    <?php  
+                    }                    
+                    ?>
+                    <p>
+                      <label for='z_tag'><?php echo __('Tags Archive Pages Ads Place', SAM_DOMAIN).': '; ?></label>
+                      <select id='z_tag' name='z_tag'>
+                        <?php $this->drawPlacesSelector($places, $row['z_tag'], false); ?>
+                      </select>
+                    </p>
+                  </div>
+                  <p>
+                    <label for='z_author'><?php echo __('Default Ads Place for Author Archive Pages', SAM_DOMAIN).': '; ?></label>
+                    <select id='z_author' name='z_author'>
+                      <?php $this->drawPlacesSelector($places, $row['z_author'], false); ?>
+                    </select>
+                  </p>
+                  <?php if(count($sAuthors) > 1) { ?>
+                  <div class='sub-content-level-2'>
+                    <?php foreach($sAuthors as $author) { ?>
+                    <p>
+                      <label for='<?php echo 'z_authors_'.$author['id']; ?>'><?php echo __('Ads Place for author', SAM_DOMAIN).' <strong>'.$author['name'].'</strong>: '; ?></label>
+                      <select id='<?php echo 'z_authors_'.$author['id']; ?>' name='<?php echo 'z_authors_'.$author['id']; ?>'>
+                        <?php $this->drawPlacesSelector($places, $author['val'], false); ?>
+                      </select>
+                    </p>
+                    <?php } ?>
+                  </div>
+                  <?php } ?>
+                  <p>
+                    <label for='z_date'><?php echo __('Date Archive Pages Ads Place', SAM_DOMAIN).': '; ?></label>
+                    <select id='z_date' name='z_date'>
+                      <?php $this->drawPlacesSelector($places, $row['z_date'], false); ?>
+                    </select>
+                  </p>
+                </div>
+                <p>
+                  <?php _e('Ads Places for Singular pages, for Pages of Taxonomies and for Archive pages are Ads Places by default for the low level pages of relevant pages.', SAM_DOMAIN); ?>
+                </p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </form>
+</div>      
+      <?php
+    }
+    
+    /*function samBlockEditPage() {
+      
+    }*/
   } // end of class definition
 } // end of if not class SimpleAdsManager exists
 ?>
