@@ -199,6 +199,7 @@ if ( !class_exists( 'SimpleAdsManagerAdmin' && class_exists('SimpleAdsManager') 
                       ADD COLUMN x_view_cats VARCHAR(255) DEFAULT NULL,
                       ADD COLUMN x_authors TINYINT(1) DEFAULT 0,
                       ADD COLUMN x_view_authors VARCHAR(255) DEFAULT NULL;";
+          $wpdb->query($aSql);
         }
         
         if($wpdb->get_var("SHOW TABLES LIKE '$zTable'") != $zTable) {

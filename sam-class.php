@@ -27,8 +27,8 @@ if ( !class_exists( 'SimpleAdsManager' ) ) {
 		);
 		
 		function __construct() {
-      define('SAM_VERSION', '0.5.20');
-			define('SAM_DB_VERSION', '0.5');
+      define('SAM_VERSION', '0.5.21');
+			define('SAM_DB_VERSION', '0.5.1');
       define('SAM_PATH', dirname( __FILE__ ));
       define('SAM_URL', WP_PLUGIN_URL . '/' . str_replace( basename( __FILE__), "", plugin_basename( __FILE__ ) ));
       define('SAM_IMG_URL', SAM_URL.'images/');
