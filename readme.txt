@@ -3,8 +3,8 @@ Contributors: minimus
 Donate link: http://www.simplelib.com/
 Tags: ad, adbrite, adgridwork, adify, admin, adpinion, adroll, ads, adsense, adserver, advertisement, advertising, affiliate, banner, banners, chitika, cj, commercial, commission, crispads, dfp, google, income, junction, link, manager, media, money, plugin, random, referral, revenue, rotator, seo, server, shoppingads, widget, widgetbucks, yahoo, ypn
 Requires at least: 3.0
-Tested up to: 3.1
-Stable tag: 0.5.21
+Tested up to: 3.1.1
+Stable tag: 0.5.22
 
 Advertisment rotation system with a flexible logic of displaying advertisements.
 
@@ -43,6 +43,7 @@ Simple Ads Manager is easy to use plugin providing a flexible logic of displayin
 = Available languages =
 * English
 * Russian
+* German by [Fabian Krenzler](http://www.ktraces.de/)
 
 If you have created your own language pack, or have an update of an existing one, you can send **.po** and **.mo files** to me (minimus AT simplelib.com) so that I can bundle it into **Simple Ads Manager** plugin pack.
   
@@ -74,6 +75,8 @@ No questions now...
 
 == Changelog ==
 
+= 0.5.22 =
+* Language pack is updated. German by [Fabian Krenzler](http://www.ktraces.de/) is added.
 = 0.5.21 =
 * Update bug fixed
 = 0.5.20 =
@@ -105,6 +108,8 @@ No questions now...
 
 == Upgrade Notice ==
 
+= 0.5.22 =
+Language pack is updated. German by [Fabian Krenzler](http://www.ktraces.de/) is added.
 = 0.5.21 =
 Update bug fixed
 = 0.5.20 =
