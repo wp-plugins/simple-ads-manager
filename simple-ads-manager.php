@@ -3,7 +3,7 @@
 Plugin Name: Simple Ads Manager
 Plugin URI: http://www.simplelib.com/?p=480
 Description: "Simple Ads Manager" is easy to use plugin providing a flexible logic of displaying advertisements. Visit <a href="http://www.simplelib.com/">SimpleLib blog</a> for more details.
-Version: 0.5.22
+Version: 0.6.23
 Author: minimus
 Author URI: http://blogcoding.ru
 */
@@ -73,5 +73,32 @@ if(class_exists("SimpleAdsManagerAdmin") || class_exists("SimpleAdsManager")) {
     if(is_object($samObject)) echo $samObject->buildAdZone($args, $codes);
     else echo '';
   }
+	
+	add_action('wp_ajax_nopriv_sam_click', 'samClickHandler');
+	add_action('wp_ajax_sam_click', 'samClickHandler');
+	function samClickHandler() {
+		$error = null;
+		if(isset($_POST['sam_ad_id'])) {
+			$adId = $_POST['sam_ad_id'];
+			$aId = explode('_', $adId);
+			$id = (integer) $aId[1];
+		}
+		else $id = -100;
+		if(isset($_POST['_ajax_nonce']))  $nonce = $_POST['_ajax_nonce'];
+		else $nonce = 0;
+
+		if(check_ajax_referer('samNonce') && ($id > 0)) {
+			global $wpdb;
+			$aTable = $wpdb->prefix . "sam_ads";  
+        
+			$result = $wpdb->query("UPDATE $aTable SET $aTable.ad_clicks = $aTable.ad_clicks+1 WHERE $aTable.id = $id;");
+			if($result) $error = $aId[1];
+			else $error = 'error';
+		}
+		else $error = 'error';
+      
+		if($error) exit($error);
+		else exit;
+	}
 }
 ?>

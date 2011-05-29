@@ -27,7 +27,7 @@ if ( !class_exists( 'SimpleAdsManager' ) ) {
 		);
 		
 		function __construct() {
-      define('SAM_VERSION', '0.5.22');
+      define('SAM_VERSION', '0.6.23');
 			define('SAM_DB_VERSION', '0.5.1');
       define('SAM_PATH', dirname( __FILE__ ));
       define('SAM_URL', WP_PLUGIN_URL . '/' . str_replace( basename( __FILE__), "", plugin_basename( __FILE__ ) ));
@@ -51,8 +51,6 @@ if ( !class_exists( 'SimpleAdsManager' ) ) {
       define('SAM_IS_AUTHOR', 2048);
       define('SAM_IS_DATE', 4096);
       
-      add_action('wp_ajax_nopriv_sam_click', array(&$this, 'clickHandler'));
-      add_action('wp_ajax_sam_click', array(&$this, 'clickHandler'));
       add_action('template_redirect', array(&$this, 'headerScripts'));
       add_action('wp_head', array(&$this, 'headerCodes'));
       

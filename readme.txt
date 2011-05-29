@@ -3,8 +3,8 @@ Contributors: minimus
 Donate link: http://www.simplelib.com/
 Tags: ad, adbrite, adgridwork, adify, admin, adpinion, adroll, ads, adsense, adserver, advertisement, advertising, affiliate, banner, banners, chitika, cj, commercial, commission, crispads, dfp, google, income, junction, link, manager, media, money, plugin, random, referral, revenue, rotator, seo, server, shoppingads, widget, widgetbucks, yahoo, ypn
 Requires at least: 3.0
-Tested up to: 3.1.1
-Stable tag: 0.5.22
+Tested up to: 3.2
+Stable tag: 0.6.23
 
 Advertisment rotation system with a flexible logic of displaying advertisements.
 
@@ -75,6 +75,8 @@ No questions now...
 
 == Changelog ==
 
+= 0.6.23 =
+* Ad clicks counting bug is fixed.
 = 0.5.22 =
 * Language pack is updated. German by [Fabian Krenzler](http://www.ktraces.de/) is added.
 = 0.5.21 =
@@ -108,6 +110,8 @@ No questions now...
 
 == Upgrade Notice ==
 
+= 0.6.23 =
+Ad clicks counting bug is fixed.
 = 0.5.22 =
 Language pack is updated. German by [Fabian Krenzler](http://www.ktraces.de/) is added.
 = 0.5.21 =
