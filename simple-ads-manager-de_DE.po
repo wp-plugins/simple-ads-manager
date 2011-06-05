@@ -3,103 +3,21 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: Simple Ads Manager 0.5.21\n"
-"Report-Msgid-Bugs-To: http://wordpress.org/tag/simple-ads-manager\n"
-"POT-Creation-Date: 2011-04-04 17:47:50+00:00\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2011-06-05 12:16+0200\n"
+"PO-Revision-Date: 2011-06-05 12:17+0200\n"
+"Last-Translator: minimus <minimus@blogcoding.ru>\n"
+"Language-Team: Fabian Krenzler <f.krenzler@ktraces.de>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
-"PO-Revision-Date: 2011-04-07 11:00+0200\n"
-"Last-Translator: minimus <minimus@blogcoding.ru>\n"
-"Language-Team: Fabian Krenzler <f.krenzler@ktraces.de>\n"
 "X-Poedit-Language: German\n"
 "X-Poedit-Country: GERMANY\n"
+"X-Poedit-KeywordsList: __;_e;__ngettext:1,2;__ngettext_noop:1,2;__ngettext;_n:1,2;_nc:1,2;esc_attr__\n"
 "X-Poedit-Basepath: .\n"
+"X-Poedit-SourceCharset: utf-8\n"
 "X-Poedit-SearchPath-0: .\n"
-
-#: js/dialog.php:27
-msgid "Insert Ads Place"
-msgstr "Ads Place hinzufügen"
-
-#: js/dialog.php:41
-msgid "Basic Settings"
-msgstr "Basis Einstellungen"
-
-#: js/dialog.php:48
-#: sam-widget-class.php:15
-msgid "Ads Place"
-msgstr "Ads Place"
-
-#: js/dialog.php:66
-#: sam-admin-class.php:1768
-msgid "Ads Place ID"
-msgstr "Ads Place ID"
-
-#: js/dialog.php:69
-msgid "Ads Place Name"
-msgstr "Ads Plce Name"
-
-#: js/dialog.php:79
-msgid "Allow Ads Places predefined codes"
-msgstr "Erlaubt von Ads Place vordefinierte Codes"
-
-#: js/dialog.php:89
-#: sam-admin-class.php:1790
-#: sam-admin-class.php:2173
-#: sam-admin-class.php:2710
-msgid "Cancel"
-msgstr "Abbrechen"
-
-#: js/dialog.php:92
-msgid "Insert"
-msgstr "Einfügen"
-
-#: sam-widget-class.php:10
-msgid "Ads Place:"
-msgstr "Ads Place:"
-
-#: sam-widget-class.php:13
-msgid "Ads Place rotator serviced by Simple Ads Manager."
-msgstr "Ads Place Rotations Service von Simple Ads Manager"
-
-#: sam-widget-class.php:101
-#: sam-widget-class.php:240
-#: sam-widget-class.php:375
-msgid "Title:"
-msgstr "Titel:"
-
-#: sam-widget-class.php:124
-#: sam-widget-class.php:263
-#: sam-widget-class.php:398
-msgid "Hide widget style."
-msgstr "Versteckt Widget Style"
-
-#: sam-widget-class.php:133
-#: sam-widget-class.php:272
-#: sam-widget-class.php:407
-msgid "Allow using previously defined \"before\" and \"after\" codes of Ads Place.."
-msgstr "Erlaubt die Verwendung von früher definierten \"before\"\"and\"after\" codes "
-
-#: sam-widget-class.php:149
-#: sam-widget-class.php:154
-msgid "Ads Zone"
-msgstr "Ads Zone"
-
-#: sam-widget-class.php:152
-msgid "Ads Zone selector serviced by Simple Ads Manager."
-msgstr "Zonen Auswahl Service von Ads Manager"
-
-#: sam-widget-class.php:284
-msgid "Ad"
-msgstr "Banner"
-
-#: sam-widget-class.php:287
-msgid "Non-rotating single ad serviced by Simple Ads Manager."
-msgstr "Einfach Banner ohne Rotation aus Simple Ads Manager"
-
-#: sam-widget-class.php:289
-msgid "Single Ad"
-msgstr "Single Banner"
 
 #: sam-admin-class.php:261
 msgid "General Settings"
@@ -153,7 +71,7 @@ msgstr "Ads Place nach dem Inhalt"
 
 #: sam-admin-class.php:274
 msgid "Allow Ads Place auto inserting after post/page content"
-msgstr "Erlaubt die Nutzung von vordefinierten Ads Place Html codes (before und after)"
+msgstr "Erlaubt das automatische einsetzen von Ad Places nach Artikeln oder Seiten.)"
 
 #: sam-admin-class.php:277
 msgid "Allow using Google DoubleClick for Publishers (DFP) rotator codes"
@@ -169,7 +87,7 @@ msgstr "Ihr Google DFP Pub Code i.e:"
 
 #: sam-admin-class.php:280
 msgid "Allow Bots and Crawlers detection"
-msgstr "Erlaubt Bots und Cralern die Erkennung"
+msgstr "Erlaubt Bots und Crawlern die Erkennung"
 
 #: sam-admin-class.php:281
 msgid "Accuracy of Bots and Crawlers Detection"
@@ -177,7 +95,7 @@ msgstr "Genauigkeit der Bots und Crawler Erkennung"
 
 #: sam-admin-class.php:281
 msgid "If bot is detected hits of ads won't be counted. Use with caution! More exact detection requires more server resources."
-msgstr "Wenn ein bot erkannt wird werden die Klicks auf banner ignoriert. Vorsicht bei der Beutzung! Eine genauere Erkennung erhöht die Serverlast."
+msgstr "Wenn ein bot erkannt wird werden die Klicks auf Banner ignoriert. Vorsicht bei der Beutzung! Eine genauere Erkennung erhöht die Serverlast."
 
 #: sam-admin-class.php:281
 msgid "Inexact detection"
@@ -219,7 +137,7 @@ msgstr "Ads Places pro Seite"
 
 #: sam-admin-class.php:284
 msgid "Ads Places Management grid pagination. How many Ads Places will be shown on one page of grid."
-msgstr "Ads Places Einstellungen für Gridanzeige. Wieviele Ads Places werden in einem Seiten Grid angezeigt."
+msgstr "Einstellungen für Ads Place Auflistung pro Seite. Wieviele Ads Places pro Seite aufgelistet werden ."
 
 #: sam-admin-class.php:285
 msgid "Ads per Page"
@@ -227,7 +145,7 @@ msgstr "Banner pro Seite"
 
 #: sam-admin-class.php:285
 msgid "Ads of Ads Place Management grid pagination. How many Ads will be shown on one page of grid."
-msgstr "Einstellungen für Banner im Ads Place Management für die Gridanzeige. Wieviele Banner werden innerhalb eines Grids angezeigt."
+msgstr "Einstellungen für Banner die Banner Auflistung pro Seite. Wieviele Banner pro Seite aufgelistet werden."
 
 #: sam-admin-class.php:287
 msgid "Delete plugin options during deactivating plugin"
@@ -552,6 +470,7 @@ msgstr "Thin Banner"
 #: sam-admin-class.php:538
 #: sam-admin-class.php:539
 #: sam-admin-class.php:540
+#, php-format
 msgid "%d Link"
 msgid_plural "%d Links"
 msgstr[0] "%d Link"
@@ -703,15 +622,11 @@ msgstr "Diese Optionen definieren das Admin Layout"
 
 #: sam-admin-class.php:844
 msgid "Are you allow to perform these actions during deactivating plugin?"
-msgstr "Haben die die Rechte diese Aktionen während der Deaktivierung des Plugins auzuführen"
+msgstr "Haben Sie die Rechte diese Aktionen während der Deaktivierung des Plugins auzuführen?"
 
 #: sam-admin-class.php:918
 msgid "Simple Ads Manager Settings Updated."
 msgstr "Einstellungen des Simple Ads Manager aktualisiert"
-
-#: sam-admin-class.php:926
-msgid "Save Changes"
-msgstr "Änderungen speichern"
 
 #: sam-admin-class.php:1002
 #: sam-admin-class.php:1181
@@ -772,6 +687,7 @@ msgstr "Statistiken zurücksetzen"
 #: sam-admin-class.php:1341
 #: sam-admin-class.php:1416
 #: sam-admin-class.php:1491
+#, php-format
 msgid "Displaying %s&#8211;%s of %s"
 msgstr "Displaying %s&#8211;%s of %s"
 
@@ -1020,7 +936,7 @@ msgstr "Neuer Ads Place"
 
 #: sam-admin-class.php:1749
 msgid "Edit Ads Place"
-msgstr "Ads Palce bearbeiten"
+msgstr "Ads Place bearbeiten"
 
 #: sam-admin-class.php:1754
 #: sam-admin-class.php:1812
@@ -1050,6 +966,11 @@ msgstr "Status"
 msgid "Back to Places List"
 msgstr "Zurück zur Places Liste"
 
+#: sam-admin-class.php:1768
+#: js/dialog.php:66
+msgid "Ads Place ID"
+msgstr "Ads Place ID"
+
 #: sam-admin-class.php:1776
 #: sam-admin-class.php:2157
 msgid "Width"
@@ -1070,6 +991,13 @@ msgstr "Ist Aktiv"
 #: sam-admin-class.php:2703
 msgid "Is In Trash"
 msgstr "Ist im Papierkorb"
+
+#: sam-admin-class.php:1790
+#: sam-admin-class.php:2173
+#: sam-admin-class.php:2710
+#: js/dialog.php:89
+msgid "Cancel"
+msgstr "Abbrechen"
 
 #: sam-admin-class.php:1793
 #: sam-admin-class.php:2176
@@ -1126,7 +1054,7 @@ msgstr "Ads Place Patch"
 
 #: sam-admin-class.php:1850
 msgid "Select type of the code of a patch and fill data entry fields with the appropriate data."
-msgstr "Selektieren Sie den typ des Codes und füllen Sie die gewünschten Felder aus."
+msgstr "Selektieren Sie den Typ des Codes und füllen Sie die gewünschten Felder aus."
 
 #: sam-admin-class.php:1852
 #: sam-admin-class.php:1856
@@ -1143,7 +1071,7 @@ msgstr "Ziel"
 
 #: sam-admin-class.php:1867
 msgid "This is a link to a page where are your suggestions for advertisers."
-msgstr "Dies ist ein Link zur Seite auf der Ihre Vorschläge für Banner sind."
+msgstr "Dieser Link führt zu der Seite des von ihnen vorgeschlagenen Inserenten."
 
 #: sam-admin-class.php:1870
 #: sam-admin-class.php:2233
@@ -1218,7 +1146,7 @@ msgstr "Codes"
 
 #: sam-admin-class.php:1927
 msgid "Enter the code to output before and after the codes of Ads Place."
-msgstr "geben Sie den Code output vor und nach einem Ads Palces ein"
+msgstr "geben Sie den Code output vor und nach einem Ads Places ein"
 
 #: sam-admin-class.php:1929
 msgid "Code Before"
@@ -1555,7 +1483,7 @@ msgstr "Ads Zonen ID"
 
 #: sam-admin-class.php:2735
 msgid "Enter description of this Ads Zone."
-msgstr "beschreibung für diese Ads Zone eingeben"
+msgstr "Beschreibung für diese Ads Zone eingeben"
 
 #: sam-admin-class.php:2747
 msgid "Ads Zone Settings"
@@ -1632,25 +1560,100 @@ msgstr "Ads Place für Datums Archivseiten"
 #: sam-admin-class.php:2876
 #, fuzzy
 msgid "Ads Places for Singular pages, for Pages of Taxonomies and for Archive pages are Ads Places by default for the low level pages of relevant pages."
-msgstr "Ads Places for Singular pages, for Pages of Taxonomies and for Archive pages are Ads Places by default for the low level pages of relevant pages."
+msgstr "Ads Places für einzelne Seiten, für Taxonomie Seiten und für Archiv Seiten sind standardmäßige Ads Places für Unterseiten von relevanten (wichtigen) Seiten."
 
-#. Plugin Name of the plugin/theme
-msgid "Simple Ads Manager"
-msgstr "Simple Ads Manager"
+#: sam-widget-class.php:10
+msgid "Ads Place:"
+msgstr "Ads Place:"
 
-#. Plugin URI of the plugin/theme
-msgid "http://www.simplelib.com/?p=480"
-msgstr "http://www.simplelib.com/?p=480"
+#: sam-widget-class.php:13
+msgid "Ads Place rotator serviced by Simple Ads Manager."
+msgstr "Ads Place Rotations Service von Simple Ads Manager"
 
-#. Description of the plugin/theme
-msgid "\"Simple Ads Manager\" is easy to use plugin providing a flexible logic of displaying advertisements. Visit <a href=\"http://www.simplelib.com/\">SimpleLib blog</a> for more details."
-msgstr "\"Simple Ads Manager\" is easy to use plugin providing a flexible logic of displaying advertisements. Visit <a href=\"http://www.simplelib.com/\">SimpleLib blog</a> for more details."
+#: sam-widget-class.php:15
+#: js/dialog.php:48
+msgid "Ads Place"
+msgstr "Ads Place"
 
-#. Author of the plugin/theme
-msgid "minimus"
-msgstr "minimus"
+#: sam-widget-class.php:101
+#: sam-widget-class.php:240
+#: sam-widget-class.php:375
+msgid "Title:"
+msgstr "Titel:"
 
-#. Author URI of the plugin/theme
-msgid "http://blogcoding.ru"
-msgstr "http://blogcoding.ru"
+#: sam-widget-class.php:124
+#: sam-widget-class.php:263
+#: sam-widget-class.php:398
+msgid "Hide widget style."
+msgstr "Versteckt Widget Style"
 
+#: sam-widget-class.php:133
+#: sam-widget-class.php:272
+#: sam-widget-class.php:407
+msgid "Allow using previously defined \"before\" and \"after\" codes of Ads Place.."
+msgstr "Erlaubt die Verwendung von früher definierten \"before\"\"and\"after\" codes "
+
+#: sam-widget-class.php:149
+#: sam-widget-class.php:154
+msgid "Ads Zone"
+msgstr "Ads Zone"
+
+#: sam-widget-class.php:152
+msgid "Ads Zone selector serviced by Simple Ads Manager."
+msgstr "Zonen Auswahl Service von Ads Manager"
+
+#: sam-widget-class.php:284
+msgid "Ad"
+msgstr "Banner"
+
+#: sam-widget-class.php:287
+msgid "Non-rotating single ad serviced by Simple Ads Manager."
+msgstr "Einfach Banner ohne Rotation aus Simple Ads Manager"
+
+#: sam-widget-class.php:289
+msgid "Single Ad"
+msgstr "Single Banner"
+
+#: js/dialog.php:27
+msgid "Insert Ads Place"
+msgstr "Ads Place hinzufügen"
+
+#: js/dialog.php:41
+msgid "Basic Settings"
+msgstr "Basis Einstellungen"
+
+#: js/dialog.php:69
+msgid "Ads Place Name"
+msgstr "Ads Plce Name"
+
+#: js/dialog.php:79
+msgid "Allow Ads Places predefined codes"
+msgstr "Erlaubt von Ads Place vordefinierte Codes"
+
+#: js/dialog.php:92
+msgid "Insert"
+msgstr "Einfügen"
+
+#~ msgid "Save Changes"
+#~ msgstr "Änderungen speichern"
+
+#~ msgid "Simple Ads Manager"
+#~ msgstr "Simple Ads Manager"
+
+#~ msgid "http://www.simplelib.com/?p=480"
+#~ msgstr "http://www.simplelib.com/?p=480"
+
+#~ msgid ""
+#~ "\"Simple Ads Manager\" is easy to use plugin providing a flexible logic "
+#~ "of displaying advertisements. Visit <a href=\"http://www.simplelib.com/"
+#~ "\">SimpleLib blog</a> for more details."
+#~ msgstr ""
+#~ "\"Simple Ads Manager\" is easy to use plugin providing a flexible logic "
+#~ "of displaying advertisements. Visit <a href=\"http://www.simplelib.com/"
+#~ "\">SimpleLib blog</a> for more details."
+
+#~ msgid "minimus"
+#~ msgstr "minimus"
+
+#~ msgid "http://blogcoding.ru"
+#~ msgstr "http://blogcoding.ru"

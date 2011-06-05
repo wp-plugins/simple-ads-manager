@@ -1673,8 +1673,8 @@ if ( !class_exists( 'SimpleAdsManagerAdmin' && class_exists('SimpleAdsManager') 
 						$updateRow = array(
 							'name' => $_POST['place_name'],
 							'description' => $_POST['description'],
-							'code_before' => $_POST['code_before'],
-							'code_after' => $_POST['code_after'],
+							'code_before' => stripslashes($_POST['code_before']),
+							'code_after' => stripslashes($_POST['code_after']),
               'place_size' => $_POST['place_size'],
 							'place_custom_width' => $_POST['place_custom_width'],
 							'place_custom_height' => $_POST['place_custom_height'],
