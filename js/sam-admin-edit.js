@@ -63,6 +63,7 @@
       });
       
       var availableCats = options.cats;
+      var availableAuthors = options.authors;
       
       function split( val ) {
         return val.split( /,\s*/ );
@@ -72,11 +73,30 @@
         return split( term ).pop();
       }
 
-      $( "#view_cats" ).autocomplete({
+      $( "#view_cats, #x_view_cats" ).autocomplete({
         minLength: 0,
         source: function( request, response ) {
           response( $.ui.autocomplete.filter(
             availableCats, extractLast( request.term ) ) );
+        },
+        focus: function() {
+          return false;
+        },
+        select: function( event, ui ) {
+          var terms = split( this.value );
+          terms.pop();
+          terms.push( ui.item.value );
+          terms.push( "" );
+          this.value = terms.join( "," );
+          return false;
+        }
+      });
+      
+      $( "#view_authors, #x_view_authors" ).autocomplete({
+        minLength: 0,
+        source: function( request, response ) {
+          response( $.ui.autocomplete.filter(
+            availableAuthors, extractLast( request.term ) ) );
         },
         focus: function() {
           return false;
