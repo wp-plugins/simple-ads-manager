@@ -47,7 +47,7 @@ Simple Ads Manager is easy to use plugin providing a flexible logic of displayin
 = Available languages =
 * English
 * Russian
-* German by [Fabian Krenzler](http://www.ktraces.de/)
+* German by [Fabian Krenzler](http://www.ktraces.de/) and **Ulrich Simon**
 
 If you have created your own language pack, or have an update of an existing one, you can send **.po** and **.mo files** to me (minimus AT simplelib.com) so that I can bundle it into **Simple Ads Manager** plugin pack.
   
