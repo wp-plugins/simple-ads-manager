@@ -2,9 +2,9 @@
 Contributors: minimus
 Donate link: https://load.payoneer.com/LoadToPage.aspx?email=minimus@simplelib.com
 Tags: ad, adbrite, adgridwork, adify, admin, adpinion, adroll, ads, adsense, adserver, advertisement, advertising, affiliate, banner, banners, chitika, cj, commercial, commission, crispads, dfp, google, income, junction, link, manager, media, money, plugin, random, referral, revenue, rotator, seo, server, shoppingads, widget, widgetbucks, yahoo, ypn
-Requires at least: 3.0
-Tested up to: 3.2
-Stable tag: 0.6.25
+Requires at least: 3.1
+Tested up to: 3.2.1
+Stable tag: 1.0.31
 
 Advertisment rotation system with a flexible logic of displaying advertisements.
 
@@ -20,15 +20,19 @@ Simple Ads Manager is easy to use plugin providing a flexible logic of displayin
 * Allowed types of ad's codes are HTML, javascript, PHP
 * Outputting ads as widget
 * Outputting ads as shortcodes in any place of single post/page content
-* Outputting ads in any place of theme template using `drawAdsPlace` function
+* Outputting ads in any place of theme template using functions
 * Automatic outputting ads in single post/page if allowed
 * Customizable limitation of displaying advertisements by types of page
 * Customizable limitation of displaying advertisements on single post/page by post/page ID (IDs)
 * Customizable limitation of displaying advertisements on single post page or category archive page by category (categories)
 * Customizable limitation of displaying advertisements on single post page or author archive page by author (authors)
+* Customizable limitation of displaying advertisements on single post page or tag archive page by tag (tags)
+* Customizable limitation of displaying advertisements on custom type single post page or custom type archive page by Custom Type (Types)
 * Customizable blocking of displaying advertisements on single post/page by post/page ID (IDs)
 * Customizable blocking of displaying advertisements on single post page or category archive page by category (categories)
 * Customizable blocking of displaying advertisements on single post page or author archive page by author (authors)
+* Customizable blocking of displaying advertisements on single post page or tag archive page by tag (tags)
+* Customizable blocking of displaying advertisements on custom type single post page or custom type archive page by Custom Type (Types)
 * Schedule of displaying each advertisment if allowed
 * Customizable limitation of displaying advertisements by hits
 * Customizable limitation of displaying advertisements by clicks
@@ -38,12 +42,12 @@ Simple Ads Manager is easy to use plugin providing a flexible logic of displayin
 * Counting revenue from ads placement, display ads and clicks on advertisements 
 
 = Requirements =
-* PHP 5.3.0+
+* PHP 5.2.14+
 
 = Available languages =
 * English
 * Russian
-* German by [Fabian Krenzler](http://www.ktraces.de/) and **Ulrich Simon**
+* German by [Fabian Krenzler](http://www.ktraces.de/)
 
 If you have created your own language pack, or have an update of an existing one, you can send **.po** and **.mo files** to me (minimus AT simplelib.com) so that I can bundle it into **Simple Ads Manager** plugin pack.
   
@@ -75,11 +79,18 @@ No questions now...
 
 == Changelog ==
 
+= 1.0.31 =
+* Ads Blocks object is added.
+* Ads Blocks widget is added.
+* Custom Types supporting are added.
+* Limitations by tags are added.
+* Some improvements are added.
+* Some fixes are made. 
 = 0.6.25 =
 * Language pack was updated by **Ulrich Simon** (German Language). 
 * Some fixes are made.
 = 0.6.23 =
-* Ad clicks counting bug is fixed.
+* Click counting bug is fixed.
 = 0.5.22 =
 * Language pack is updated. German by [Fabian Krenzler](http://www.ktraces.de/) is added.
 = 0.5.21 =
@@ -113,11 +124,18 @@ No questions now...
 
 == Upgrade Notice ==
 
+= 1.0.31 =
+Ads Blocks object is added. 
+Ads Blocks widget is added. 
+Custom Types supporting are added. 
+Limitations by tags are added. 
+Some improvements are added. 
+Some fixes are made. 
 = 0.6.25 =
 Language pack was updated by Ulrich Simon (German Language). 
-Some fixes are made. 
+Some fixes are made.
 = 0.6.23 =
-Ad clicks counting bug is fixed.
+Click counting bug is fixed.
 = 0.5.22 =
 Language pack is updated. German by [Fabian Krenzler](http://www.ktraces.de/) is added.
 = 0.5.21 =

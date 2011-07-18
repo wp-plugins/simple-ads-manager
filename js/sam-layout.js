@@ -6,11 +6,11 @@
         type: "POST",
         url: samAjax.ajaxurl,
         data: {
-          action: 'sam_click', 
+          action: "sam_click", 
           sam_ad_id: adId,
           _ajax_nonce: samAjax._ajax_nonce
         },
-        async: true
+        async: false
       });
     });
   });

@@ -64,6 +64,8 @@
       
       var availableCats = options.cats;
       var availableAuthors = options.authors;
+      var availableTags = options.tags;
+      var availableCustoms = options.customs;
       
       function split( val ) {
         return val.split( /,\s*/ );
@@ -97,6 +99,44 @@
         source: function( request, response ) {
           response( $.ui.autocomplete.filter(
             availableAuthors, extractLast( request.term ) ) );
+        },
+        focus: function() {
+          return false;
+        },
+        select: function( event, ui ) {
+          var terms = split( this.value );
+          terms.pop();
+          terms.push( ui.item.value );
+          terms.push( "" );
+          this.value = terms.join( "," );
+          return false;
+        }
+      });
+      
+      $( "#view_tags, #x_view_tags" ).autocomplete({
+        minLength: 0,
+        source: function( request, response ) {
+          response( $.ui.autocomplete.filter(
+            availableTags, extractLast( request.term ) ) );
+        },
+        focus: function() {
+          return false;
+        },
+        select: function( event, ui ) {
+          var terms = split( this.value );
+          terms.pop();
+          terms.push( ui.item.value );
+          terms.push( "" );
+          this.value = terms.join( "," );
+          return false;
+        }
+      });
+      
+      $( "#view_custom, #x_view_custom" ).autocomplete({
+        minLength: 0,
+        source: function( request, response ) {
+          response( $.ui.autocomplete.filter(
+            availableCustoms, extractLast( request.term ) ) );
         },
         focus: function() {
           return false;
