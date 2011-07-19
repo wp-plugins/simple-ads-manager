@@ -50,8 +50,10 @@ if(!class_exists('SamAd')) {
         $aEnd ='';
         $iTag = '';
         if(!empty($ad['ad_target'])) {
-          $aStart = ((in_array((integer)$ad['ad_no'], array(2,3))) ? '<noindex>' : '')."<a href='{$ad['ad_target']}' target='_blank' ".((in_array((integer)$ad['ad_no'], array(1,3))) ? " rel='nofollow'" : '').">";
-          $aEnd = "</a>".(in_array((integer)$ad['ad_no'], array(2,3))) ? '</noindex>' : '';
+          //$aStart = ((in_array((integer)$ad['ad_no'], array(2,3))) ? '<noindex>' : '')."<a href='{$ad['ad_target']}' target='_blank' ".((in_array((integer)$ad['ad_no'], array(1,3))) ? " rel='nofollow'" : '').">";
+          //$aEnd = "</a>".(in_array((integer)$ad['ad_no'], array(2,3))) ? '</noindex>' : '';
+          $aStart = "<a href='{$ad['ad_target']}' target='_blank' ".">";
+          $aEnd = "</a>";
         }
         if(!empty($ad['ad_img'])) $iTag = "<img $outId src='{$ad['ad_img']}' ".((!empty($ad['ad_alt'])) ? " alt={$ad['ad_alt']} " : '')." />";
         $output = $aStart.$iTag.$aEnd;
@@ -343,8 +345,10 @@ if(!class_exists('SamAdPlace')) {
           if(!empty($settings['adDisplay'])) $target = '_'.$settings['adDisplay'];
           else $target = '_blank';
           if(!empty($ad['ad_target'])) {
-            $aStart = ((in_array((integer)$ad['ad_no'], array(2,3))) ? '<noindex>' : '')."<a href='{$ad['ad_target']}' target='$target' ".((in_array((integer)$ad['ad_no'], array(1,3))) ? " rel='nofollow'" : '').">";
-            $aEnd = "</a>".(in_array((integer)$ad['ad_no'], array(2,3))) ? '</noindex>' : '';
+            //$aStart = ((in_array((integer)$ad['ad_no'], array(2,3))) ? '<noindex>' : '')."<a href='{$ad['ad_target']}' target='$target' ".((in_array((integer)$ad['ad_no'], array(1,3))) ? " rel='nofollow'" : '').">";
+            //$aEnd = "</a>".(in_array((integer)$ad['ad_no'], array(2,3))) ? '</noindex>' : '';
+            $aStart = "<a href='{$ad['ad_target']}' target='$target' ".">";
+            $aEnd = "</a>";
           }
           if(!empty($ad['ad_img'])) $iTag = "<img $outId src='{$ad['ad_img']}' ".((!empty($ad['ad_alt'])) ? " alt={$ad['ad_alt']} " : '')." />";
           $output = $aStart.$iTag.$aEnd;

@@ -839,7 +839,7 @@ if(!class_exists('SamPlaceEdit')) {
                   <p><strong><?php _e('Use carefully!', SAM_DOMAIN) ?></strong> <?php _e("Do not use if the wp-admin folder is password protected. In this case the viewer will be prompted to enter a username and password during ajax request. It's not good.", SAM_DOMAIN) ?></p>
                   <p>
                     <label for='ad_no'><strong><?php echo __('Add to ad', SAM_DOMAIN).':'; ?></strong></label>
-                    <select name='ad_no' id='ad_no'>
+                    <select name='ad_no' id='ad_no' disabled='disabled'>
                       <option value='0' <?php selected(0, $row['ad_no']); ?>><?php _e('Non Selected', SAM_DOMAIN) ?></option>
                       <option value='1' <?php selected(1, $row['ad_no']); ?>><?php _e('nofollow', SAM_DOMAIN) ?></option>
                       <option value='2' <?php selected(2, $row['ad_no']); ?>><?php _e('noindex', SAM_DOMAIN) ?></option>
