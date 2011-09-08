@@ -239,6 +239,11 @@ if(!class_exists('SamBlockEditor')) {
   <form method="post" action="<?php echo $_SERVER["REQUEST_URI"]; ?>">
     <div class="icon32" style="background: url('<?php echo SAM_IMG_URL.'sam-editor.png'; ?>') no-repeat transparent; "><br/></div>
     <h2><?php echo ( ( ($action === 'new') && ( $row['id'] === __('Undefined', SAM_DOMAIN) ) ) ? __('New Ads Block', SAM_DOMAIN) : __('Edit Ads Block', SAM_DOMAIN).' ('.$item.')' ); ?></h2>
+    <?php
+      include_once('errors.class.php');
+      $errors = new samErrors();
+      if(!empty($errors->errorString)) echo $errors->errorString;
+    ?>
     <div class="metabox-holder has-right-sidebar" id="poststuff">
       <div id="side-info-column" class="inner-sidebar">
         <div class="meta-box-sortables ui-sortable">

@@ -761,7 +761,12 @@ if ( !class_exists( 'SimpleAdsManagerAdmin' && class_exists('SimpleAdsManager') 
 				<?php screen_icon("options-general"); ?>
 				<h2><?php  _e('Simple Ads Manager Settings', SAM_DOMAIN); ?></h2>
 				<?php
-				if(isset($_GET['settings-updated'])) $updated = $_GET['settings-updated'];
+				/*$shell = $this->checkShell();
+        if(!empty($shell)) echo $shell;*/
+        include_once('errors.class.php');
+        $errors = new samErrors();
+        if(!empty($errors->errorString)) echo $errors->errorString;
+        if(isset($_GET['settings-updated'])) $updated = $_GET['settings-updated'];
         elseif(isset($_GET['updated'])) $updated = $_GET['updated'];
 				if($updated === 'true') {
           parent::getSettings(true);

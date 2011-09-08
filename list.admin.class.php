@@ -135,6 +135,11 @@ if(!class_exists('SamPlaceList')) {
 <div class='wrap'>
   <div class="icon32" style="background: url('<?php echo SAM_IMG_URL.'sam-list.png' ?>') no-repeat transparent; "><br/></div>
   <h2><?php _e('Managing Ads Places', SAM_DOMAIN); ?></h2>
+  <?php
+    include_once('errors.class.php');
+    $errors = new samErrors();
+    if(!empty($errors->errorString)) echo $errors->errorString;
+  ?>
   <ul class="subsubsub">
     <li><a <?php if($mode === 'all') echo 'class="current"';?> href="<?php echo admin_url('admin.php'); ?>?page=sam-list&action=places&mode=all"><?php _e('All', SAM_DOMAIN); ?></a> (<?php echo $all_num; ?>) | </li>
     <li><a <?php if($mode === 'active') echo 'class="current"';?> href="<?php echo admin_url('admin.php'); ?>?page=sam-list&action=places&mode=active"><?php _e('Active', SAM_DOMAIN); ?></a> (<?php echo $active_num; ?>) | </li>
@@ -314,6 +319,11 @@ if(!class_exists('SamPlaceList')) {
 <div class="wrap">
   <div class="icon32" style="background: url('<?php echo SAM_IMG_URL.'sam-list.png'; ?>') no-repeat transparent; "><br/></div>
   <h2><?php echo __('Managing Items of Ads Place', SAM_DOMAIN).' "'.$places['name'].'" ('.$item.') '; ?></h2>
+  <?php
+    include_once('errors.class.php');
+    $errors = new samErrors();
+    if(!empty($errors->errorString)) echo $errors->errorString;
+  ?>
   <ul class="subsubsub">
     <li><a <?php if($mode === 'all') echo 'class="current"';?> href="<?php echo admin_url('admin.php'); ?>?page=sam-list&action=items&mode=all&item=<?php echo $item ?>"><?php _e('All', SAM_DOMAIN); ?></a> (<?php echo $all_num; ?>) | </li>
     <li><a <?php if($mode === 'active') echo 'class="current"';?> href="<?php echo admin_url('admin.php'); ?>?page=sam-list&action=items&mode=active&item=<?php echo $item ?>"><?php _e('Active', SAM_DOMAIN); ?></a> (<?php echo $active_num; ?>) | </li>

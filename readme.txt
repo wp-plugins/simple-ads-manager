@@ -4,7 +4,7 @@ Donate link: https://load.payoneer.com/LoadToPage.aspx?email=minimus@simplelib.c
 Tags: ad, adbrite, adgridwork, adify, admin, adpinion, adroll, ads, adsense, adserver, advertisement, advertising, affiliate, banner, banners, chitika, cj, commercial, commission, crispads, dfp, google, income, junction, link, manager, media, money, plugin, random, referral, revenue, rotator, seo, server, shoppingads, widget, widgetbucks, yahoo, ypn
 Requires at least: 3.1
 Tested up to: 3.2.1
-Stable tag: 1.0.33
+Stable tag: 1.0.35
 
 Advertisment rotation system with a flexible logic of displaying advertisements.
 
@@ -21,6 +21,7 @@ Simple Ads Manager is easy to use plugin providing a flexible logic of displayin
 * Outputting ads as widget
 * Outputting ads as shortcodes in any place of single post/page content
 * Outputting ads in any place of theme template using functions
+* Customizable outputting ads as block of ads
 * Automatic outputting ads in single post/page if allowed
 * Customizable limitation of displaying advertisements by types of page
 * Customizable limitation of displaying advertisements on single post/page by post/page ID (IDs)
@@ -79,9 +80,10 @@ No questions now...
 
 == Changelog ==
 
+= 1.0.35 =
+* System of Checking Errors is added.
+* Some minor improvements are made.
 = 1.0.33 =
-* Quick patch (rollback of noindex|nofollow feature)! Bug of Automatic Insertion are fixed.
-= 1.0.32 =
 * Ads Blocks object is added.
 * Ads Blocks widget is added.
 * Custom Types supporting are added.
