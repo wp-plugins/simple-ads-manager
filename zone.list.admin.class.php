@@ -109,9 +109,8 @@ if(!class_exists('SamZoneList')) {
       $i = 0;
       if(!is_array($zones) || empty ($zones)) {
       ?>
-      <tr id="g0" class="alternate author-self status-publish iedit" valign="top">
-        <th class="post-title column-title">0</th>
-        <th class="author column-author"><?php _e('There are no data ...', SAM_DOMAIN).$pTable; ?></th>
+      <tr id="g0" class="no-items" valign="top">
+        <th class="colspanchange" colspan='2'><?php _e('There are no data ...', SAM_DOMAIN).$pTable; ?></th>
       </tr>
         <?php } else {
           foreach($zones as $row) {            

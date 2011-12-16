@@ -212,9 +212,8 @@ if(!class_exists('SamPlaceList')) {
           $i = 0;
           if(!is_array($places) || empty ($places)) {
         ?>
-      <tr id="g0" class="alternate author-self status-publish iedit" valign="top">
-        <th class="post-title column-title">0</th>
-        <th class="author column-author"><?php _e('There are no data ...', SAM_DOMAIN).$pTable; ?></th>
+      <tr class="no-items">
+        <th class="colspanchange" colspan='7'><?php _e('There are no data ...', SAM_DOMAIN).$pTable; ?></th>
       </tr>
         <?php } else {
           switch($options['currency']) {
@@ -415,9 +414,8 @@ if(!class_exists('SamPlaceList')) {
           $i = 0;
           if(!is_array($items) || empty($items)) {
         ?>
-      <tr id="g0" class="alternate author-self status-publish iedit" valign="top">
-        <th class="post-title column-title">0</th>
-        <th class="author column-author"><?php _e('There are no data ...', SAM_DOMAIN); ?></th>
+      <tr class="no-items" valign="top">
+        <th class="colspanchange" colspan='6'><?php _e('There are no data ...', SAM_DOMAIN); ?></th>
       </tr>
         <?php 
           } 

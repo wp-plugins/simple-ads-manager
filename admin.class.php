@@ -9,7 +9,7 @@ if ( !class_exists( 'SimpleAdsManagerAdmin' && class_exists('SimpleAdsManager') 
     private $editBlock;
     private $listBlock;
     
-    function __construct() {
+    public function __construct() {
       parent::__construct();
       
 			if ( function_exists( 'load_plugin_textdomain' ) )
@@ -29,16 +29,18 @@ if ( !class_exists( 'SimpleAdsManagerAdmin' && class_exists('SimpleAdsManager') 
       add_filter('contextual_help', array(&$this, 'help'), 10, 3);
       
       $versions = parent::getVersions(true);
-      if(empty($versions) || version_compare($versions['sam'], SAM_VERSION, '<')) self::updateDB();
+      if(empty($versions) || 
+         version_compare($versions['sam'], SAM_VERSION, '<') ||
+         version_compare($versions['db'], SAM_DB_VERSION, '<')) self::updateDB();
     }
     
-    function onActivate() {
+    public function onActivate() {
       $settings = parent::getSettings(true);
 			update_option( SAM_OPTIONS_NAME, $settings );
 			self::updateDB();
     }
     
-    function onDeactivate() {
+    public function onDeactivate() {
       global $wpdb;
 			$zTable = $wpdb->prefix . "sam_zones";
       $pTable = $wpdb->prefix . "sam_places";					
@@ -64,9 +66,9 @@ if ( !class_exists( 'SimpleAdsManagerAdmin' && class_exists('SimpleAdsManager') 
       }
     }
     
-    function getVersionData($version) {
+    private function getVersionData($version) {
       $output = array();
-      $vArray = split('.', $version);
+      $vArray = explode('.', $version);
       
       $output['major'] = (integer)$vArray[0];
       $output['minor'] = (integer)$vArray[1];
@@ -76,8 +78,8 @@ if ( !class_exists( 'SimpleAdsManagerAdmin' && class_exists('SimpleAdsManager') 
       return $output;
     }
     
-    function updateDB() {
-      global $wpdb;
+    private function updateDB() {
+      global $wpdb, $charset_collate;
       $pTable = $wpdb->prefix . "sam_places";          
       $aTable = $wpdb->prefix . "sam_ads";
       $zTable = $wpdb->prefix . "sam_zones";
@@ -109,14 +111,19 @@ if ( !class_exists( 'SimpleAdsManagerAdmin' && class_exists('SimpleAdsManager') 
                     patch_hits INT(11) DEFAULT 0,
                     trash TINYINT(1) DEFAULT 0,
                     PRIMARY KEY  (id)
-                   )";
+                   ) $charset_collate;";
           dbDelta($pSql);
         }
         elseif($dbVersion == '0.1' || $dbVersion == '0.2') {
           $pSql = "ALTER TABLE $pTable 
+                     CONVERT TO $charset_collate,
                      ADD COLUMN patch_dfp VARCHAR(255) DEFAULT NULL,
                      ADD COLUMN patch_adserver TINYINT(1) DEFAULT 0,
                      ADD COLUMN patch_hits INT(11) DEFAULT 0;";
+          $wpdb->query($pSql);
+        }
+        elseif($vData['major'] < 2) {
+          $pSql = "ALTER TABLE $pTable CONVERT TO $charset_collate;";
           $wpdb->query($pSql);
         }
         
@@ -171,11 +178,12 @@ if ( !class_exists( 'SimpleAdsManagerAdmin' && class_exists('SimpleAdsManager') 
                   per_month DECIMAL(10,2) UNSIGNED DEFAULT 0.00,
                   trash TINYINT(1) NOT NULL DEFAULT 0,
                   PRIMARY KEY  (id, pid)
-                )";
+                ) $charset_collate;";
           dbDelta($aSql);
         }
         elseif($dbVersion == '0.1') {
           $aSql = "ALTER TABLE $aTable 
+                      CONVERT TO $charset_collate,
                       MODIFY view_pages set('isHome','isSingular','isSingle','isPage','isAttachment','isSearch','is404','isArchive','isTax','isCategory','isTag','isAuthor','isDate','isPostType','isPostTypeArchive') default NULL,
                       ADD COLUMN ad_alt TEXT DEFAULT NULL,
                       ADD COLUMN ad_no TINYINT(1) NOT NULL DEFAULT 0,
@@ -213,6 +221,7 @@ if ( !class_exists( 'SimpleAdsManagerAdmin' && class_exists('SimpleAdsManager') 
         }
         elseif($dbVersion == '0.2' || $dbVersion == '0.3' || $dbVersion == '0.3.1') {
           $aSql = "ALTER TABLE $aTable
+                      CONVERT TO $charset_collate,
                       MODIFY view_pages set('isHome','isSingular','isSingle','isPage','isAttachment','isSearch','is404','isArchive','isTax','isCategory','isTag','isAuthor','isDate','isPostType','isPostTypeArchive') default NULL,
                       ADD COLUMN ad_alt TEXT DEFAULT NULL,
                       ADD COLUMN ad_no TINYINT(1) NOT NULL DEFAULT 0,
@@ -241,6 +250,7 @@ if ( !class_exists( 'SimpleAdsManagerAdmin' && class_exists('SimpleAdsManager') 
         }
         elseif($dbVersion == '0.4' || $dbVersion == '0.5') {
           $aSql = "ALTER TABLE $aTable
+                      CONVERT TO $charset_collate,
                       MODIFY view_pages set('isHome','isSingular','isSingle','isPage','isAttachment','isSearch','is404','isArchive','isTax','isCategory','isTag','isAuthor','isDate','isPostType','isPostTypeArchive') default NULL,
                       ADD COLUMN ad_alt TEXT DEFAULT NULL,
                       ADD COLUMN ad_no TINYINT(1) NOT NULL DEFAULT 0,
@@ -262,6 +272,7 @@ if ( !class_exists( 'SimpleAdsManagerAdmin' && class_exists('SimpleAdsManager') 
         }
         elseif($dbVersion == "0.5.1") {
           $aSql = "ALTER TABLE $aTable
+                      CONVERT TO $charset_collate,
                       MODIFY view_pages set('isHome','isSingular','isSingle','isPage','isAttachment','isSearch','is404','isArchive','isTax','isCategory','isTag','isAuthor','isDate','isPostType','isPostTypeArchive') default NULL,
                       ADD COLUMN ad_alt TEXT DEFAULT NULL,
                       ADD COLUMN ad_no TINYINT(1) NOT NULL DEFAULT 0,
@@ -273,6 +284,10 @@ if ( !class_exists( 'SimpleAdsManagerAdmin' && class_exists('SimpleAdsManager') 
                       ADD COLUMN x_view_tags VARCHAR(255) DEFAULT NULL,
                       ADD COLUMN x_custom TINYINT(1) DEFAULT 0,
                       ADD COLUMN x_view_custom VARCHAR(255) DEFAULT NULL;";
+          $wpdb->query($aSql);
+        }
+        elseif($vData['major'] < 2) {
+          $aSql = "ALTER TABLE $aTable CONVERT TO $charset_collate;";
           $wpdb->query($aSql);
         }
         
@@ -303,15 +318,20 @@ if ( !class_exists( 'SimpleAdsManagerAdmin' && class_exists('SimpleAdsManager') 
                     z_archive_ct LONGTEXT DEFAULT NULL,
                     trash TINYINT(1) DEFAULT 0,
                     PRIMARY KEY (id)
-                  );";
+                  ) $charset_collate;";
           dbDelta($zSql);
         }
         elseif(in_array($dbVersion, array('0.1', '0.2', '0.3', '0.3.1', '0.4', '0.5', '0.5.1'))) {
           $zSql = "ALTER TABLE $zTable
+                      CONVERT TO $charset_collate,
                       ADD COLUMN z_ct INT(11) DEFAULT 0,
                       ADD COLUMN z_cts INT(11) DEFAULT 0,
                       ADD COLUMN z_single_ct LONGTEXT DEFAULT NULL,
                       ADD COLUMN z_archive_ct LONGTEXT DEFAULT NULL;";
+          $wpdb->query($zSql);
+        }
+        elseif($vData['major'] < 2) {
+          $zSql = "ALTER TABLE $zTable CONVERT TO $charset_collate;";
           $wpdb->query($zSql);
         }
         
@@ -333,8 +353,12 @@ if ( !class_exists( 'SimpleAdsManagerAdmin' && class_exists('SimpleAdsManager') 
                       i_border VARCHAR(30) DEFAULT '0px solid #333333',
                       trash TINYINT(1) DEFAULT 0,
                       PRIMARY KEY (id)
-                  );";
+                  ) $charset_collate;";
           dbDelta($bSql);
+        }
+        elseif($vData['major'] < 2) {
+          $bSql = "ALTER TABLE $bTable CONVERT TO $charset_collate;";
+          $wpdb->query($bSql);
         }
         update_option('sam_db_version', SAM_DB_VERSION);
       }
@@ -342,7 +366,7 @@ if ( !class_exists( 'SimpleAdsManagerAdmin' && class_exists('SimpleAdsManager') 
       $this->getVersions(true);
     }
 		
-		function initSettings() {
+		public function initSettings() {
 			register_setting('samOptions', SAM_OPTIONS_NAME);
       add_settings_section("sam_general_section", __("General Settings", SAM_DOMAIN), array(&$this, "drawGeneralSection"), 'sam-settings');
       add_settings_section("sam_single_section", __("Auto Inserting Settings", SAM_DOMAIN), array(&$this, "drawSingleSection"), 'sam-settings');
@@ -367,7 +391,8 @@ if ( !class_exists( 'SimpleAdsManagerAdmin' && class_exists('SimpleAdsManager') 
       add_settings_field('detectBots', __("Allow Bots and Crawlers detection", SAM_DOMAIN), array(&$this, 'drawCheckboxOption'), 'sam-settings', 'sam_statistic_section', array('label_for' => 'detectBots', 'checkbox' => true));
       add_settings_field('detectingMode', __("Accuracy of Bots and Crawlers Detection", SAM_DOMAIN), array(&$this, 'drawRadioOption'), 'sam-settings', 'sam_statistic_section', array('description' => __("If bot is detected hits of ads won't be counted. Use with caution! More exact detection requires more server resources.", SAM_DOMAIN), 'options' => array( 'inexact' => __('Inexact detection', SAM_DOMAIN), 'exact' => __('Exact detection', SAM_DOMAIN), 'more' => __('More exact detection', SAM_DOMAIN))));
       add_settings_field('currency', __("Display of Currency", SAM_DOMAIN), array(&$this, 'drawRadioOption'), 'sam-settings', 'sam_statistic_section', array('description' => __("Define display of currency. Auto - auto detection of currency from blog settings. USD, EUR - Forcing the display of currency to U.S. dollars or Euro.", SAM_DOMAIN), 'options' => array( 'auto' => __('Auto', SAM_DOMAIN), 'usd' => __('USD', SAM_DOMAIN), 'euro' => __('EUR', SAM_DOMAIN))));
-      
+
+      add_settings_field('editorButtonMode', __("TinyMCE Editor Button Mode", SAM_DOMAIN), array(&$this, 'drawRadioOption'), 'sam-settings', 'sam_layout_section', array('description' => __('If you do not want to use the modern dropdown button in your TinyMCE editor, or use of this button causes a problem, you can use classic TinyMCE buttons. In this case select "Classic TinyMCE Buttons".', SAM_DOMAIN), 'options' => array('modern' => __('Modern TinyMCE Button', SAM_DOMAIN), 'classic' => __('Classic TinyMCE Buttons', SAM_DOMAIN))));
       add_settings_field('placesPerPage', __("Ads Places per Page", SAM_DOMAIN), array(&$this, 'drawTextOption'), 'sam-settings', 'sam_layout_section', array('description' => __('Ads Places Management grid pagination. How many Ads Places will be shown on one page of grid.', SAM_DOMAIN)));
 			add_settings_field('itemsPerPage', __("Ads per Page", SAM_DOMAIN), array(&$this, 'drawTextOption'), 'sam-settings', 'sam_layout_section', array('description' => __('Ads of Ads Place Management grid pagination. How many Ads will be shown on one page of grid.', SAM_DOMAIN)));
       
@@ -378,7 +403,7 @@ if ( !class_exists( 'SimpleAdsManagerAdmin' && class_exists('SimpleAdsManager') 
       register_setting('sam-settings', SAM_OPTIONS_NAME, array(&$this, 'sanitizeSettings'));
 		}
     
-    function regAdminPage() {
+    public function regAdminPage() {
 			$menuPage = add_object_page(__('Ads', SAM_DOMAIN), __('Ads', SAM_DOMAIN), 8, 'sam-list', array(&$this, 'samTablePage'), WP_PLUGIN_URL.'/simple-ads-manager/images/sam-icon.png');
 			$this->listPage = add_submenu_page('sam-list', __('Ads List', SAM_DOMAIN), __('Ads Places', SAM_DOMAIN), 8, 'sam-list', array(&$this, 'samTablePage'));
 			add_action('admin_print_styles-'.$this->listPage, array(&$this, 'adminListStyles'));
@@ -397,7 +422,7 @@ if ( !class_exists( 'SimpleAdsManagerAdmin' && class_exists('SimpleAdsManager') 
       add_action('admin_print_styles-'.$this->settingsPage, array(&$this, 'adminSettingsStyles'));
 		}
     
-    function help($contextualHelp, $screenId, $screen) {
+    public function help($contextualHelp, $screenId, $screen) {
       if ($screenId == $this->editPage) {
         if($_GET['mode'] == 'item') {
           $contextualHelp = '<div class="sam-contextual-help">';
@@ -465,21 +490,21 @@ if ( !class_exists( 'SimpleAdsManagerAdmin' && class_exists('SimpleAdsManager') 
       return $contextualHelp;
     }
     
-    function adminEditStyles() {
+    public function adminEditStyles() {
       wp_enqueue_style('adminEditLayout', SAM_URL.'css/sam-admin-edit.css', false, SAM_VERSION);
       wp_enqueue_style('jquery-ui-css', SAM_URL.'css/jquery-ui-1.8.9.custom.css', false, '1.8.9');
       wp_enqueue_style('ColorPickerCSS', SAM_URL.'css/colorpicker.css');
     }
     
-    function adminSettingsStyles() {
+    public function adminSettingsStyles() {
       wp_enqueue_style('adminSettingsLayout', SAM_URL.'css/sam-admin-edit.css', false, SAM_VERSION);
     }
     
-    function adminListStyles() {
+    public function adminListStyles() {
       wp_enqueue_style('adminListLayout', SAM_URL.'css/sam-admin-list.css', false, SAM_VERSION);
     }
     
-    function adminEditScripts() {
+    public function adminEditScripts() {
       $loc = get_locale();
       if(in_array($loc, array('en_GB', 'fr_CH', 'pt_BR', 'sr_SR', 'zh_CN', 'zh_HK', 'zh_TW')))
         $lc = str_replace('_', '-', $loc);
@@ -521,7 +546,7 @@ if ( !class_exists( 'SimpleAdsManagerAdmin' && class_exists('SimpleAdsManager') 
       return $output;
     }
     
-    function uploadHandler() {
+    public function uploadHandler() {
       $uploaddir = SAM_AD_IMG;  
       $file = $uploaddir . basename($_FILES['uploadfile']['name']);   
 
@@ -532,7 +557,7 @@ if ( !class_exists( 'SimpleAdsManagerAdmin' && class_exists('SimpleAdsManager') 
       }
     }
     
-    function getStringsHandler() {
+    public function getStringsHandler() {
       global $wpdb;
       $tTable = $wpdb->prefix . "terms";
       $ttTable = $wpdb->prefix . "term_taxonomy";
@@ -603,7 +628,7 @@ if ( !class_exists( 'SimpleAdsManagerAdmin' && class_exists('SimpleAdsManager') 
       exit(json_encode($output));
     }
 		
-		function doSettingsSections($page) {
+		public function doSettingsSections($page) {
       global $wp_settings_sections, $wp_settings_fields;
 
       if ( !isset($wp_settings_sections) || !isset($wp_settings_sections[$page]) )
@@ -624,7 +649,7 @@ if ( !class_exists( 'SimpleAdsManagerAdmin' && class_exists('SimpleAdsManager') 
       }
     }
     
-    function doSettingsFields($page, $section) {
+    public function doSettingsFields($page, $section) {
 			global $wp_settings_fields;
 
 			if ( !isset($wp_settings_fields) || !isset($wp_settings_fields[$page]) || !isset($wp_settings_fields[$page][$section]) )
@@ -651,7 +676,7 @@ if ( !class_exists( 'SimpleAdsManagerAdmin' && class_exists('SimpleAdsManager') 
 			}
 		}
     
-    function sanitizeSettings($input) {
+    public function sanitizeSettings($input) {
       global $wpdb;
       
       $pTable = $wpdb->prefix . "sam_places";
@@ -665,31 +690,31 @@ if ( !class_exists( 'SimpleAdsManagerAdmin' && class_exists('SimpleAdsManager') 
       return $output;
     }
     
-    function drawGeneralSection() {
+    public function drawGeneralSection() {
       echo '<p>'.__('There are general options.', SAM_DOMAIN).'</p>';
     }
     
-    function drawSingleSection() {
+    public function drawSingleSection() {
       echo '<p>'.__('Single post/page auto inserting options. Use these parameters for allowing/defining Ads Places which will be automatically inserted before/after post/page content.', SAM_DOMAIN).'</p>';
     }
     
-    function drawDFPSection() {
+    public function drawDFPSection() {
       echo '<p>'.__('Adjust parameters of your Google DFP account.', SAM_DOMAIN).'</p>';
     }
     
-    function drawStatisticsSection() {
+    public function drawStatisticsSection() {
       echo '<p>'.__('Adjust parameters of plugin statistics.', SAM_DOMAIN).'</p>';
     }
 		
-		function drawLayoutSection() {
+		public function drawLayoutSection() {
 			echo '<p>'.__('This options define layout for Ads Managin Pages.', SAM_DOMAIN).'</p>';
 		}
     
-    function drawDeactivateSection() {
+    public function drawDeactivateSection() {
 			echo '<p>'.__('Are you allow to perform these actions during deactivating plugin?', SAM_DOMAIN).'</p>';
 		}
     
-    function drawTextOption( $id, $args ) {
+    public function drawTextOption( $id, $args ) {
       $settings = parent::getSettings();
       $width = $args['width'];
       ?>
@@ -701,7 +726,7 @@ if ( !class_exists( 'SimpleAdsManagerAdmin' && class_exists('SimpleAdsManager') 
       <?php
     }
 
-    function drawCheckboxOption( $id, $args ) {
+    public function drawCheckboxOption( $id, $args ) {
 			$settings = parent::getSettings();
 			?>
 				<input id="<?php echo $id; ?>"
@@ -712,7 +737,7 @@ if ( !class_exists( 'SimpleAdsManagerAdmin' && class_exists('SimpleAdsManager') 
 			<?php
 		}
     
-    function drawSelectOptionX( $id, $args ) {
+    public function drawSelectOptionX( $id, $args ) {
       global $wpdb;
       $pTable = $wpdb->prefix . "sam_places";
       
@@ -729,7 +754,7 @@ if ( !class_exists( 'SimpleAdsManagerAdmin' && class_exists('SimpleAdsManager') 
       <?php
     }
     
-    function drawRadioOption( $id, $args ) {
+    public function drawRadioOption( $id, $args ) {
       $options = $args['options'];
       $settings = parent::getSettings();
       
@@ -748,7 +773,7 @@ if ( !class_exists( 'SimpleAdsManagerAdmin' && class_exists('SimpleAdsManager') 
       }
     }
 		
-		function samAdminPage() {
+		public function samAdminPage() {
       global $wpdb, $wp_version;
       
       $row = $wpdb->get_row('SELECT VERSION()AS ver', ARRAY_A);
@@ -783,6 +808,9 @@ if ( !class_exists( 'SimpleAdsManagerAdmin' && class_exists('SimpleAdsManager') 
                 <div class="inside">
                   <p>
                     <?php 
+                      //$versions = $this->getVersions(false);
+                      //$dbVersion = $versions['db'];
+                      //$vData = $this->getVersionData($dbVersion);
                       echo __('Wordpress Version', SAM_DOMAIN).': <strong>'.$wp_version.'</strong><br/>';
                       echo __('SAM Version', SAM_DOMAIN).': <strong>'.SAM_VERSION.'</strong><br/>';
                       echo __('SAM DB Version', SAM_DOMAIN).': <strong>'.SAM_DB_VERSION.'</strong><br/>';
@@ -817,11 +845,11 @@ if ( !class_exists( 'SimpleAdsManagerAdmin' && class_exists('SimpleAdsManager') 
                       printf($format, $str); 
                     ?>
                   </p>
-                  <center>
+                  <div style="text-align: center;">
                     <a title="Donate Now!" href="https://load.payoneer.com/LoadToPage.aspx?email=minimus@simplelib.com" target="_blank">
                       <img  title="<?php _e('Donate Now!', SAM_DOMAIN); ?>" src="<?php echo SAM_IMG_URL.'donate-now.png' ?>" alt="" width="100" height="34" style='margin-right: 5px;' />
                     </a>
-                  </center>
+                  </div>
                   <p style='margin: 3px; font-size: 0.8em'>
                     <?php 
                       $format = __("Warning! The default value of donation is %s. Don't worry! This is not my appetite, this is default value defined by Payoneer service.", SAM_DOMAIN).'<strong>'.__(' You can change it to any value you want!', SAM_DOMAIN).'</strong>';
@@ -829,6 +857,24 @@ if ( !class_exists( 'SimpleAdsManagerAdmin' && class_exists('SimpleAdsManager') 
                       printf($format, $str);
                     ?>
                   </p>                    
+                </div>
+              </div>
+              <div class='postbox opened'>
+                <h3><?php _e('Another Plugins', SAM_DOMAIN) ?></h3>
+                <div class="inside">
+                  <p>
+                    <?php
+                    $format = __('Another plugins from %s', SAM_DOMAIN).':';
+                    $str = '<strong><a target="_blank" href="http://wordpress.org/extend/plugins/profile/minimus">minimus</a></strong>';
+                    printf($format, $str);
+                    ?>
+                  </p>
+                    <ul>
+                      <li><a target='_blank' href='http://wordpress.org/extend/plugins/wp-special-textboxes/'><strong>Special Text Boxes</strong></a> - <?php _e("Highlights any portion of text as text in the colored boxes.", SAM_DOMAIN); ?></li>
+                      <li><a target='_blank' href='http://wordpress.org/extend/plugins/simple-counters/'><strong>Simple Counters</strong></a> - <?php _e("Adds simple counters badge (FeedBurner subscribers and Twitter followers) to your blog.", SAM_DOMAIN); ?></li>
+                      <li><a target='_blank' href='http://wordpress.org/extend/plugins/simple-view/'><strong>Simple View</strong></a> - <?php _e("This plugin is WordPress shell for FloatBox library by Byron McGregor.", SAM_DOMAIN); ?></li>
+                      <li><a target='_blank' href='http://wordpress.org/extend/plugins/wp-copyrighted-post/'><strong>Copyrighted Post</strong></a> - <?php _e("Adds copyright notice in the end of each post of your blog. ", SAM_DOMAIN); ?></li>
+                    </ul>
                 </div>
               </div>
             </div>
@@ -848,7 +894,7 @@ if ( !class_exists( 'SimpleAdsManagerAdmin' && class_exists('SimpleAdsManager') 
 			<?php
 		}
     
-    function addButtons() {
+    public function addButtons() {
       if ( ! current_user_can('edit_posts') && ! current_user_can('edit_pages') )
         return;
       
@@ -858,56 +904,60 @@ if ( !class_exists( 'SimpleAdsManagerAdmin' && class_exists('SimpleAdsManager') 
       }
     }
     
-    function registerButton( $buttons ) {
-      array_push($buttons, "separator", "samb");
+    public function registerButton( $buttons ) {
+      $options = $this->getSettings();
+      if($options['editorButtonMode'] === 'modern') array_push($buttons, "separator", "samb");
+      else array_push($buttons, 'separator', 'sama', 'samp', 'samz', 'samb');
       return $buttons;
     }
     
-    function addTinyMCEPlugin( $plugin_array ) {
-      $plugin_array['samb'] = SAM_URL.'js/editor_plugin.js';
+    public function addTinyMCEPlugin( $plugin_array ) {
+      $options = parent::getSettings();
+      if($options['editorButtonMode'] === 'modern') $plugin_array['samb'] = SAM_URL.'js/editor_plugin.js';
+      else $plugin_array['samb'] = SAM_URL.'js/ep_classic.js';
       return $plugin_array;
     }
     
-    function tinyMCEVersion( $version ) {
+    public function tinyMCEVersion( $version ) {
       return ++$version;
     }
 		
-		function samTablePage() {
-			include_once('list.admin.class.php');
-      $settings = parent::getSettings();
-      $list = new SamPlaceList($settings);
-      $list->page();
-		}
+	  public function samTablePage() {
+	    include_once('list.admin.class.php');
+        $settings = parent::getSettings();
+        $list = new SamPlaceList($settings);
+        $list->page();
+	  }
     
-    function samZoneListPage() {
+    public function samZoneListPage() {
       include_once('zone.list.admin.class.php');
       $settings = parent::getSettings();
       $list = new SamZoneList($settings);
       $list->page();
     }
     
-    function samBlockListPage() {
+    public function samBlockListPage() {
       include_once('block.list.admin.class.php');
       $settings = parent::getSettings();
       $list = new SamBlockList($settings);
       $list->page();
     }
 		
-		function samEditPage() {
-			include_once('editor.admin.class.php');
-      $settings = parent::getSettings();
-      $editor = new SamPlaceEdit($settings);
-      $editor->page();
-		}
+	  public function samEditPage() {
+	    include_once('editor.admin.class.php');
+        $settings = parent::getSettings();
+        $editor = new SamPlaceEdit($settings);
+        $editor->page();
+	  }
       
-    function samZoneEditPage() {
+    public function samZoneEditPage() {
       include_once('zone.editor.admin.class.php');
       $settings = parent::getSettings();
       $editor = new SamZoneEditor($settings);
       $editor->page();
     }
     
-    function samBlockEditPage() {
+    public function samBlockEditPage() {
       include_once('block.editor.admin.class.php');
       $settings = parent::getSettings();
       $editor = new SamBlockEditor($settings);

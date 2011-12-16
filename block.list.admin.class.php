@@ -109,9 +109,8 @@ if(!class_exists('SamBlockList')) {
       $i = 0;
       if(!is_array($blocks) || empty ($blocks)) {
       ?>
-      <tr id="g0" class="alternate author-self status-publish iedit" valign="top">
-        <th class="post-title column-title">0</th>
-        <th class="author column-author"><?php _e('There are no data ...', SAM_DOMAIN); ?></th>
+      <tr class="no-items">
+        <th class="colspanchange" colspan='2'><?php _e('There are no data ...', SAM_DOMAIN); ?></th>
       </tr>
         <?php } else {
           foreach($blocks as $row) {            

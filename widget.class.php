@@ -452,7 +452,7 @@ if(!class_exists('simple_ads_manager_block_widget') && class_exists('WP_Widget')
             break;
             
           case 'exact':
-            include_once('browser.php');
+            if(!class_exists('Browser')) include_once('browser.php');
             $browser = new Browser();
             $crawler = $browser->isRobot();
             break;

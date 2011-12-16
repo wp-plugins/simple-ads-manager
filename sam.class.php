@@ -11,8 +11,8 @@ if ( !class_exists( 'SimpleAdsManager' ) ) {
       'adDisplay' => 'blank',
       'placesPerPage' => 10,
       'itemsPerPage' => 10,
-			'deleteOptions' => 0,
-			'deleteDB' => 0,
+	    'deleteOptions' => 0,
+      'deleteDB' => 0,
       'deleteFolder' => 0,
       'beforePost' => 0,
       'bpAdsId' => 0,
@@ -25,17 +25,18 @@ if ( !class_exists( 'SimpleAdsManager' ) ) {
       'detectingMode' => 'inexact',
       'currency' => 'auto',
       'dfpPub' => '',
-      'dfpBlocks' => array()
-		);
+      'dfpBlocks' => array(),
+      'editorButtonMode' => 'modern' // modern|classic
+	  );
 		
-		function __construct() {
-      define('SAM_VERSION', '1.0.35');
-			define('SAM_DB_VERSION', '1.0');
+	  public function __construct() {
+      define('SAM_VERSION', '1.1.38');
+      define('SAM_DB_VERSION', '2.0');
       define('SAM_PATH', dirname( __FILE__ ));
       define('SAM_URL', WP_PLUGIN_URL . '/' . str_replace( basename( __FILE__), "", plugin_basename( __FILE__ ) ));
       define('SAM_IMG_URL', SAM_URL.'images/');
       define('SAM_DOMAIN', 'simple-ads-manager');
-			define('SAM_OPTIONS_NAME', 'samPluginOptions');
+      define('SAM_OPTIONS_NAME', 'samPluginOptions');
       define('SAM_AD_IMG', WP_PLUGIN_DIR.'/sam-images/');
       define('SAM_AD_URL', WP_PLUGIN_URL.'/sam-images/');
       
@@ -74,22 +75,22 @@ if ( !class_exists( 'SimpleAdsManager' ) ) {
       $this->crawler = $this->isCrawler();
     }
 		
-		function getSettings($force = false) {
-			if($force) {
+	  public function getSettings($force = false) {
+	    if($force) {
         $pluginOptions = get_option(SAM_OPTIONS_NAME, '');
-			  $options = $this->defaultSettings;
-			  if ($pluginOptions !== '') {
-				  foreach($pluginOptions as $key => $option) {
-					  $options[$key] = $option;
-				  }
-			  }
-			  $this->samOptions = $options;        
+		    $options = $this->defaultSettings;
+		    if ($pluginOptions !== '') {
+		      foreach($pluginOptions as $key => $option) {
+			      $options[$key] = $option;
+		      }
+		    }
+		    $this->samOptions = $options;
       }
       else $options = $this->samOptions;
       return $options; 
-		}
+	  }
     
-    function getVersions($force = false) {
+    public function getVersions($force = false) {
       $versions = array('sam' => null, 'db' => null);
       if($force) {
         $versions['sam'] = get_option( 'sam_version', '' );
@@ -101,7 +102,7 @@ if ( !class_exists( 'SimpleAdsManager' ) ) {
       return $versions;
     }
     
-    function headerScripts() {
+    public function headerScripts() {
       $this->samNonce = wp_create_nonce('samNonce');
       
       wp_enqueue_script('jquery');
@@ -112,7 +113,7 @@ if ( !class_exists( 'SimpleAdsManager' ) ) {
       wp_enqueue_script('samLayout', SAM_URL.'js/sam-layout.js', array('jquery'), SAM_VERSION);
     }
     
-    function headerCodes() {
+    public function headerCodes() {
       $options = $this->getSettings();
       $pub = $options['dfpPub'];
       
@@ -152,7 +153,7 @@ if ( !class_exists( 'SimpleAdsManager' ) ) {
             break;
             
           case 'exact':
-            include_once('browser.php');
+            if(!class_exists('Browser')) include_once('browser.php');
             $browser = new Browser();
             $crawler = $browser->isRobot();
             break;
@@ -179,7 +180,7 @@ if ( !class_exists( 'SimpleAdsManager' ) ) {
     * @param bool|array $useCodes If bool codes 'before' and 'after' from Ads Place record are used. If array codes 'before' and 'after' from array are used
     * @return string value of Ad content
     */
-    function buildSingleAd( $args = null, $useCodes = false ) {
+    public function buildSingleAd( $args = null, $useCodes = false ) {
       $ad = new SamAd($args, $useCodes, $this->crawler);
       $output = $ad->ad;
       return $output;
@@ -196,7 +197,7 @@ if ( !class_exists( 'SimpleAdsManager' ) ) {
     * @param bool|array $useCodes If bool codes 'before' and 'after' from Ads Place record are used. If array codes 'before' and 'after' from array are used
     * @return string value of Ads Place content
     */
-    function buildAd( $args = null, $useCodes = false ) {
+    public function buildAd( $args = null, $useCodes = false ) {
       $ad = new SamAdPlace($args, $useCodes, $this->crawler);
       $output = $ad->ad;
       return $output;
@@ -213,7 +214,7 @@ if ( !class_exists( 'SimpleAdsManager' ) ) {
     * @param bool|array $useCodes If bool codes 'before' and 'after' from Ads Place record are used. If array codes 'before' and 'after' from array are used
     * @return string value of Ads Zone content
     */
-    function buildAdZone( $args = null, $useCodes = false ) {
+    public function buildAdZone( $args = null, $useCodes = false ) {
       $ad = new SamAdPlaceZone($args, $useCodes, $this->crawler);
       $output = $ad->ad;
       return $output;
@@ -229,37 +230,37 @@ if ( !class_exists( 'SimpleAdsManager' ) ) {
     * @param array $args 'id' array element: id of Ads Block, 'name' array elemnt: name of Ads Block
     * @return string value of Ads Zone content
     */
-    function buildAdBlock( $args = null ) {
+    public function buildAdBlock( $args = null ) {
       $block = new SamAdBlock($args, $this->crawler);
       $output = $block->ad;
       return $output;
     }
     
-    function doAdShortcode($atts) {
+    public function doAdShortcode($atts) {
       extract(shortcode_atts( array( 'id' => '', 'name' => '', 'codes' => ''), $atts ));
       $ad = new SamAd(array('id' => $id, 'name' => $name), ($codes == 'true'), $this->crawler);
       return $ad->ad;
     }
     
-    function doShortcode( $atts ) {
+    public function doShortcode( $atts ) {
       extract(shortcode_atts( array( 'id' => '', 'name' => '', 'codes' => ''), $atts ));      
       $ad = new SamAdPlace(array('id' => $id, 'name' => $name), ($codes == 'true'), $this->crawler);
       return $ad->ad;
     }
     
-    function doZoneShortcode($atts) {
+    public function doZoneShortcode($atts) {
       extract(shortcode_atts( array( 'id' => '', 'name' => '', 'codes' => ''), $atts ));
       $ad = new SamAdPlaceZone(array('id' => $id, 'name' => $name), ($codes == 'true'), $this->crawler);
       return $ad->ad;
     }
     
-    function doBlockShortcode($atts) {
+    public function doBlockShortcode($atts) {
       extract(shortcode_atts( array( 'id' => '', 'name' => ''), $atts ));
       $block = new SamAdBlock(array('id' => $id, 'name' => $name), $this->crawler);
       return $block->ad;
     }
     
-    function addContentAds( $content ) {
+    public function addContentAds( $content ) {
       $options = $this->getSettings();
       $bpAd = '';
       $apAd = '';

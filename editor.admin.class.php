@@ -560,23 +560,23 @@ if(!class_exists('SamPlaceEdit')) {
               'view_pages' => $viewPages,
               'view_id' => $_POST['view_id'],
               'ad_cats' => $_POST['ad_cats'],
-              'view_cats' => $this->removeTrailingComma( $_POST['view_cats'] ),
+              'view_cats' => $this->removeTrailingComma( stripcslashes( $_POST['view_cats'] )),
               'ad_authors' => $_POST['ad_authors'],
-              'view_authors' => $this->removeTrailingComma( $_POST['view_authors'] ),
+              'view_authors' => $this->removeTrailingComma(stripcslashes( $_POST['view_authors'])),
               'ad_tags' => $_POST['ad_tags'],
-              'view_tags' => $this->removeTrailingComma( $_POST['view_tags'] ),
+              'view_tags' => $this->removeTrailingComma( stripcslashes($_POST['view_tags']) ),
               'ad_custom' => $_POST['ad_custom'],
-              'view_custom' => $this->removeTrailingComma( $_POST['view_custom'] ),
+              'view_custom' => $this->removeTrailingComma( stripcslashes( $_POST['view_custom'] ) ),
               'x_id' => $_POST['x_id'],
               'x_view_id' => $_POST['x_view_id'],
               'x_cats' => $_POST['x_cats'],
-              'x_view_cats' => $this->removeTrailingComma($_POST['x_view_cats']),
+              'x_view_cats' => $this->removeTrailingComma(stripslashes($_POST['x_view_cats'])),
               'x_authors' => $_POST['x_authors'],
-              'x_view_authors' => $this->removeTrailingComma($_POST['x_view_authors']),
+              'x_view_authors' => $this->removeTrailingComma(stripcslashes($_POST['x_view_authors'])),
               'x_tags' => $_POST['x_tags'],
-              'x_view_tags' => $this->removeTrailingComma($_POST['x_view_tags']),
+              'x_view_tags' => $this->removeTrailingComma(stripcslashes($_POST['x_view_tags'])),
               'x_custom' => $_POST['x_custom'],
-              'x_view_custom' => $this->removeTrailingComma($_POST['x_view_custom']),
+              'x_view_custom' => $this->removeTrailingComma(stripcslashes($_POST['x_view_custom'])),
               'ad_start_date' => $_POST['ad_start_date'],
               'ad_end_date' => $_POST['ad_end_date'],              
               'ad_schedule' => $_POST['ad_schedule'],
@@ -992,7 +992,7 @@ if(!class_exists('SamPlaceEdit')) {
                 <div class='radio-content'>
                   <p>
                     <label for='x_view_id'><strong><?php echo __('Posts/Pages IDs (comma separated)', SAM_DOMAIN).':'; ?></strong></label>
-                    <input type='text' name='x_view_id' id='x_view_id' value='<?php echo $row['x_view_id']; ?>' style='width: 100%;'>
+                    <input type='text' name='x_view_id' id='x_view_id' value="<?php echo $row['x_view_id']; ?>" style='width: 100%;'>
                   </p>                  
                 </div>
                 <p>
@@ -1005,7 +1005,7 @@ if(!class_exists('SamPlaceEdit')) {
                 </p>
                 <div class='radio-content'>
                   <label for='view_cats'><strong><?php echo __('Categories (comma separated)', SAM_DOMAIN).':'; ?></strong></label>
-                  <input type='text' name='view_cats' id='view_cats' autocomplete="off" value='<?php echo $row['view_cats']; ?>' style="width:100%">                  
+                  <input type='text' name='view_cats' id='view_cats' autocomplete="off" value="<?php echo $row['view_cats']; ?>" style="width:100%">                  
                 </div>
                 <p>
                   <?php _e('Use this setting to display an ad only in single posts or categories archives of certain categories. Enter the names of categories, separated by commas.', SAM_DOMAIN); ?>
@@ -1022,7 +1022,7 @@ if(!class_exists('SamPlaceEdit')) {
                 </p>
                 <div class='radio-content'>
                   <label for='x_view_cats'><strong><?php echo __('Categories (comma separated)', SAM_DOMAIN).':'; ?></strong></label>
-                  <input type='text' name='x_view_cats' id='x_view_cats' autocomplete="off" value='<?php echo $row['x_view_cats']; ?>' style="width:100%">                  
+                  <input type='text' name='x_view_cats' id='x_view_cats' autocomplete="off" value="<?php echo $row['x_view_cats']; ?>" style="width:100%">                  
                 </div>
                 <p>
                   <?php _e('Use this setting to not display an ad in single posts or categories archives of certain categories. Enter the names of categories, separated by commas.', SAM_DOMAIN); ?>
@@ -1034,7 +1034,7 @@ if(!class_exists('SamPlaceEdit')) {
                 </p>
                 <div class='radio-content'>
                   <label for='view_authors'><strong><?php echo __('Authors (comma separated)', SAM_DOMAIN).':'; ?></strong></label>
-                  <input type='text' name='view_authors' id='view_authors' autocomplete="off" value='<?php echo $row['view_authors']; ?>' style="width:100%">                  
+                  <input type='text' name='view_authors' id='view_authors' autocomplete="off" value="<?php echo $row['view_authors']; ?>" style="width:100%">                  
                 </div>
                 <p>
                   <?php _e('Use this setting to display an ad only in single posts or authors archives of certain authors. Enter the names of authors, separated by commas.', SAM_DOMAIN); ?>
@@ -1051,7 +1051,7 @@ if(!class_exists('SamPlaceEdit')) {
                 </p>
                 <div class='radio-content'>
                   <label for='x_view_authors'><strong><?php echo __('Authors (comma separated)', SAM_DOMAIN).':'; ?></strong></label>
-                  <input type='text' name='x_view_authors' id='x_view_authors' autocomplete="off" value='<?php echo $row['x_view_authors']; ?>' style="width:100%">                  
+                  <input type='text' name='x_view_authors' id='x_view_authors' autocomplete="off" value="<?php echo $row['x_view_authors']; ?>" style="width:100%">                  
                 </div>
                 <p>
                   <?php _e('Use this setting to not display an ad in single posts or authors archives of certain authors. Enter the names of authors, separated by commas.', SAM_DOMAIN); ?>
@@ -1063,7 +1063,7 @@ if(!class_exists('SamPlaceEdit')) {
                 </p>
                 <div class='radio-content'>
                   <label for='view_tags'><strong><?php echo __('Tags (comma separated)', SAM_DOMAIN).':'; ?></strong></label>
-                  <input type='text' name='view_tags' id='view_tags' autocomplete="off" value='<?php echo $row['view_tags']; ?>' style="width:100%">                  
+                  <input type='text' name='view_tags' id='view_tags' autocomplete="off" value="<?php echo $row['view_tags']; ?>" style="width:100%">                  
                 </div>
                 <p>
                   <?php _e('Use this setting to display an ad only in single posts or tags archives of certain tags. Enter the names of tags, separated by commas.', SAM_DOMAIN); ?>
@@ -1080,7 +1080,7 @@ if(!class_exists('SamPlaceEdit')) {
                 </p>
                 <div class='radio-content'>
                   <label for='x_view_tags'><strong><?php echo __('Tags (comma separated)', SAM_DOMAIN).':'; ?></strong></label>
-                  <input type='text' name='x_view_tags' id='x_view_tags' autocomplete="off" value='<?php echo $row['x_view_tags']; ?>' style="width:100%">                  
+                  <input type='text' name='x_view_tags' id='x_view_tags' autocomplete="off" value="<?php echo $row['x_view_tags']; ?>" style="width:100%">                  
                 </div>
                 <p>
                   <?php _e('Use this setting to not display an ad in single posts or tags archives of certain tags. Enter the names of tags, separated by commas.', SAM_DOMAIN); ?>
@@ -1092,7 +1092,7 @@ if(!class_exists('SamPlaceEdit')) {
                 </p>
                 <div class='radio-content'>
                   <label for='view_custom'><strong><?php echo __('Custom post types (comma separated)', SAM_DOMAIN).':'; ?></strong></label>
-                  <input type='text' name='view_custom' id='view_custom' autocomplete="off" value='<?php echo $row['view_custom']; ?>' style="width:100%">                  
+                  <input type='text' name='view_custom' id='view_custom' autocomplete="off" value="<?php echo $row['view_custom']; ?>" style="width:100%">                  
                 </div>
                 <p>
                   <?php _e('Use this setting to display an ad only in custom type single posts or custom post type archives of certain custom post types. Enter the names of custom post types, separated by commas.', SAM_DOMAIN); ?>
@@ -1109,7 +1109,7 @@ if(!class_exists('SamPlaceEdit')) {
                 </p>
                 <div class='radio-content'>
                   <label for='x_view_custom'><strong><?php echo __('Custom post types (comma separated)', SAM_DOMAIN).':'; ?></strong></label>
-                  <input type='text' name='x_view_custom' id='x_view_custom' autocomplete="off" value='<?php echo $row['x_view_custom']; ?>' style="width:100%">                  
+                  <input type='text' name='x_view_custom' id='x_view_custom' autocomplete="off" value="<?php echo $row['x_view_custom']; ?>" style="width:100%">                  
                 </div>
                 <p>
                   <?php _e('Use this setting to not display an ad in custom type single posts or custom post type archives of certain custom post types. Enter the names of custom post types, separated by commas.', SAM_DOMAIN); ?>

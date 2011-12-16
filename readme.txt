@@ -3,8 +3,8 @@ Contributors: minimus
 Donate link: https://load.payoneer.com/LoadToPage.aspx?email=minimus@simplelib.com
 Tags: ad, adbrite, adgridwork, adify, admin, adpinion, adroll, ads, adsense, adserver, advertisement, advertising, affiliate, banner, banners, chitika, cj, commercial, commission, crispads, dfp, google, income, junction, link, manager, media, money, plugin, random, referral, revenue, rotator, seo, server, shoppingads, widget, widgetbucks, yahoo, ypn
 Requires at least: 3.1
-Tested up to: 3.2.1
-Stable tag: 1.0.35
+Tested up to: 3.3
+Stable tag: 1.1.38
 
 Advertisment rotation system with a flexible logic of displaying advertisements.
 
@@ -48,7 +48,8 @@ Simple Ads Manager is easy to use plugin providing a flexible logic of displayin
 = Available languages =
 * English
 * Russian
-* German by [Fabian Krenzler](http://www.ktraces.de/)
+* German by [Fabian Krenzler](http://www.ktraces.de/) and **Ulrich Simon**
+* Belarusian by Alexander Ovsov ([Web Geek Sciense](http://webhostinggeeks.com/science/))
 
 If you have created your own language pack, or have an update of an existing one, you can send **.po** and **.mo files** to me (minimus AT simplelib.com) so that I can bundle it into **Simple Ads Manager** plugin pack.
   
@@ -80,6 +81,10 @@ No questions now...
 
 == Changelog ==
 
+= 1.1.38 =
+* Language pack is updated. Belarusian by Alexander Ovsov is added
+* TinyMCE plugin's button modes (modern, classic) are added
+* Some fixes are made
 = 1.0.35 =
 * System of Checking Errors is added.
 * Some minor improvements are made.
@@ -128,6 +133,13 @@ No questions now...
 
 == Upgrade Notice ==
 
+= 1.1.38 =
+Language pack is updated. Belarusian by Alexander Ovsov is added.
+TinyMCE plugin's button modes (modern, classic) are added.
+Some fixes are made.
+= 1.0.35 =
+System of Checking Errors is added.
+Some minor improvements are made.
 = 1.0.33 =
 Quick patch (rollback of noindex|nofollow feature)! Bug of Automatic Insertion are fixed
 = 1.0.32 =

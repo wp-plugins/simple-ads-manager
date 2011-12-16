@@ -55,7 +55,7 @@ if(!class_exists('SamAd')) {
           $aStart = "<a href='{$ad['ad_target']}' target='_blank' ".">";
           $aEnd = "</a>";
         }
-        if(!empty($ad['ad_img'])) $iTag = "<img $outId src='{$ad['ad_img']}' ".((!empty($ad['ad_alt'])) ? " alt={$ad['ad_alt']} " : '')." />";
+        if(!empty($ad['ad_img'])) $iTag = "<img $outId src='{$ad['ad_img']}' ".((!empty($ad['ad_alt'])) ? " alt='{$ad['ad_alt']}' " : '')." />";
         $output = $aStart.$iTag.$aEnd;
       }
       else {
@@ -138,8 +138,8 @@ if(!class_exists('SamAdPlace')) {
           $viewPages += SAM_IS_POST_TYPE;
           
           $postType = get_post_type();
-          $wct = " AND IF($aTable.view_type < 2 AND $aTable.ad_custom AND IF($aTable.view_type = 0, $aTable.view_pages+0 & $viewPages, TRUE), FIND_IN_SET('{$postType}', $aTable.view_custom), TRUE)";
-          $wcxt = " AND IF($aTable.view_type < 2 AND $aTable.x_custom AND IF($aTable.view_type = 0, $aTable.view_pages+0 & $viewPages, TRUE), NOT FIND_IN_SET('{$postType}', $aTable.x_view_custom), TRUE)";
+          $wct = " AND IF($aTable.view_type < 2 AND $aTable.ad_custom AND IF($aTable.view_type = 0, $aTable.view_pages+0 & $viewPages, TRUE), FIND_IN_SET(\"$postType\", $aTable.view_custom), TRUE)";
+          $wcxt = " AND IF($aTable.view_type < 2 AND $aTable.x_custom AND IF($aTable.view_type = 0, $aTable.view_pages+0 & $viewPages, TRUE), NOT FIND_IN_SET(\"$postType\", $aTable.x_view_custom), TRUE)";
         }
         elseif(is_single()) {
           global $post;
@@ -154,10 +154,10 @@ if(!class_exists('SamAdPlace')) {
             $wcc = " AND IF($aTable.view_type < 2 AND $aTable.ad_cats AND IF($aTable.view_type = 0, $aTable.view_pages+0 & $viewPages, TRUE),";
             $wcxc = " AND IF($aTable.view_type < 2 AND $aTable.x_cats AND IF($aTable.view_type = 0, $aTable.view_pages+0 & $viewPages, TRUE),";
             foreach($categories as $category) {
-              if(empty($wcc_0)) $wcc_0 = " FIND_IN_SET('{$category->cat_name}', $aTable.view_cats)";
-              else $wcc_0 .= " OR FIND_IN_SET('{$category->cat_name}', $aTable.view_cats)";
-              if(empty($wcxc_0)) $wcxc_0 = " (NOT FIND_IN_SET('{$category->cat_name}', $aTable.x_view_cats))";
-              else $wcxc_0 .= " AND (NOT FIND_IN_SET('{$category->cat_name}', $aTable.x_view_cats))";
+              if(empty($wcc_0)) $wcc_0 = " FIND_IN_SET(\"{$category->cat_name}\", $aTable.view_cats)";
+              else $wcc_0 .= " OR FIND_IN_SET(\"{$category->cat_name}\", $aTable.view_cats)";
+              if(empty($wcxc_0)) $wcxc_0 = " (NOT FIND_IN_SET(\"{$category->cat_name}\", $aTable.x_view_cats))";
+              else $wcxc_0 .= " AND (NOT FIND_IN_SET(\"{$category->cat_name}\", $aTable.x_view_cats))";
             }
             $wcc .= $wcc_0.", TRUE)";
             $wcxc .= $wcxc_0.", TRUE)";
@@ -169,10 +169,10 @@ if(!class_exists('SamAdPlace')) {
             $wct = " AND IF($aTable.view_type < 2 AND $aTable.ad_tags AND IF($aTable.view_type = 0, $aTable.view_pages+0 & $viewPages, TRUE),";
             $wcxt = " AND IF($aTable.view_type < 2 AND $aTable.x_tags AND IF($aTable.view_type = 0, $aTable.view_pages+0 & $viewPages, TRUE),";
             foreach($tags as $tag) {
-              if(empty($wct_0)) $wct_0 = " FIND_IN_SET('{$tag->name}', $aTable.view_tags)";
-              else $wct_0 .= " OR FIND_IN_SET('{$tag->name}', $aTable.view_tags)";
-              if(empty($wcxt_0)) $wcxt_0 = " (NOT FIND_IN_SET('{$tag->name}', $aTable.x_view_tags))";
-              else $wcxt_0 .= " AND (NOT FIND_IN_SET('{$tag->name}', $aTable.x_view_tags))";
+              if(empty($wct_0)) $wct_0 = " FIND_IN_SET(\"{$tag->name}\", $aTable.view_tags)";
+              else $wct_0 .= " OR FIND_IN_SET(\"{$tag->name}\", $aTable.view_tags)";
+              if(empty($wcxt_0)) $wcxt_0 = " (NOT FIND_IN_SET(\"{$tag->name}\", $aTable.x_view_tags))";
+              else $wcxt_0 .= " AND (NOT FIND_IN_SET(\"{$tag->name}\", $aTable.x_view_tags))";
             }
             $wct .= $wct_0.", TRUE)";
             $wcxt .= $wcxt_0.", TRUE)";
@@ -181,8 +181,8 @@ if(!class_exists('SamAdPlace')) {
           $wci = " OR ($aTable.view_type = 2 AND FIND_IN_SET({$post->ID}, $aTable.view_id))";
           $wcx = " AND IF($aTable.x_id, NOT FIND_IN_SET({$post->ID}, $aTable.x_view_id), TRUE)";
           $author = get_userdata($post->post_author);
-          $wca = " AND IF($aTable.view_type < 2 AND $aTable.ad_authors AND IF($aTable.view_type = 0, $aTable.view_pages+0 & $viewPages, TRUE), FIND_IN_SET('{$author->display_name}', $aTable.view_authors), TRUE)";
-          $wcxa = " AND IF($aTable.view_type < 2 AND $aTable.x_authors AND IF($aTable.view_type = 0, $aTable.view_pages+0 & $viewPages, TRUE), NOT FIND_IN_SET('{$author->display_name}', $aTable.x_view_authors), TRUE)";
+          $wca = " AND IF($aTable.view_type < 2 AND $aTable.ad_authors AND IF($aTable.view_type = 0, $aTable.view_pages+0 & $viewPages, TRUE), FIND_IN_SET(\"{$author->display_name}\", $aTable.view_authors), TRUE)";
+          $wcxa = " AND IF($aTable.view_type < 2 AND $aTable.x_authors AND IF($aTable.view_type = 0, $aTable.view_pages+0 & $viewPages, TRUE), NOT FIND_IN_SET(\"{$author->display_name}\", $aTable.x_view_authors), TRUE)";
         }
         if(is_page()) {
           global $post;
@@ -201,8 +201,8 @@ if(!class_exists('SamAdPlace')) {
         if(is_category()) {
           $viewPages += SAM_IS_CATEGORY;
           $cat = get_category(get_query_var('cat'), false);
-          $wcc = " AND IF($aTable.view_type < 2 AND $aTable.ad_cats AND IF($aTable.view_type = 0, $aTable.view_pages+0 & $viewPages, TRUE), FIND_IN_SET('{$cat->cat_name}', $aTable.view_cats), TRUE)";
-          $wcxc = " AND IF($aTable.view_type < 2 AND $aTable.x_cats AND IF($aTable.view_type = 0, $aTable.view_pages+0 & $viewPages, TRUE), NOT FIND_IN_SET('{$cat->cat_name}', $aTable.x_view_cats), TRUE)";
+          $wcc = " AND IF($aTable.view_type < 2 AND $aTable.ad_cats AND IF($aTable.view_type = 0, $aTable.view_pages+0 & $viewPages, TRUE), FIND_IN_SET(`{$cat->cat_name}`, $aTable.view_cats), TRUE)";
+          $wcxc = " AND IF($aTable.view_type < 2 AND $aTable.x_cats AND IF($aTable.view_type = 0, $aTable.view_pages+0 & $viewPages, TRUE), NOT FIND_IN_SET(`{$cat->cat_name}`, $aTable.x_view_cats), TRUE)";
         }
         if(is_tag()) {
           $viewPages += SAM_IS_TAG;
@@ -350,7 +350,7 @@ if(!class_exists('SamAdPlace')) {
             $aStart = "<a href='{$ad['ad_target']}' target='$target' ".">";
             $aEnd = "</a>";
           }
-          if(!empty($ad['ad_img'])) $iTag = "<img $outId src='{$ad['ad_img']}' ".((!empty($ad['ad_alt'])) ? " alt={$ad['ad_alt']} " : '')." />";
+          if(!empty($ad['ad_img'])) $iTag = "<img $outId src='{$ad['ad_img']}' ".((!empty($ad['ad_alt'])) ? " alt='{$ad['ad_alt']}' " : '')." />";
           $output = $aStart.$iTag.$aEnd;
         }
         else {
