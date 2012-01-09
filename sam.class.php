@@ -30,15 +30,15 @@ if ( !class_exists( 'SimpleAdsManager' ) ) {
 	  );
 		
 	  public function __construct() {
-      define('SAM_VERSION', '1.1.38');
+      define('SAM_VERSION', '1.2.40');
       define('SAM_DB_VERSION', '2.0');
       define('SAM_PATH', dirname( __FILE__ ));
-      define('SAM_URL', WP_PLUGIN_URL . '/' . str_replace( basename( __FILE__), "", plugin_basename( __FILE__ ) ));
+      define('SAM_URL', plugins_url('/' . str_replace( basename( __FILE__), "", plugin_basename( __FILE__ ) )) );
       define('SAM_IMG_URL', SAM_URL.'images/');
       define('SAM_DOMAIN', 'simple-ads-manager');
       define('SAM_OPTIONS_NAME', 'samPluginOptions');
       define('SAM_AD_IMG', WP_PLUGIN_DIR.'/sam-images/');
-      define('SAM_AD_URL', WP_PLUGIN_URL.'/sam-images/');
+      define('SAM_AD_URL', plugins_url('/sam-images/'));
       
       define('SAM_IS_HOME', 1);
       define('SAM_IS_SINGULAR', 2);

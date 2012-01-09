@@ -3,8 +3,8 @@ Contributors: minimus
 Donate link: https://load.payoneer.com/LoadToPage.aspx?email=minimus@simplelib.com
 Tags: ad, adbrite, adgridwork, adify, admin, adpinion, adroll, ads, adsense, adserver, advertisement, advertising, affiliate, banner, banners, chitika, cj, commercial, commission, crispads, dfp, google, income, junction, link, manager, media, money, plugin, random, referral, revenue, rotator, seo, server, shoppingads, widget, widgetbucks, yahoo, ypn
 Requires at least: 3.1
-Tested up to: 3.3
-Stable tag: 1.1.38
+Tested up to: 3.3.1
+Stable tag: 1.2.40
 
 Advertisment rotation system with a flexible logic of displaying advertisements.
 
@@ -81,6 +81,9 @@ No questions now...
 
 == Changelog ==
 
+= 1.2.40 =
+* MultiSite support is added. Thanks to *meermedia*.
+* Major bug is fixed
 = 1.1.38 =
 * Language pack is updated. Belarusian by Alexander Ovsov is added
 * TinyMCE plugin's button modes (modern, classic) are added
@@ -133,6 +136,9 @@ No questions now...
 
 == Upgrade Notice ==
 
+= 1.2.40 =
+MultiSite support is added.
+Major bug is fixed.
 = 1.1.38 =
 Language pack is updated. Belarusian by Alexander Ovsov is added.
 TinyMCE plugin's button modes (modern, classic) are added.

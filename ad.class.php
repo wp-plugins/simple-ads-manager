@@ -201,8 +201,8 @@ if(!class_exists('SamAdPlace')) {
         if(is_category()) {
           $viewPages += SAM_IS_CATEGORY;
           $cat = get_category(get_query_var('cat'), false);
-          $wcc = " AND IF($aTable.view_type < 2 AND $aTable.ad_cats AND IF($aTable.view_type = 0, $aTable.view_pages+0 & $viewPages, TRUE), FIND_IN_SET(`{$cat->cat_name}`, $aTable.view_cats), TRUE)";
-          $wcxc = " AND IF($aTable.view_type < 2 AND $aTable.x_cats AND IF($aTable.view_type = 0, $aTable.view_pages+0 & $viewPages, TRUE), NOT FIND_IN_SET(`{$cat->cat_name}`, $aTable.x_view_cats), TRUE)";
+          $wcc = " AND IF($aTable.view_type < 2 AND $aTable.ad_cats AND IF($aTable.view_type = 0, $aTable.view_pages+0 & $viewPages, TRUE), FIND_IN_SET(\"{$cat->cat_name}\", $aTable.view_cats), TRUE)";
+          $wcxc = " AND IF($aTable.view_type < 2 AND $aTable.x_cats AND IF($aTable.view_type = 0, $aTable.view_pages+0 & $viewPages, TRUE), NOT FIND_IN_SET(\"{$cat->cat_name}\", $aTable.x_view_cats), TRUE)";
         }
         if(is_tag()) {
           $viewPages += SAM_IS_TAG;
