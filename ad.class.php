@@ -127,24 +127,25 @@ if(!class_exists('SamAdPlace')) {
       $wci = '';
       $wca = '';
       $wcx = '';
+      $wct = '';
       $wcxc = '';
       $wcxa = '';
       $wcxt = '';
       if(is_home() || is_front_page()) $viewPages += SAM_IS_HOME;
       if(is_singular()) {
-        $viewPages += SAM_IS_SINGULAR;
+        $viewPages |= SAM_IS_SINGULAR;
         if($this->isCustomPostType()) {
-          $viewPages += SAM_IS_SINGLE;
-          $viewPages += SAM_IS_POST_TYPE;
+          $viewPages |= SAM_IS_SINGLE;
+          $viewPages |= SAM_IS_POST_TYPE;
           
           $postType = get_post_type();
-          $wct = " AND IF($aTable.view_type < 2 AND $aTable.ad_custom AND IF($aTable.view_type = 0, $aTable.view_pages+0 & $viewPages, TRUE), FIND_IN_SET(\"$postType\", $aTable.view_custom), TRUE)";
-          $wcxt = " AND IF($aTable.view_type < 2 AND $aTable.x_custom AND IF($aTable.view_type = 0, $aTable.view_pages+0 & $viewPages, TRUE), NOT FIND_IN_SET(\"$postType\", $aTable.x_view_custom), TRUE)";
+          $wct .= " AND IF($aTable.view_type < 2 AND $aTable.ad_custom AND IF($aTable.view_type = 0, $aTable.view_pages+0 & $viewPages, TRUE), FIND_IN_SET(\"$postType\", $aTable.view_custom), TRUE)";
+          $wcxt .= " AND IF($aTable.view_type < 2 AND $aTable.x_custom AND IF($aTable.view_type = 0, $aTable.view_pages+0 & $viewPages, TRUE), NOT FIND_IN_SET(\"$postType\", $aTable.x_view_custom), TRUE)";
         }
-        elseif(is_single()) {
+        if(is_single()) {
           global $post;
           
-          $viewPages += SAM_IS_SINGLE;
+          $viewPages |= SAM_IS_SINGLE;
           $categories = get_the_category($post->ID);
           $tags = get_the_tags();
           
@@ -166,8 +167,8 @@ if(!class_exists('SamAdPlace')) {
           if(!empty($tags)) {
             $wct_0 = '';
             $wcxt_0 = '';
-            $wct = " AND IF($aTable.view_type < 2 AND $aTable.ad_tags AND IF($aTable.view_type = 0, $aTable.view_pages+0 & $viewPages, TRUE),";
-            $wcxt = " AND IF($aTable.view_type < 2 AND $aTable.x_tags AND IF($aTable.view_type = 0, $aTable.view_pages+0 & $viewPages, TRUE),";
+            $wct .= " AND IF($aTable.view_type < 2 AND $aTable.ad_tags AND IF($aTable.view_type = 0, $aTable.view_pages+0 & $viewPages, TRUE),";
+            $wcxt .= " AND IF($aTable.view_type < 2 AND $aTable.x_tags AND IF($aTable.view_type = 0, $aTable.view_pages+0 & $viewPages, TRUE),";
             foreach($tags as $tag) {
               if(empty($wct_0)) $wct_0 = " FIND_IN_SET(\"{$tag->name}\", $aTable.view_tags)";
               else $wct_0 .= " OR FIND_IN_SET(\"{$tag->name}\", $aTable.view_tags)";
@@ -187,25 +188,25 @@ if(!class_exists('SamAdPlace')) {
         if(is_page()) {
           global $post;
           
-          $viewPages += SAM_IS_PAGE;
+          $viewPages |= SAM_IS_PAGE;
           $wci = " OR ($aTable.view_type = 2 AND FIND_IN_SET({$post->ID}, $aTable.view_id))";
           $wcx = " AND IF($aTable.x_id, NOT FIND_IN_SET({$post->ID}, $aTable.x_view_id), TRUE)";
         }
-        if(is_attachment()) $viewPages += SAM_IS_ATTACHMENT;
+        if(is_attachment()) $viewPages |= SAM_IS_ATTACHMENT;
       }
-      if(is_search()) $viewPages += SAM_IS_SEARCH;
-      if(is_404()) $viewPages += SAM_IS_404;
+      if(is_search()) $viewPages |= SAM_IS_SEARCH;
+      if(is_404()) $viewPages |= SAM_IS_404;
       if(is_archive()) {
-        $viewPages += SAM_IS_ARCHIVE;
-        if(is_tax()) $viewPages += SAM_IS_TAX;
+        $viewPages |= SAM_IS_ARCHIVE;
+        if(is_tax()) $viewPages |= SAM_IS_TAX;
         if(is_category()) {
-          $viewPages += SAM_IS_CATEGORY;
+          $viewPages |= SAM_IS_CATEGORY;
           $cat = get_category(get_query_var('cat'), false);
           $wcc = " AND IF($aTable.view_type < 2 AND $aTable.ad_cats AND IF($aTable.view_type = 0, $aTable.view_pages+0 & $viewPages, TRUE), FIND_IN_SET(\"{$cat->cat_name}\", $aTable.view_cats), TRUE)";
           $wcxc = " AND IF($aTable.view_type < 2 AND $aTable.x_cats AND IF($aTable.view_type = 0, $aTable.view_pages+0 & $viewPages, TRUE), NOT FIND_IN_SET(\"{$cat->cat_name}\", $aTable.x_view_cats), TRUE)";
         }
         if(is_tag()) {
-          $viewPages += SAM_IS_TAG;
+          $viewPages |= SAM_IS_TAG;
           $tag = get_tag(get_query_var('tag_id'));
           $wct = " AND IF($aTable.view_type < 2 AND $aTable.ad_tags AND IF($aTable.view_type = 0, $aTable.view_pages+0 & $viewPages, TRUE), FIND_IN_SET('{$tag->name}', $aTable.view_tags), TRUE)";
           $wcxt = " AND IF($aTable.view_type < 2 AND $aTable.x_tags AND IF($aTable.view_type = 0, $aTable.view_pages+0 & $viewPages, TRUE), NOT FIND_IN_SET('{$tag->name}', $aTable.x_view_tags), TRUE)";
@@ -213,19 +214,19 @@ if(!class_exists('SamAdPlace')) {
         if(is_author()) {
           global $wp_query;
           
-          $viewPages += SAM_IS_AUTHOR;
+          $viewPages |= SAM_IS_AUTHOR;
           $author = $wp_query->get_queried_object();
           $wca = " AND IF($aTable.view_type < 2 AND $aTable.ad_authors = 1 AND IF($aTable.view_type = 0, $aTable.view_pages+0 & $viewPages, TRUE), FIND_IN_SET('{$author->display_name}', $aTable.view_authors), TRUE)";
           $wcxa = " AND IF($aTable.view_type < 2 AND $aTable.x_authors AND IF($aTable.view_type = 0, $aTable.view_pages+0 & $viewPages, TRUE), NOT FIND_IN_SET('{$author->display_name}', $aTable.x_view_authors), TRUE)";
         }
         if(is_post_type_archive()) {
-          $viewPages += SAM_IS_POST_TYPE_ARCHIVE;
+          $viewPages |= SAM_IS_POST_TYPE_ARCHIVE;
           //$postType = post_type_archive_title( '', false );
           $postType = get_post_type();
           $wct = " AND IF($aTable.view_type < 2 AND $aTable.ad_custom AND IF($aTable.view_type = 0, $aTable.view_pages+0 & $viewPages, TRUE), FIND_IN_SET('{$postType}', $aTable.view_custom), TRUE)";
           $wcxt = " AND IF($aTable.view_type < 2 AND $aTable.x_custom AND IF($aTable.view_type = 0, $aTable.view_pages+0 & $viewPages, TRUE), NOT FIND_IN_SET('{$postType}', $aTable.x_view_custom), TRUE)";
         }
-        if(is_date()) $viewPages += SAM_IS_DATE;
+        if(is_date()) $viewPages |= SAM_IS_DATE;
       }
       
       if(empty($wcc)) $wcc = " AND ($aTable.ad_cats = 0)";

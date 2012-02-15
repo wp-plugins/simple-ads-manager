@@ -428,11 +428,27 @@ if ( !class_exists( 'SimpleAdsManagerAdmin' && class_exists('SimpleAdsManager') 
       if(version_compare($wp_version, '3.3', '>=')) {
         add_action('load-'.$this->listPage, array(&$this, 'samHelp'));
         add_action('load-'.$this->editPage, array(&$this, 'samHelp'));
+        add_action('load-'.$this->settingsPage, array(&$this, 'samHelp'));
       }
 		}
 
     public function samHelp() {
       $samScreens = array($this->listPage, $this->editPage, $this->listZone, $this->editZone, $this->listBlock, $this->editBlock, $this->settingsPage);
+      $samPages = array(
+        'listPage' => $this->listPage,
+        'editPage' => $this->editPage,
+        'listZone' => $this->listZone,
+        'editZone' => $this->editZone,
+        'listBlock' => $this->listBlock,
+        'editBlock' => $this->editBlock,
+        'settingsPage' => $this->settingsPage
+      );
+
+      include_once('help.class.php');
+      $help = new SAMHelp33(array('screens' => $samScreens, 'pages' => $samPages));
+      $help->help();
+
+      /*$samScreens = array($this->listPage, $this->editPage, $this->listZone, $this->editZone, $this->listBlock, $this->editBlock, $this->settingsPage);
       $screen = get_current_screen();
       $context = '';
 
@@ -441,7 +457,7 @@ if ( !class_exists( 'SimpleAdsManagerAdmin' && class_exists('SimpleAdsManager') 
       if($screen->id == $this->listPage) {
         if($_GET["action"] == 'places' || $_GET["action"] == '') {
           //$context = '<div class="sam-contextual-help">';
-          $context .= '<p>'.__('This is list of Ads Places').'</p>';
+          $context .= '<p>'.__('This is list of Ads Places', SAM_DOMAIN).'</p>';
           $context .= '<p><a class="button-secondary" href="http://www.simplelib.com/?p=480" target="_blank">'.__('Manual', SAM_DOMAIN).'</a> ';
           $context .= '<a class="button-secondary" href="http://forum.simplelib.com/index.php?board=10.0" target="_blank">'.__('Support Forum', SAM_DOMAIN).'</a></p>';
           //$context .= '</div>';
@@ -449,7 +465,7 @@ if ( !class_exists( 'SimpleAdsManagerAdmin' && class_exists('SimpleAdsManager') 
         }
         else {
           //$context = '<div class="sam-contextual-help">';
-          $context .= '<p>'.__('This is list of Ads').'</p>';
+          $context .= '<p>'.__('This is list of Ads', SAM_DOMAIN).'</p>';
           $context .= '<p><a class="button-secondary" href="http://www.simplelib.com/?p=480" target="_blank">'.__('Manual', SAM_DOMAIN).'</a> ';
           $context .= '<a class="button-secondary" href="http://forum.simplelib.com/index.php?board=10.0" target="_blank">'.__('Support Forum', SAM_DOMAIN).'</a></p>';
           //$context .= '</div>';
@@ -526,11 +542,21 @@ if ( !class_exists( 'SimpleAdsManagerAdmin' && class_exists('SimpleAdsManager') 
 
           $screen->add_help_tab(array('id' => 'sam-help-item-lmt', 'title' => $title3, 'content' => $context3));
         }
-      }
+      }*/
     }
     
     public function help($contextualHelp, $screenId, $screen) {
-      if ($screenId == $this->editPage) {
+      include_once('help.class.php');
+
+      $help = new SAMHelp(array(
+        'editPage' => $this->editPage,
+        'listPage' => $this->listPage,
+        'settingsPage' => $this->settingsPage
+      ));
+
+      return $help->help($contextualHelp, $screenId, $screen);
+
+      /*if ($screenId == $this->editPage) {
         if($_GET['mode'] == 'item') {
           $contextualHelp = '<div class="sam-contextual-help">';
           $contextualHelp .= '<p>'.__('Enter a <strong>name</strong> and a <strong>description</strong> of the advertisement. These parameters are optional, because don’t influence anything, but help in the visual identification of the ad (do not forget which is which).', SAM_DOMAIN).'</p>';
@@ -594,7 +620,7 @@ if ( !class_exists( 'SimpleAdsManagerAdmin' && class_exists('SimpleAdsManager') 
         $contextualHelp .= '<a class="button-secondary" href="http://forum.simplelib.com/index.php?board=10.0" target="_blank">'.__('Support Forum', SAM_DOMAIN).'</a></p>';
         $contextualHelp .= '</div>';
       }
-      return $contextualHelp;
+      return $contextualHelp;*/
     }
     
     public function adminEditStyles() {

@@ -168,19 +168,21 @@
     
     $('#is_singular').click(function() {
       if($('#is_singular').is(':checked')) 
-        $('#is_single, #is_page, #is_attachment').attr('checked', true);
+        $('#is_single, #is_page, #is_attachment, #is_posttype').attr('checked', true);
     });
     
-    $('#is_single, #is_page, #is_attachment').click(function() {
+    $('#is_single, #is_page, #is_attachment, #is_posttype').click(function() {
       if($('#is_singular').is(':checked') && 
          (!$('#is_single').is(':checked') || 
           !$('#is_page').is(':checked') || 
-          !$('#is_attachment').is(':checked'))) {
+          !$('#is_attachment').is(':checked') ||
+          !$('#is_posttype').is(':checked') )) {
         $('#is_singular').attr('checked', false);
       }
       else {
         if(!$('#is_singular').is(':checked') && 
-            $('#is_single').is(':checked') && 
+            $('#is_single').is(':checked') &&
+            $('#is_posttype').is(':checked') &&
             $('#is_page').is(':checked') && 
             $('#is_attachment').is(':checked'))
           $('#is_singular').attr('checked', true);
@@ -189,13 +191,14 @@
     
     $('#is_archive').click(function() {
       if($('#is_archive').is(':checked'))
-        $('#is_tax, #is_category, #is_tag, #is_author, #is_date').attr('checked', true);
+        $('#is_tax, #is_category, #is_tag, #is_author, #is_date, #is_posttype_archive').attr('checked', true);
     });
     
-    $('#is_tax, #is_category, #is_tag, #is_author, #is_date').click(function() {
+    $('#is_tax, #is_category, #is_tag, #is_author, #is_date, #is_posttype_archive').click(function() {
       if($('#is_archive').is(':checked') &&
          (!$('#is_tax').is(':checked') ||
           !$('#is_category').is(':checked') ||
+          !$('#is_posttype_archive').is(':checked') ||
           !$('#is_tag').is(':checked') ||
           !$('#is_author').is(':checked') ||
           !$('#is_date').is(':checked'))) {
@@ -205,6 +208,7 @@
         if(!$('#is_archive').is(':checked') &&
            $('#is_tax').is(':checked') &&
            $('#is_category').is(':checked') &&
+           $('#is_posttype_archive').is(':checked') &&
            $('#is_tag').is(':checked') &&
            $('#is_author').is(':checked') &&
            $('#is_date').is(':checked')) {

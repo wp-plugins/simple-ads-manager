@@ -4,7 +4,7 @@ Donate link: https://load.payoneer.com/LoadToPage.aspx?email=minimus@simplelib.c
 Tags: ad, adbrite, adgridwork, adify, admin, adpinion, adroll, ads, adsense, adserver, advertisement, advertising, affiliate, banner, banners, chitika, cj, commercial, commission, crispads, dfp, google, income, junction, link, manager, media, money, plugin, random, referral, revenue, rotator, seo, server, shoppingads, widget, widgetbucks, yahoo, ypn
 Requires at least: 3.1
 Tested up to: 3.3.1
-Stable tag: 1.2.40
+Stable tag: 1.3.41
 
 Advertisment rotation system with a flexible logic of displaying advertisements.
 
@@ -81,6 +81,8 @@ No questions now...
 
 == Changelog ==
 
+= 1.3.41 =
+* Minor bug fixed. Now you can define all possible limitations for Custom Types Posts too.
 = 1.2.40 =
 * MultiSite support is added. Thanks to *meermedia*.
 * Major bug is fixed
@@ -136,6 +138,8 @@ No questions now...
 
 == Upgrade Notice ==
 
+= 1.3.41 =
+Minor bug (Custom Types Posts limitations) fixed.
 = 1.2.40 =
 MultiSite support is added.
 Major bug is fixed.
