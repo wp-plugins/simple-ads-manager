@@ -429,7 +429,7 @@ if(!class_exists('SamPlaceList')) {
             $codeset = get_bloginfo('charset');
             setlocale(LC_MONETARY, $lang.'.'.$codeset);
             foreach($items as $row) {
-              if($row['ad_weight'] > 0) $activity = __('Yes', SAM_DOMAIN);
+              if($row['ad_weight'] > 0 && !$row['trash'] && !$row['expired']) $activity = __('Yes', SAM_DOMAIN);
               else $activity = __('No', SAM_DOMAIN);
               $eMonth = round(floatval($row['e_month']), 2);
               $eCPM = round(floatval($row['e_cpm']), 2);

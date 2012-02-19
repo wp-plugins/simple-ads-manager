@@ -5,7 +5,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Simple Ads Manager\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2012-01-07 12:33+0300\n"
+"POT-Creation-Date: 2012-02-19 19:59+0300\n"
 "PO-Revision-Date: \n"
 "Last-Translator: minimus <minimus@blogcoding.ru>\n"
 "Language-Team: minimus <minimus@blogcoding.ru>\n"
@@ -33,7 +33,8 @@ msgid "Google DFP Settings"
 msgstr "Параметры Google DFP"
 
 #: admin.class.php:377
-#: admin.class.php:590
+#: help.class.php:68
+#: help.class.php:190
 msgid "Statistics Settings"
 msgstr "Параметры статистики"
 
@@ -79,552 +80,349 @@ msgstr "Разрешить автоматическую вставку рекл�
 
 #: admin.class.php:386
 #: admin.class.php:389
+#: admin.class.php:392
 msgid "Allow using predefined Ads Place HTML codes (before and after codes)"
 msgstr "Использовать заранее заданные коды рекламного места (коды рекламного места \"до\" и \"после\")"
 
 #: admin.class.php:387
+msgid "Ads Place in the middle of content"
+msgstr "Рекламное место в средней части контента"
+
+#: admin.class.php:388
+msgid "Allow Ads Place auto inserting into the middle of post/page content"
+msgstr "Разрешить автоматическую вставку рекламного места в середину контента статьи/страницы"
+
+#: admin.class.php:390
 msgid "Ads Place after content"
 msgstr "Рекламное место после контента"
 
-#: admin.class.php:388
+#: admin.class.php:391
 msgid "Allow Ads Place auto inserting after post/page content"
 msgstr "Разрешить автоматическую вставку рекламного места после контента статьи/страницы"
 
-#: admin.class.php:391
+#: admin.class.php:394
 msgid "Allow using Google DoubleClick for Publishers (DFP) rotator codes"
 msgstr "Разрешить использование кодов Google DoubleClick for Publishers (DFP)"
 
-#: admin.class.php:392
+#: admin.class.php:395
 msgid "Google DFP Pub Code"
 msgstr "Pub-код Google DFP"
 
-#: admin.class.php:392
+#: admin.class.php:395
 msgid "Your Google DFP Pub code. i.e:"
 msgstr "Ваш pub-код Google DFP. Например:"
 
-#: admin.class.php:394
+#: admin.class.php:397
 msgid "Allow Bots and Crawlers detection"
 msgstr "Разрешить обнаружение ботов и сканеров"
 
-#: admin.class.php:395
+#: admin.class.php:398
 msgid "Accuracy of Bots and Crawlers Detection"
 msgstr "Точность обнаружения ботов и сканеров"
 
-#: admin.class.php:395
+#: admin.class.php:398
 msgid "If bot is detected hits of ads won't be counted. Use with caution! More exact detection requires more server resources."
 msgstr "Если обнаружен бот, показы объявлений не будут защитаны. Используйте с осторожностью! Чем точнее определение, тем больше ресурсов сервера требуется."
 
-#: admin.class.php:395
+#: admin.class.php:398
 msgid "Inexact detection"
 msgstr "Неточное определение"
 
-#: admin.class.php:395
+#: admin.class.php:398
 msgid "Exact detection"
 msgstr "Точное определение"
 
-#: admin.class.php:395
+#: admin.class.php:398
 msgid "More exact detection"
 msgstr "Более точное определение"
 
-#: admin.class.php:396
-#: admin.class.php:592
+#: admin.class.php:399
+#: help.class.php:70
+#: help.class.php:192
 msgid "Display of Currency"
 msgstr "Показ валюты"
 
-#: admin.class.php:396
-#: admin.class.php:592
+#: admin.class.php:399
+#: help.class.php:70
+#: help.class.php:192
 msgid "Define display of currency. Auto - auto detection of currency from blog settings. USD, EUR - Forcing the display of currency to U.S. dollars or Euro."
 msgstr "Определите отображение валюты. Автоопределение - автоматическое определение валюты из параметров настройки блога. Доллары США, Евро - принудительное отображение валюты в долларах США или евро."
 
-#: admin.class.php:396
+#: admin.class.php:399
 msgid "Auto"
 msgstr "Автоопределение"
 
-#: admin.class.php:396
+#: admin.class.php:399
 msgid "USD"
 msgstr "Доллары США"
 
-#: admin.class.php:396
+#: admin.class.php:399
 msgid "EUR"
 msgstr "Евро"
 
-#: admin.class.php:398
+#: admin.class.php:401
 msgid "TinyMCE Editor Button Mode"
 msgstr "Режим кнопки плагина в редакторе TinyMCE"
 
-#: admin.class.php:398
+#: admin.class.php:401
 msgid "If you do not want to use the modern dropdown button in your TinyMCE editor, or use of this button causes a problem, you can use classic TinyMCE buttons. In this case select \"Classic TinyMCE Buttons\"."
 msgstr "Если Вы не хотите использовать современную выпадающую кнопку в своем редакторе TinyMCE, или использование этой кнопки вызывает проблемы, Вы можете использовать классические кнопки TinyMCE. В этом случае выберите \"Классические кнопки TinyMCE\"."
 
-#: admin.class.php:398
+#: admin.class.php:401
 msgid "Modern TinyMCE Button"
 msgstr "Современная кнопка TinyMCE"
 
-#: admin.class.php:398
+#: admin.class.php:401
 msgid "Classic TinyMCE Buttons"
 msgstr "Классические кнопки TinyMCE"
 
-#: admin.class.php:399
+#: admin.class.php:402
 msgid "Ads Places per Page"
 msgstr "Рекламных мест на страницу"
 
-#: admin.class.php:399
+#: admin.class.php:402
 msgid "Ads Places Management grid pagination. How many Ads Places will be shown on one page of grid."
 msgstr "Разбиение на страницы таблицы представления рекламных мест. Сколько рекламных мест будет показано в таблице на одной странице."
 
-#: admin.class.php:400
+#: admin.class.php:403
 msgid "Ads per Page"
 msgstr "Объявлений на страницу"
 
-#: admin.class.php:400
+#: admin.class.php:403
 msgid "Ads of Ads Place Management grid pagination. How many Ads will be shown on one page of grid."
 msgstr "Разбиение на страницы таблицы представления рекламных объявлений. Сколько рекламных объявлений будет показано в таблице на одной странице."
 
-#: admin.class.php:402
+#: admin.class.php:405
 msgid "Delete plugin options during deactivating plugin"
 msgstr "Удалить параметры плагина при деактивации"
 
-#: admin.class.php:403
+#: admin.class.php:406
 msgid "Delete database tables of plugin during deactivating plugin"
 msgstr "Удалить таблицы базы данных плагина во время деактивации"
 
-#: admin.class.php:404
+#: admin.class.php:407
 msgid "Delete custom images folder of plugin during deactivating plugin"
 msgstr "Удалить папку пользовательских изображений плагина во время деактивации"
 
-#: admin.class.php:412
+#: admin.class.php:415
 msgid "Ads"
 msgstr "Реклама"
 
-#: admin.class.php:413
+#: admin.class.php:416
 msgid "Ads List"
 msgstr "Список рекламных объявлений"
 
-#: admin.class.php:413
+#: admin.class.php:416
 msgid "Ads Places"
 msgstr "Рекламные места"
 
-#: admin.class.php:415
+#: admin.class.php:418
 msgid "Ad Editor"
 msgstr "Редактор рекламного объявления"
 
-#: admin.class.php:415
+#: admin.class.php:418
 msgid "New Place"
 msgstr "Новое место"
 
-#: admin.class.php:418
+#: admin.class.php:421
 msgid "Ads Zones List"
 msgstr "Список зон рекламных объявлений"
 
-#: admin.class.php:418
+#: admin.class.php:421
 msgid "Ads Zones"
 msgstr "Рекламные зоны"
 
-#: admin.class.php:420
+#: admin.class.php:423
 msgid "Ads Zone Editor"
 msgstr "Редактор рекламной зоны"
 
-#: admin.class.php:420
+#: admin.class.php:423
 msgid "New Zone"
 msgstr "Новая зона"
 
-#: admin.class.php:422
+#: admin.class.php:425
 msgid "Ads Blocks List"
 msgstr "Список блоков рекламных объявлений"
 
-#: admin.class.php:422
+#: admin.class.php:425
 msgid "Ads Blocks"
 msgstr "Рекламные блоки"
 
-#: admin.class.php:424
+#: admin.class.php:427
 #: block.editor.admin.class.php:389
 msgid "Ads Block Editor"
 msgstr "Редактор рекламного блока"
 
-#: admin.class.php:424
+#: admin.class.php:427
 msgid "New Block"
 msgstr "Новый блок"
 
-#: admin.class.php:426
-#: admin.class.php:894
+#: admin.class.php:429
+#: admin.class.php:923
 msgid "Simple Ads Manager Settings"
 msgstr "Параметры Simple Ads Manager"
 
-#: admin.class.php:426
+#: admin.class.php:429
 msgid "Settings"
 msgstr "Параметры"
 
-#: admin.class.php:444
-#, fuzzy
-msgid "This is list of Ads Places"
-msgstr "Изменить этот элемент рекламного места"
-
-#: admin.class.php:445
-#: admin.class.php:453
-#: admin.class.php:464
-#: admin.class.php:481
-#: admin.class.php:490
-#: admin.class.php:506
-#: admin.class.php:522
-#: admin.class.php:555
-#: admin.class.php:572
-#: admin.class.php:579
-#: admin.class.php:593
-msgid "Manual"
-msgstr "Руководство"
-
-#: admin.class.php:446
-#: admin.class.php:454
-#: admin.class.php:465
-#: admin.class.php:482
-#: admin.class.php:491
-#: admin.class.php:507
-#: admin.class.php:523
-#: admin.class.php:556
-#: admin.class.php:573
-#: admin.class.php:580
-#: admin.class.php:594
-#: admin.class.php:940
-msgid "Support Forum"
-msgstr "Форум поддержки"
-
-#: admin.class.php:448
-#: admin.class.php:456
-msgid "Help"
-msgstr "Справка"
-
-#: admin.class.php:452
-msgid "This is list of Ads"
-msgstr ""
-
-#: admin.class.php:463
-msgid "The main object of the plugin is “Ads Place“. Each Ads Place is a container for the advertisements and provides the logic of the show and rotation. In addition, one of the parameters of advertising space is “patch ad code”, ie ad to be shown if and only if the logic of ads this Ads Place does not permit to show none of the advertisements contained in this Ads Place. One Ads Place can contain any number of objects “advertisement”."
-msgstr "Основным объектом плагина является рекламное место. Каждое рекламное место является контейнером для рекламных объявлений и обеспечивает логику их показа и ротации. Кроме того, одним из параметров рекламного места является код объявления-заплатки, т.е. рекламного объявления которое будет показано тогда и, только тогда, когда логика показа объявлений данного рекламного места не позволяет показать ни одно из объявлений содержащихся в этом рекламном месте. Одно рекламное место может содержать любое количество объектов “рекламное объявление”."
-
-#: admin.class.php:466
-#: block.editor.admin.class.php:77
-#: widget.class.php:15
-msgid "Ads Place"
-msgstr "Рекламное место"
-
-#: admin.class.php:470
-#: admin.class.php:561
-msgid "Enter a <strong>name</strong> and a <strong>description</strong> of the Ads Place. In principle, it is not mandatory parameters, because these parameters don’t influence anything, but experience suggests that after a while all IDs usually will be forgotten  and such information may be useful."
-msgstr "Введите <strong>название</strong> и <strong>описание</strong> рекламного места. В принципе, это не обязательные параметры, т.к. ни на что не влияют, однако опыт подсказывает, что через некоторое время всякие ID забываются и такая информация может быть полезной."
-
-#: admin.class.php:471
-#: admin.class.php:562
-msgid "<strong>Ads Place Size</strong> – in this version is only for informational purposes only, but in future I plan to use this option. It is desirable to expose the real size."
-msgstr "<strong>Размер рекламного места</strong> – в этой версии несёт на себе исключительно информационную нагрузку, но в будущем я планирую использовать этот параметр. Желательно выставлять реальный размер."
-
-#: admin.class.php:472
-#: admin.class.php:563
-msgid "<strong>Ads Place Patch</strong> - it’s an ad that will appear in the event that the logic of basic ads outputing of this Ads Place on the current page will not be able to choose a single basic ad for displaying. For example, if all basic announcements are set to displaying only on archives pages or single pages, in this case the patch ad of Ads Place will be shown on the Home page. Conveniently to use the patch ad of Ads Place where you sell the advertising place for a limited time – after the time expiration of ordered ad will appear patch ad. It may be a banner leading to your page of advertisement publication costs or a banner from AdSense."
-msgstr "<strong>Заглушка рекламного места</strong> - это рекламное объявление, которое будет показываться в том случае, если логика вывода основных рекламных объявлений данного рекламного места на текущей странице не сможет выбрать ни одного основного объявления для показа. Например, все основные объявления настроены на показ либо в архивах, либо на странице единственной статьи (single post), в этом случае на Главной будет показана заглушка. Удобно использовать заглушку в тех рекламных местах где Вы продаёте место на ограниченный срок – по истечении срока вместо заказанного объявления будет показываться заглушка. В качестве заглушки неплохо использовать баннер ведущий на вашу страницу расценок публикации рекламных объявлений или баннер от AdSense."
-
-#: admin.class.php:473
-#: admin.class.php:564
-msgid "Patch can be defined"
-msgstr "Заглушка может быть задана"
-
-#: admin.class.php:475
-#: admin.class.php:566
-msgid "as combination of the image URL and target page URL"
-msgstr "как комбинация URL изображения и URL целевой страницы"
-
-#: admin.class.php:476
-#: admin.class.php:567
-msgid "as HTML code or javascript code"
-msgstr "как код HTML или Javascript"
-
-#: admin.class.php:477
-#: admin.class.php:568
-msgid "as name of Google <a href=\"https://www.google.com/intl/en/dfp/info/welcome.html\" target=\"_blank\">DoubleClick for Publishers</a> (DFP) block"
-msgstr "как имя блока Google <a href=\"https://www.google.com/intl/en/dfp/info/welcome.html\" target=\"_blank\">DoubleClick for Publishers</a> (DFP)"
-
-#: admin.class.php:479
-#: admin.class.php:570
-msgid "If you select the first option (image mode), tools to download/choosing of downloaded image banner become available for you."
-msgstr "В случае использования первого варианта (режим изображения) Вам становятся доступны инструменты для загрузки/выбора загруженного изображения баннера."
-
-#: admin.class.php:480
-#: admin.class.php:571
-msgid "<strong>Codes</strong> – as Ads Place can be inserted into the page code not only as widget, but as a short code or by using function, you can use code “before” and “after” for centering or alignment of Ads Place on the place of inserting or for something else you need. Use HTML tags."
-msgstr "<strong>Коды</strong> – поскольку рекламное место может быть вставлено в код страницы не только как виджет, но и как короткий код или с помощью функции, вполне резонно можно использовать коды «до» и «после» для центровки или выравнивания рекламного места на месте вставки. Используйте HTML теги."
-
-#: admin.class.php:483
-#: admin.class.php:509
-msgid "Parameters"
-msgstr "Параметры"
-
-#: admin.class.php:489
-msgid "Object “advertisement” rigidly attached to his container “Ads Place”. Its parameters determine frequency (weight) of displaying and limiting displaying from “show all pages” to “show the articles with ID … ” and show from date to date (the schedule)."
-msgstr "Объект “рекламное объявление” жёстко привязан к своему контейнеру “рекламное место”. Его параметры определяют частоту показа (вес) и параметры ограничения показа, от “показывать на всех страницах” до “показывать в статьях с ID …” и показывать с … по (расписание)."
-
-#: admin.class.php:492
-#: list.admin.class.php:360
-#: list.admin.class.php:370
-msgid "Advertisement"
-msgstr "Рекламное объявление"
-
-#: admin.class.php:496
-#: admin.class.php:536
-msgid "Enter a <strong>name</strong> and a <strong>description</strong> of the advertisement. These parameters are optional, because don’t influence anything, but help in the visual identification of the ad (do not forget which is which)."
-msgstr "Введите <strong>название</strong> и <strong>описание</strong> рекламного объявления. Это необязательные параметры, т.к. ни на что не влияют, но помогают в визуальной идентификации объявления (не забыть что есть что)."
-
-#: admin.class.php:497
-#: admin.class.php:537
-msgid "<strong>Ad Code</strong> – code can be defined as a combination of the image URL and target page URL, or as HTML code, javascript code, or PHP code (for PHP-code don’t forget to set the checkbox labeled \"This code of ad contains PHP script\"). If you select the first option (image mode) you can keep statistics of clicks and also tools for uploading/selecting the downloaded image banner becomes available to you."
-msgstr "<strong>Код рекламного объявления</strong> – код может быть задан как комбинация URL изображения и URL целевой страницы, либо как код HTML, код javascript или PHP-код (для PHP-кода не забудьте выставить флажок «Этот код объявления содержит PHP скрипт»). В случае использования первого варианта (режим изображения) Вам становится доступна возможность вести статистику кликов, а так же инструменты для загрузки/выбора загруженного изображения баннера."
-
-#: admin.class.php:498
-#: admin.class.php:538
-msgid "<strong>Restrictions of advertisement Showing</strong>"
-msgstr "<strong>Ограничения показа объявления</strong>"
-
-#: admin.class.php:499
-#: admin.class.php:539
-msgid "<em>Ad Weight</em> – coefficient of frequency of show of the advertisement for one cycle of advertisements rotation. 0 – ad is inactive, 1 – minimal activity of this advertisement, 10 – maximal activity of this ad."
-msgstr "<em>Вес рекламного объявления</em> -  коэффициент частоты показа рекламного объявления за однин цикл ротации. 0 - объявление неактивно, 1 - минимальная активность, 10 - максимальная активность объявления."
-
-#: admin.class.php:500
-#: admin.class.php:540
-msgid "<em>Restrictions by the type of pages</em> – select restrictions:"
-msgstr "<em>Ограничения по типу страниц</em> - выберите режим ограничения:"
-
-#: admin.class.php:502
-#: admin.class.php:542
-#: editor.admin.class.php:925
-msgid "Show ad on all pages of blog"
-msgstr "Показывать объявление на всех страницах блога"
-
-#: admin.class.php:503
-#: admin.class.php:543
-msgid "Show ad only on pages of this type – ad will appear only on the pages of selected types"
-msgstr "Показывать на страницах только данного типа – объявление будет показываться только на страницах выбранных типов"
-
-#: admin.class.php:504
-#: admin.class.php:544
-msgid "Show ad only in certain posts – ad will be shown only on single posts pages with the given IDs (ID items separated by commas, no spaces)"
-msgstr "Показывать объявление только в определённых статьях – объявление будет показываться только на страницах статей с заданными ID статей (ID статей разделять запятыми, без пробелов)"
-
-#: admin.class.php:513
-msgid "<strong>Additional restrictions</strong>"
-msgstr "<strong>Доплнительные ограничения</strong>"
-
-#: admin.class.php:515
-#: admin.class.php:548
-msgid "Show ad only in single posts or categories archives of certain categories – ad will be shown only on single posts pages or category archive pages of the specified categories"
-msgstr "Показывать объявление только в одиночных статьях или архивах заданных рубрик – объявление будет показываться только на страницах статей, входящих в заданные рубрики и на страницах архивов заданных рубрик"
-
-#: admin.class.php:516
-#: admin.class.php:549
-msgid "Show ad only in single posts or authors archives of certain authors – ad will be shown only on single posts pages or author archive pages of the specified authors"
-msgstr "Показывать объявление только в одиночных статьях или архивах заданных авторов – объявление будет показываться только на страницах статей и на страницах архивов заданных авторов."
-
-#: admin.class.php:518
-#: admin.class.php:551
-msgid "<em>Use the schedule for this ad</em> – if necessary, select checkbox labeled “Use the schedule for this ad” and set start and finish dates of ad campaign."
-msgstr "<em>Ограничение времени показа</em> – если необходимо, взведите флажок «Использовать расписание для этого объявления» и установите даты начала и конца рекламной кампании."
-
-#: admin.class.php:519
-#: admin.class.php:552
-msgid "<em>Use limitation by hits</em> – if necessary, select checkbox labeled “Use limitation by hits” and set hits limit."
-msgstr "<em>Использовать ограничение по показам</em> – если необходимо, взведите флажок «Использовать ограничение по показам» и установите лимит показов."
-
-#: admin.class.php:520
-#: admin.class.php:553
-msgid "<em>Use limitation by clicks</em> – if necessary, select checkbox labeled “Use limitation by clicks” and set clicks limit."
-msgstr "<em>Использовать ограничение по кликам</em> – если необходимо, взведите флажок «Использовать ограничение по кликам» и установите лимит кликов."
-
-#: admin.class.php:521
-#: admin.class.php:554
-#: editor.admin.class.php:1162
-msgid "Prices"
-msgstr "Расценки"
-
-#: admin.class.php:521
-#: admin.class.php:554
-msgid "Use these parameters to get the statistics of incomes from advertisements placed in your blog. \"Price of ad placement per month\" - parameter used only for calculating statistic of scheduled ads."
-msgstr "Используйте эти параметры, чтобы получить статистику доходов от рекламы, размещаемой в вашем блоге. \"Цена размещения объявлений в месяц\" - этот параметр используется для расчета статистики только для объявлений, показываемых по расписанию."
-
-#: admin.class.php:525
-msgid "Additional Parameters"
-msgstr "Доплнительные параметры"
-
-#: admin.class.php:546
-msgid "<em>Additional restrictions</em>"
-msgstr "<em>Доплнительные ограничения</em>"
-
-#: admin.class.php:585
-msgid "<strong>Views per Cycle</strong> – the number of impressions an ad for one cycle of rotation, provided that this ad has maximum weight (the activity). In other words, if the number of hits in the series is 1000, an ad with a weight of 10 will be shown in 1000, and the ad with a weight of 3 will be shown 300 times."
-msgstr "<strong>Количество показов в цикле</strong> – количество показов одного объявления за один цикл ротации, при условии, что это объявление имее максимальный вес (активность). Другими словами, при количестве показов в цикле равном 1000, объявление с весом 10 будет показано 1000 раз, а объявление с весом 3 будет показано 300 раз."
-
-#: admin.class.php:586
-msgid "Do not set this parameter to a value less than the maximum number of visitors which may simultaneously be on your site – it may violate the logic of rotation."
-msgstr "Не устанавливайте этот параметр в значение меньшее, чем максимальное количество посетителей могущих одномоментно находиться на Вашем сайте – это может привести к нарушению логики ротации."
-
-#: admin.class.php:587
-msgid "Not worth it, though it has no special meaning, set this parameter to a value greater than the number of hits your web pages during a month. Optimal, perhaps, is the value to the daily shows website pages."
-msgstr "Не стоит, хоть это и не имеет особого значения, устанавливать этот параметр в значенее большее, чем количество показов страниц Вашего сайта в месяц. Оптимальным, пожалуй, является значение равное суточному показу страниц сайта."
-
-#: admin.class.php:588
-msgid "<strong>Auto Inserting Settings</strong> - here you can select the Ads Places and allow the display of their ads before and after the  content of single post."
-msgstr "<strong>Параметры автовставки</strong> - здесь Вы можете выбрать рекламные места и разрешить показ их рекламных объявлений до и после контента одиночной статьи."
-
-#: admin.class.php:589
-msgid "<strong>Google DFP Settings</strong> - if you want to use codes of Google DFP rotator, you must allow it's using and define your pub-code."
-msgstr "<strong>Параметры Google DFP</strong> - если Вы хотите использовать коды ротатора Google DFP, Вы должны разрешить их использование и определить Ваш pub-код."
-
-#: admin.class.php:591
-msgid "Bots and Crawlers detection"
-msgstr "Обнаружение ботов и сканеров"
-
-#: admin.class.php:591
-msgid "For obtaining of more exact indexes of statistics and incomes it is preferable to exclude data about visits of bots and crawlers from the data about all visits of your blog. If enabled and bot or crawler is detected, hits of ads won't be counted. Select accuracy of detection but use with caution - more exact detection requires more server resources."
-msgstr "Для обеспечения более точных показателей статистики посещений и доходов, предпочтительно исключить данные о посещениях блога ботами и сканерами из общих данных о посещениях блога. Если включено, при обнаружении бота или сканера данные о показе не будут записаны. Выберите точность обнаружения ботов, но помните, что чем точнее тем больше требуется ресурсов сервера."
-
-#: admin.class.php:721
+#: admin.class.php:750
 msgid "Uploading"
 msgstr "Загружается"
 
-#: admin.class.php:722
+#: admin.class.php:751
 msgid "Uploaded."
 msgstr "загружен."
 
-#: admin.class.php:723
+#: admin.class.php:752
 msgid "Only JPG, PNG or GIF files are allowed"
 msgstr "Разрешается загрузка файлов формата JPG, PNG или GIF"
 
-#: admin.class.php:724
+#: admin.class.php:753
 msgid "File"
 msgstr "Файл"
 
-#: admin.class.php:801
+#: admin.class.php:830
 msgid "There are general options."
 msgstr "Основные параметры плагина."
 
-#: admin.class.php:805
+#: admin.class.php:834
 msgid "Single post/page auto inserting options. Use these parameters for allowing/defining Ads Places which will be automatically inserted before/after post/page content."
 msgstr "Параметры автоматической вставки для режима вывода одной статьи/страницы. Используйте эти параметры для разрешения/определения рекламных мест, которые будут автоматически вставлены до/после контента статьи/страницы."
 
-#: admin.class.php:809
+#: admin.class.php:838
 msgid "Adjust parameters of your Google DFP account."
 msgstr "Настройте параметры вашей учётной записи Google DFP."
 
-#: admin.class.php:813
+#: admin.class.php:842
 msgid "Adjust parameters of plugin statistics."
 msgstr "Настройте параметры статистики плагина."
 
-#: admin.class.php:817
+#: admin.class.php:846
 msgid "This options define layout for Ads Managin Pages."
 msgstr "Эти параметры определяют внешний вид страниц управления рекламными объявлениями и рекламными местами."
 
-#: admin.class.php:821
+#: admin.class.php:850
 msgid "Are you allow to perform these actions during deactivating plugin?"
 msgstr "Вы разрешаете выполнение этих деиствий в ходе деактивации плагина?"
 
-#: admin.class.php:906
+#: admin.class.php:935
 msgid "Simple Ads Manager Settings Updated."
 msgstr "Параметры Simple Ads Manager сохранены."
 
-#: admin.class.php:914
+#: admin.class.php:943
 msgid "System Info"
 msgstr "Системная информация"
 
-#: admin.class.php:921
+#: admin.class.php:950
 msgid "Wordpress Version"
 msgstr "Версия Wordpress"
 
-#: admin.class.php:922
+#: admin.class.php:951
 msgid "SAM Version"
 msgstr "Версия плагина"
 
-#: admin.class.php:923
+#: admin.class.php:952
 msgid "SAM DB Version"
 msgstr "Версия таблиц БД плагина"
 
-#: admin.class.php:924
+#: admin.class.php:953
 msgid "PHP Version"
 msgstr "Версия PHP"
 
-#: admin.class.php:925
+#: admin.class.php:954
 msgid "MySQL Version"
 msgstr "Версия MySQL"
 
-#: admin.class.php:926
+#: admin.class.php:955
 msgid "Memory Limit"
 msgstr "Лимит памяти"
 
-#: admin.class.php:930
+#: admin.class.php:959
 msgid "Note! If you have detected a bug, include this data to bug report."
 msgstr "Обратите внимание! Если вы обнаружили ошибку, не забудьте включить эти данные в отчет об ошибке."
 
-#: admin.class.php:935
+#: admin.class.php:964
 msgid "Resources"
 msgstr "Ресурсы"
 
-#: admin.class.php:938
+#: admin.class.php:967
 msgid "Wordpress Plugin Page"
 msgstr "Страница плагина на Wordpress"
 
-#: admin.class.php:939
+#: admin.class.php:968
 msgid "Author Plugin Page"
 msgstr "Страница плагина"
 
-#: admin.class.php:941
+#: admin.class.php:969
+#: help.class.php:34
+#: help.class.php:51
+#: help.class.php:58
+#: help.class.php:72
+#: help.class.php:100
+#: help.class.php:108
+#: help.class.php:119
+#: help.class.php:136
+#: help.class.php:145
+#: help.class.php:161
+#: help.class.php:177
+#: help.class.php:194
+msgid "Support Forum"
+msgstr "Форум поддержки"
+
+#: admin.class.php:970
 msgid "Author's Blog"
 msgstr "Блог автора"
 
-#: admin.class.php:946
+#: admin.class.php:975
 msgid "Donations"
 msgstr "Пожертвования"
 
-#: admin.class.php:950
+#: admin.class.php:979
 #, php-format
 msgid "If you have found this plugin useful, please consider making a %s to help support future development. Your support will be much appreciated. Thank you!"
 msgstr "Если Вы сочли этот плагин полезным, пожалуйста, изыщите возможность сделать %s, чтобы поддержать дальнейшие работы по разработке плагина. Ваша поддержка будет оценена по достоинству. Спасибо!"
 
-#: admin.class.php:951
-#: admin.class.php:957
+#: admin.class.php:980
+#: admin.class.php:986
 msgid "Donate Now!"
 msgstr "Пожертвовать!"
 
-#: admin.class.php:951
+#: admin.class.php:980
 msgid "donation"
 msgstr "пожертвование"
 
-#: admin.class.php:962
+#: admin.class.php:991
 #, php-format
 msgid "Warning! The default value of donation is %s. Don't worry! This is not my appetite, this is default value defined by Payoneer service."
 msgstr "Внимание! Значение по умолчанию для пожертвования составляет %s. Не волнуйтесь! Это не мой аппетит, это - значение по умолчанию, определенное службой Payoneer."
 
-#: admin.class.php:962
+#: admin.class.php:991
 msgid " You can change it to any value you want!"
 msgstr " Вы можете изменить его на любое значение, которое посчитаете нужным!"
 
-#: admin.class.php:970
+#: admin.class.php:999
 msgid "Another Plugins"
 msgstr "Другие плагины"
 
-#: admin.class.php:974
+#: admin.class.php:1003
 #, php-format
 msgid "Another plugins from %s"
 msgstr "Другие плагины от %s'а"
 
-#: admin.class.php:980
+#: admin.class.php:1009
 msgid "Highlights any portion of text as text in the colored boxes."
 msgstr "Подсветка любой части текста в виде текста в цветной рамке."
 
-#: admin.class.php:981
+#: admin.class.php:1010
 msgid "Adds simple counters badge (FeedBurner subscribers and Twitter followers) to your blog."
 msgstr "Добавляет бейджик счётчиков (подписчики Feedburner и последователи Twitter) на все страницы блога."
 
-#: admin.class.php:982
+#: admin.class.php:1011
 msgid "This plugin is WordPress shell for FloatBox library by Byron McGregor."
 msgstr "Wordpress оболочка для плагина FloatBox от Байрона МакГрегора."
 
-#: admin.class.php:983
+#: admin.class.php:1012
 msgid "Adds copyright notice in the end of each post of your blog. "
 msgstr "Добавляет строку уведомления об авторском праве в конец каждой статьи блога."
 
@@ -657,6 +455,12 @@ msgstr "Кликнуть для переключения"
 msgid "Item"
 msgstr "Элемент"
 
+#: block.editor.admin.class.php:77
+#: help.class.php:120
+#: widget.class.php:15
+msgid "Ads Place"
+msgstr "Рекламное место"
+
 #: block.editor.admin.class.php:79
 #: block.editor.admin.class.php:92
 #: block.editor.admin.class.php:105
@@ -671,7 +475,6 @@ msgstr "Рекламное объявление"
 #: block.editor.admin.class.php:103
 #: widget.class.php:149
 #: widget.class.php:154
-#: js/dialog-zone.php:48
 msgid "Ads Zone"
 msgstr "Рекламная зона"
 
@@ -742,7 +545,6 @@ msgstr "В корзине"
 #: zone.editor.admin.class.php:318
 #: js/dialog-ad.php:89
 #: js/dialog-block.php:79
-#: js/dialog-zone.php:89
 msgid "Cancel"
 msgstr "Отмена"
 
@@ -1630,6 +1432,12 @@ msgstr "Вес рекламного объявления является коэ
 msgid "0 - ad is inactive, 1 - minimal activity of this advertisement, 10 - maximal activity of this ad."
 msgstr "0 - объявление не активно, 1 - минимальная активность этого объявления, 10 - максимальная активность данного объявления."
 
+#: editor.admin.class.php:925
+#: help.class.php:20
+#: help.class.php:156
+msgid "Show ad on all pages of blog"
+msgstr "Показывать объявление на всех страницах блога"
+
 #: editor.admin.class.php:929
 msgid "Show ad only on pages of this type"
 msgstr "Показывать объявление только на страницах данного типа"
@@ -1850,6 +1658,12 @@ msgstr "Лимит кликов"
 msgid "Use this parameter for limiting displaying of ad by clicks."
 msgstr "Используйте этот параметр для ограничения показа объявлений по кликам."
 
+#: editor.admin.class.php:1162
+#: help.class.php:32
+#: help.class.php:175
+msgid "Prices"
+msgstr "Расценки"
+
 #: editor.admin.class.php:1165
 msgid "Price of ad placement per month"
 msgstr "Цена размещения в месяц"
@@ -1899,6 +1713,212 @@ msgstr "Таблица базы данных %s не была создана!"
 #, php-format
 msgid "Database table %s hasn't been upgraded!"
 msgstr "Таблица базы данных %s не была обновлена!"
+
+#: help.class.php:14
+#: help.class.php:150
+msgid "Enter a <strong>name</strong> and a <strong>description</strong> of the advertisement. These parameters are optional, because don’t influence anything, but help in the visual identification of the ad (do not forget which is which)."
+msgstr "Введите <strong>название</strong> и <strong>описание</strong> рекламного объявления. Это необязательные параметры, т.к. ни на что не влияют, но помогают в визуальной идентификации объявления (не забыть что есть что)."
+
+#: help.class.php:15
+#: help.class.php:151
+msgid "<strong>Ad Code</strong> – code can be defined as a combination of the image URL and target page URL, or as HTML code, javascript code, or PHP code (for PHP-code don’t forget to set the checkbox labeled \"This code of ad contains PHP script\"). If you select the first option (image mode) you can keep statistics of clicks and also tools for uploading/selecting the downloaded image banner becomes available to you."
+msgstr "<strong>Код рекламного объявления</strong> – код может быть задан как комбинация URL изображения и URL целевой страницы, либо как код HTML, код javascript или PHP-код (для PHP-кода не забудьте выставить флажок «Этот код объявления содержит PHP скрипт»). В случае использования первого варианта (режим изображения) Вам становится доступна возможность вести статистику кликов, а так же инструменты для загрузки/выбора загруженного изображения баннера."
+
+#: help.class.php:16
+#: help.class.php:152
+msgid "<strong>Restrictions of advertisement Showing</strong>"
+msgstr "<strong>Ограничения показа объявления</strong>"
+
+#: help.class.php:17
+#: help.class.php:153
+msgid "<em>Ad Weight</em> – coefficient of frequency of show of the advertisement for one cycle of advertisements rotation. 0 – ad is inactive, 1 – minimal activity of this advertisement, 10 – maximal activity of this ad."
+msgstr "<em>Вес рекламного объявления</em> -  коэффициент частоты показа рекламного объявления за однин цикл ротации. 0 - объявление неактивно, 1 - минимальная активность, 10 - максимальная активность объявления."
+
+#: help.class.php:18
+#: help.class.php:154
+msgid "<em>Restrictions by the type of pages</em> – select restrictions:"
+msgstr "<em>Ограничения по типу страниц</em> - выберите режим ограничения:"
+
+#: help.class.php:21
+#: help.class.php:157
+msgid "Show ad only on pages of this type – ad will appear only on the pages of selected types"
+msgstr "Показывать на страницах только данного типа – объявление будет показываться только на страницах выбранных типов"
+
+#: help.class.php:22
+#: help.class.php:158
+msgid "Show ad only in certain posts – ad will be shown only on single posts pages with the given IDs (ID items separated by commas, no spaces)"
+msgstr "Показывать объявление только в определённых статьях – объявление будет показываться только на страницах статей с заданными ID статей (ID статей разделять запятыми, без пробелов)"
+
+#: help.class.php:24
+msgid "<em>Additional restrictions</em>"
+msgstr "<em>Доплнительные ограничения</em>"
+
+#: help.class.php:26
+#: help.class.php:169
+msgid "Show ad only in single posts or categories archives of certain categories – ad will be shown only on single posts pages or category archive pages of the specified categories"
+msgstr "Показывать объявление только в одиночных статьях или архивах заданных рубрик – объявление будет показываться только на страницах статей, входящих в заданные рубрики и на страницах архивов заданных рубрик"
+
+#: help.class.php:27
+#: help.class.php:170
+msgid "Show ad only in single posts or authors archives of certain authors – ad will be shown only on single posts pages or author archive pages of the specified authors"
+msgstr "Показывать объявление только в одиночных статьях или архивах заданных авторов – объявление будет показываться только на страницах статей и на страницах архивов заданных авторов."
+
+#: help.class.php:29
+#: help.class.php:172
+msgid "<em>Use the schedule for this ad</em> – if necessary, select checkbox labeled “Use the schedule for this ad” and set start and finish dates of ad campaign."
+msgstr "<em>Ограничение времени показа</em> – если необходимо, взведите флажок «Использовать расписание для этого объявления» и установите даты начала и конца рекламной кампании."
+
+#: help.class.php:30
+#: help.class.php:173
+msgid "<em>Use limitation by hits</em> – if necessary, select checkbox labeled “Use limitation by hits” and set hits limit."
+msgstr "<em>Использовать ограничение по показам</em> – если необходимо, взведите флажок «Использовать ограничение по показам» и установите лимит показов."
+
+#: help.class.php:31
+#: help.class.php:174
+msgid "<em>Use limitation by clicks</em> – if necessary, select checkbox labeled “Use limitation by clicks” and set clicks limit."
+msgstr "<em>Использовать ограничение по кликам</em> – если необходимо, взведите флажок «Использовать ограничение по кликам» и установите лимит кликов."
+
+#: help.class.php:32
+#: help.class.php:175
+msgid "Use these parameters to get the statistics of incomes from advertisements placed in your blog. \"Price of ad placement per month\" - parameter used only for calculating statistic of scheduled ads."
+msgstr "Используйте эти параметры, чтобы получить статистику доходов от рекламы, размещаемой в вашем блоге. \"Цена размещения объявлений в месяц\" - этот параметр используется для расчета статистики только для объявлений, показываемых по расписанию."
+
+#: help.class.php:33
+#: help.class.php:50
+#: help.class.php:57
+#: help.class.php:71
+#: help.class.php:99
+#: help.class.php:107
+#: help.class.php:118
+#: help.class.php:135
+#: help.class.php:144
+#: help.class.php:160
+#: help.class.php:176
+#: help.class.php:193
+msgid "Manual"
+msgstr "Руководство"
+
+#: help.class.php:39
+#: help.class.php:124
+msgid "Enter a <strong>name</strong> and a <strong>description</strong> of the Ads Place. In principle, it is not mandatory parameters, because these parameters don’t influence anything, but experience suggests that after a while all IDs usually will be forgotten  and such information may be useful."
+msgstr "Введите <strong>название</strong> и <strong>описание</strong> рекламного места. В принципе, это не обязательные параметры, т.к. ни на что не влияют, однако опыт подсказывает, что через некоторое время всякие ID забываются и такая информация может быть полезной."
+
+#: help.class.php:40
+#: help.class.php:125
+msgid "<strong>Ads Place Size</strong> – in this version is only for informational purposes only, but in future I plan to use this option. It is desirable to expose the real size."
+msgstr "<strong>Размер рекламного места</strong> – в этой версии несёт на себе исключительно информационную нагрузку, но в будущем я планирую использовать этот параметр. Желательно выставлять реальный размер."
+
+#: help.class.php:41
+#: help.class.php:126
+msgid "<strong>Ads Place Patch</strong> - it’s an ad that will appear in the event that the logic of basic ads outputing of this Ads Place on the current page will not be able to choose a single basic ad for displaying. For example, if all basic announcements are set to displaying only on archives pages or single pages, in this case the patch ad of Ads Place will be shown on the Home page. Conveniently to use the patch ad of Ads Place where you sell the advertising place for a limited time – after the time expiration of ordered ad will appear patch ad. It may be a banner leading to your page of advertisement publication costs or a banner from AdSense."
+msgstr "<strong>Заглушка рекламного места</strong> - это рекламное объявление, которое будет показываться в том случае, если логика вывода основных рекламных объявлений данного рекламного места на текущей странице не сможет выбрать ни одного основного объявления для показа. Например, все основные объявления настроены на показ либо в архивах, либо на странице единственной статьи (single post), в этом случае на Главной будет показана заглушка. Удобно использовать заглушку в тех рекламных местах где Вы продаёте место на ограниченный срок – по истечении срока вместо заказанного объявления будет показываться заглушка. В качестве заглушки неплохо использовать баннер ведущий на вашу страницу расценок публикации рекламных объявлений или баннер от AdSense."
+
+#: help.class.php:42
+#: help.class.php:127
+msgid "Patch can be defined"
+msgstr "Заглушка может быть задана"
+
+#: help.class.php:44
+#: help.class.php:129
+msgid "as combination of the image URL and target page URL"
+msgstr "как комбинация URL изображения и URL целевой страницы"
+
+#: help.class.php:45
+#: help.class.php:130
+msgid "as HTML code or javascript code"
+msgstr "как код HTML или Javascript"
+
+#: help.class.php:46
+#: help.class.php:131
+msgid "as name of Google <a href=\"https://www.google.com/intl/en/dfp/info/welcome.html\" target=\"_blank\">DoubleClick for Publishers</a> (DFP) block"
+msgstr "как имя блока Google <a href=\"https://www.google.com/intl/en/dfp/info/welcome.html\" target=\"_blank\">DoubleClick for Publishers</a> (DFP)"
+
+#: help.class.php:48
+#: help.class.php:133
+msgid "If you select the first option (image mode), tools to download/choosing of downloaded image banner become available for you."
+msgstr "В случае использования первого варианта (режим изображения) Вам становятся доступны инструменты для загрузки/выбора загруженного изображения баннера."
+
+#: help.class.php:49
+#: help.class.php:134
+msgid "<strong>Codes</strong> – as Ads Place can be inserted into the page code not only as widget, but as a short code or by using function, you can use code “before” and “after” for centering or alignment of Ads Place on the place of inserting or for something else you need. Use HTML tags."
+msgstr "<strong>Коды</strong> – поскольку рекламное место может быть вставлено в код страницы не только как виджет, но и как короткий код или с помощью функции, вполне резонно можно использовать коды «до» и «после» для центровки или выравнивания рекламного места на месте вставки. Используйте HTML теги."
+
+#: help.class.php:63
+#: help.class.php:185
+msgid "<strong>Views per Cycle</strong> – the number of impressions an ad for one cycle of rotation, provided that this ad has maximum weight (the activity). In other words, if the number of hits in the series is 1000, an ad with a weight of 10 will be shown in 1000, and the ad with a weight of 3 will be shown 300 times."
+msgstr "<strong>Количество показов в цикле</strong> – количество показов одного объявления за один цикл ротации, при условии, что это объявление имее максимальный вес (активность). Другими словами, при количестве показов в цикле равном 1000, объявление с весом 10 будет показано 1000 раз, а объявление с весом 3 будет показано 300 раз."
+
+#: help.class.php:64
+#: help.class.php:186
+msgid "Do not set this parameter to a value less than the maximum number of visitors which may simultaneously be on your site – it may violate the logic of rotation."
+msgstr "Не устанавливайте этот параметр в значение меньшее, чем максимальное количество посетителей могущих одномоментно находиться на Вашем сайте – это может привести к нарушению логики ротации."
+
+#: help.class.php:65
+#: help.class.php:187
+msgid "Not worth it, though it has no special meaning, set this parameter to a value greater than the number of hits your web pages during a month. Optimal, perhaps, is the value to the daily shows website pages."
+msgstr "Не стоит, хоть это и не имеет особого значения, устанавливать этот параметр в значенее большее, чем количество показов страниц Вашего сайта в месяц. Оптимальным, пожалуй, является значение равное суточному показу страниц сайта."
+
+#: help.class.php:66
+#: help.class.php:188
+msgid "<strong>Auto Inserting Settings</strong> - here you can select the Ads Places and allow the display of their ads before and after the  content of single post."
+msgstr "<strong>Параметры автовставки</strong> - здесь Вы можете выбрать рекламные места и разрешить показ их рекламных объявлений до и после контента одиночной статьи."
+
+#: help.class.php:67
+#: help.class.php:189
+msgid "<strong>Google DFP Settings</strong> - if you want to use codes of Google DFP rotator, you must allow it's using and define your pub-code."
+msgstr "<strong>Параметры Google DFP</strong> - если Вы хотите использовать коды ротатора Google DFP, Вы должны разрешить их использование и определить Ваш pub-код."
+
+#: help.class.php:69
+#: help.class.php:191
+msgid "Bots and Crawlers detection"
+msgstr "Обнаружение ботов и сканеров"
+
+#: help.class.php:69
+#: help.class.php:191
+msgid "For obtaining of more exact indexes of statistics and incomes it is preferable to exclude data about visits of bots and crawlers from the data about all visits of your blog. If enabled and bot or crawler is detected, hits of ads won't be counted. Select accuracy of detection but use with caution - more exact detection requires more server resources."
+msgstr "Для обеспечения более точных показателей статистики посещений и доходов, предпочтительно исключить данные о посещениях блога ботами и сканерами из общих данных о посещениях блога. Если включено, при обнаружении бота или сканера данные о показе не будут записаны. Выберите точность обнаружения ботов, но помните, что чем точнее тем больше требуется ресурсов сервера."
+
+#: help.class.php:98
+#, fuzzy
+msgid "This is list of Ads Places"
+msgstr "Изменить этот элемент рекламного места"
+
+#: help.class.php:102
+#: help.class.php:110
+#: help.class.php:196
+msgid "Help"
+msgstr "Справка"
+
+#: help.class.php:106
+msgid "This is list of Ads"
+msgstr ""
+
+#: help.class.php:117
+msgid "The main object of the plugin is “Ads Place“. Each Ads Place is a container for the advertisements and provides the logic of the show and rotation. In addition, one of the parameters of advertising space is “patch ad code”, ie ad to be shown if and only if the logic of ads this Ads Place does not permit to show none of the advertisements contained in this Ads Place. One Ads Place can contain any number of objects “advertisement”."
+msgstr "Основным объектом плагина является рекламное место. Каждое рекламное место является контейнером для рекламных объявлений и обеспечивает логику их показа и ротации. Кроме того, одним из параметров рекламного места является код объявления-заплатки, т.е. рекламного объявления которое будет показано тогда и, только тогда, когда логика показа объявлений данного рекламного места не позволяет показать ни одно из объявлений содержащихся в этом рекламном месте. Одно рекламное место может содержать любое количество объектов “рекламное объявление”."
+
+#: help.class.php:137
+#: help.class.php:163
+msgid "Parameters"
+msgstr "Параметры"
+
+#: help.class.php:143
+msgid "Object “advertisement” rigidly attached to his container “Ads Place”. Its parameters determine frequency (weight) of displaying and limiting displaying from “show all pages” to “show the articles with ID … ” and show from date to date (the schedule)."
+msgstr "Объект “рекламное объявление” жёстко привязан к своему контейнеру “рекламное место”. Его параметры определяют частоту показа (вес) и параметры ограничения показа, от “показывать на всех страницах” до “показывать в статьях с ID …” и показывать с … по (расписание)."
+
+#: help.class.php:146
+#: list.admin.class.php:360
+#: list.admin.class.php:370
+msgid "Advertisement"
+msgstr "Рекламное объявление"
+
+#: help.class.php:167
+msgid "<strong>Additional restrictions</strong>"
+msgstr "<strong>Доплнительные ограничения</strong>"
+
+#: help.class.php:179
+msgid "Additional Parameters"
+msgstr "Доплнительные параметры"
 
 #: list.admin.class.php:137
 msgid "Managing Ads Places"
@@ -2100,7 +2120,6 @@ msgid "Back to Zones List"
 msgstr "Назад, к списку зон"
 
 #: zone.editor.admin.class.php:304
-#: js/dialog-zone.php:66
 msgid "Ads Zone ID"
 msgstr "ID рекламноой зоны"
 
@@ -2232,7 +2251,6 @@ msgstr "Вставить рекламное объявление"
 
 #: js/dialog-ad.php:41
 #: js/dialog-block.php:41
-#: js/dialog-zone.php:41
 msgid "Basic Settings"
 msgstr "Основные параметры"
 
@@ -2245,13 +2263,11 @@ msgid "Single Ad Name"
 msgstr "Имя объявления"
 
 #: js/dialog-ad.php:79
-#: js/dialog-zone.php:79
 msgid "Allow Ads Places predefined codes"
 msgstr "Использовать заданные коды рекламного места"
 
 #: js/dialog-ad.php:92
 #: js/dialog-block.php:82
-#: js/dialog-zone.php:92
 msgid "Insert"
 msgstr "Вставить"
 

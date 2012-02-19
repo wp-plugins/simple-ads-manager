@@ -17,6 +17,9 @@ if ( !class_exists( 'SimpleAdsManager' ) ) {
       'beforePost' => 0,
       'bpAdsId' => 0,
       'bpUseCodes' => 1,
+      'middlePost' => 0,
+      'mpAdsId' => 0,
+      'mpUseCodes' => 1,
       'afterPost' => 0,
       'apAdsId' => 0,
       'apUseCodes' => 1,
@@ -30,7 +33,7 @@ if ( !class_exists( 'SimpleAdsManager' ) ) {
 	  );
 		
 	  public function __construct() {
-      define('SAM_VERSION', '1.3.41');
+      define('SAM_VERSION', '1.4.44');
       define('SAM_DB_VERSION', '2.0');
       define('SAM_PATH', dirname( __FILE__ ));
       define('SAM_URL', plugins_url('/' . str_replace( basename( __FILE__), "", plugin_basename( __FILE__ ) )) );
@@ -264,15 +267,26 @@ if ( !class_exists( 'SimpleAdsManager' ) ) {
       $options = $this->getSettings();
       $bpAd = '';
       $apAd = '';
+      $mpAd = '';
       
       if(is_single() || is_page()) {
         if(!empty($options['beforePost']) && !empty($options['bpAdsId'])) 
           $bpAd = $this->buildAd(array('id' => $options['bpAdsId']), $options['bpUseCodes']);
+        if(!empty($options['middlePost']) && !empty($options['mpAdsId']))
+          $mpAd = $this->buildAd(array('id' => $options['mpAdsId']), $options['mpUseCodes']);
         if(!empty($options['afterPost']) && !empty($options['apAdsId'])) 
           $apAd = $this->buildAd(array('id' => $options['apAdsId']), $options['apUseCodes']);
       }
-      
-      return $bpAd.$content.$apAd;
+
+      if(!empty($mpAd)) {
+        $xc = explode("\r\n", $content);
+        $hm = ceil(count($xc)/2);
+        $cntFirst = implode("\r\n", array_slice($xc, 0, $hm));
+        $cntLast = implode("\r\n", array_slice($xc, $hm));
+
+        return $bpAd.$cntFirst.$mpAd.$cntLast.$apAd;
+      }
+      else return $bpAd.$content.$apAd;
     }
   } // end of class definition
 } // end of if not class SimpleAdsManager exists

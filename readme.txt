@@ -4,7 +4,7 @@ Donate link: https://load.payoneer.com/LoadToPage.aspx?email=minimus@simplelib.c
 Tags: ad, adbrite, adgridwork, adify, admin, adpinion, adroll, ads, adsense, adserver, advertisement, advertising, affiliate, banner, banners, chitika, cj, commercial, commission, crispads, dfp, google, income, junction, link, manager, media, money, plugin, random, referral, revenue, rotator, seo, server, shoppingads, widget, widgetbucks, yahoo, ypn
 Requires at least: 3.1
 Tested up to: 3.3.1
-Stable tag: 1.3.41
+Stable tag: 1.4.44
 
 Advertisment rotation system with a flexible logic of displaying advertisements.
 
@@ -50,6 +50,7 @@ Simple Ads Manager is easy to use plugin providing a flexible logic of displayin
 * Russian
 * German by [Fabian Krenzler](http://www.ktraces.de/) and **Ulrich Simon**
 * Belarusian by Alexander Ovsov ([Web Geek Sciense](http://webhostinggeeks.com/science/))
+* Spanish by [xiaobai_wp](http://wordpress.org/extend/plugins/profile/xiaobai_wp)
 
 If you have created your own language pack, or have an update of an existing one, you can send **.po** and **.mo files** to me (minimus AT simplelib.com) so that I can bundle it into **Simple Ads Manager** plugin pack.
   
@@ -81,6 +82,10 @@ No questions now...
 
 == Changelog ==
 
+= 1.4.44 =
+* Minor bug (activity of ad in ads list) is fixed.
+* Auto insertion of ad into the middle of post/page is added.
+* Language pack is updated. Spanish language by **xiaobai_wp** is added.
 = 1.3.41 =
 * Minor bug fixed. Now you can define all possible limitations for Custom Types Posts too.
 = 1.2.40 =
@@ -138,6 +143,10 @@ No questions now...
 
 == Upgrade Notice ==
 
+= 1.4.44 =
+Minor bug (activity of ad in ads list) is fixed.
+Auto insertion of ad into the middle of post/page is added.
+Language pack is updated. Spanish language by **xiaobai_wp** is added.
 = 1.3.41 =
 Minor bug (Custom Types Posts limitations) fixed.
 = 1.2.40 =

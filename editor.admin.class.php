@@ -242,8 +242,8 @@ if(!class_exists('SamPlaceEdit')) {
           if(isset($_POST['update_place'])) {
             $placeId = $_POST['place_id'];
             $updateRow = array(
-              'name' => $_POST['place_name'],
-              'description' => $_POST['description'],
+              'name' => stripslashes($_POST['place_name']),
+              'description' => stripslashes($_POST['description']),
               'code_before' => stripslashes($_POST['code_before']),
               'code_after' => stripslashes($_POST['code_after']),
               'place_size' => $_POST['place_size'],
@@ -546,8 +546,8 @@ if(!class_exists('SamPlaceEdit')) {
             ));
             $updateRow = array(
               'pid' => $_POST['place_id'],
-              'name' => $_POST['item_name'],
-              'description' => $_POST['item_description'],
+              'name' => stripslashes($_POST['item_name']),
+              'description' => stripslashes($_POST['item_description']),
               'code_type' => $_POST['code_type'],
               'code_mode' => $_POST['code_mode'],
               'ad_code' => stripslashes($_POST['ad_code']),
