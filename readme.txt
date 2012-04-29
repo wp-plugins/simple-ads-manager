@@ -2,9 +2,9 @@
 Contributors: minimus
 Donate link: https://load.payoneer.com/LoadToPage.aspx?email=minimus@simplelib.com
 Tags: ad, adbrite, adgridwork, adify, admin, adpinion, adroll, ads, adsense, adserver, advertisement, advertising, affiliate, banner, banners, chitika, cj, commercial, commission, crispads, dfp, google, income, junction, link, manager, media, money, plugin, random, referral, revenue, rotator, seo, server, shoppingads, widget, widgetbucks, yahoo, ypn
-Requires at least: 3.1
-Tested up to: 3.3.1
-Stable tag: 1.4.44
+Requires at least: 3.3
+Tested up to: 3.4
+Stable tag: 1.5.50
 
 Advertisment rotation system with a flexible logic of displaying advertisements.
 
@@ -82,6 +82,13 @@ No questions now...
 
 == Changelog ==
 
+= 1.5.50 =
+* Error log is added
+* User interface of *Ads Editor* is improved
+* Categories and Tags identification is changed from *name* to *slug*
+* Flash (SWF) banners support is added
+* Limitations of displaying ads to users are added
+* Accessing menu settings are added
 = 1.4.44 =
 * Minor bug (activity of ad in ads list) is fixed.
 * Auto insertion of ad into the middle of post/page is added.
@@ -101,7 +108,7 @@ No questions now...
 = 1.0.33 =
 * Ads Blocks object is added.
 * Ads Blocks widget is added.
-* Custom Types supporting are added.
+* Custom Types supporting is added.
 * Limitations by tags are added.
 * Some improvements are added.
 * Some fixes are made. 
@@ -143,6 +150,13 @@ No questions now...
 
 == Upgrade Notice ==
 
+= 1.5.50 =
+Error log is added.
+User interface of *Ads Editor* is improved.
+Categories and Tags identification is changed from *name* to *slug*.
+Flash (SWF) banners support is added.
+Limitations of displaying ads to users are added.
+Accessing menu settings are added.
 = 1.4.44 =
 Minor bug (activity of ad in ads list) is fixed.
 Auto insertion of ad into the middle of post/page is added.

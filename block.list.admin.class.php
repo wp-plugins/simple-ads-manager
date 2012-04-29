@@ -120,7 +120,7 @@ if(!class_exists('SamBlockList')) {
         <td class="post-title column-title">
           <strong style='display: inline;'><a href="<?php echo admin_url('admin.php'); ?>?page=sam-block-edit&action=edit&mode=block&item=<?php echo $row['id']; ?>"><?php echo $row['name'];?></a><?php echo ((($row['trash'] == true) && ($mode === 'all')) ? '<span class="post-state"> - '.__('in Trash', SAM_DOMAIN).'</span>' : ''); ?></strong><br/><?php echo $row['description'];?>
           <div class="row-actions">
-            <span class="edit"><a href="<?php echo admin_url('admin.php'); ?>?page=sam-block-edit&action=edit&mode=block&item=<?php echo $row['id']; ?>" title="<?php _e('Edit Zone', SAM_DOMAIN) ?>"><?php _e('Edit', SAM_DOMAIN); ?></a> | </span>
+            <span class="edit"><a href="<?php echo admin_url('admin.php'); ?>?page=sam-block-edit&action=edit&mode=block&item=<?php echo $row['id']; ?>" title="<?php _e('Edit Block', SAM_DOMAIN) ?>"><?php _e('Edit', SAM_DOMAIN); ?></a> | </span>
             <?php 
             if($row['trash'] == true) { 
               ?>

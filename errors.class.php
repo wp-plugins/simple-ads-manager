@@ -40,7 +40,7 @@
       $oError = '';
       $output = '';
       
-      if(is_null($rows)) $rows = array('places' => 16, 'ads' => 48, 'zones' => 24, 'blocks' => 15);
+      if(is_null($rows)) $rows = array('places' => 16, 'ads' => 62, 'zones' => 24, 'blocks' => 15);
       $errors = $this->getErrors($rows, SAM_AD_IMG);
       if($errors['dir']) { 
         $dirError = '<p><strong>'.__("Simple Ads Manager Images Folder hasn't been created!", SAM_DOMAIN).'</strong></p>';

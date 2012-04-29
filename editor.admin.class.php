@@ -384,7 +384,7 @@ if(!class_exists('SamPlaceEdit')) {
             </div>
           </div>
           <div class="meta-box-sortables ui-sortable">
-            <div id="descdiv" class="postbox ">
+            <div id="p-descdiv" class="postbox ">
               <div class="handlediv" title="<?php _e('Click to toggle', SAM_DOMAIN); ?>"><br/></div>
               <h3 class="hndle"><span><?php _e('Description', SAM_DOMAIN);?></span></h3>
               <div class="inside">
@@ -427,7 +427,7 @@ if(!class_exists('SamPlaceEdit')) {
                 <p>
                   <label for="patch_source_image"><input type="radio" id="patch_source_image" name="patch_source" value="0" <?php if($row['patch_source'] == '0') { echo 'checked="checked"'; } ?> />&nbsp;<?php _e('Image', SAM_DOMAIN); ?></label>&nbsp;&nbsp;&nbsp;&nbsp;
                 </p>
-                <div class='radio-content'>
+                <div id="rc-psi" class='radio-content' style="<?php if((int)$row['patch_source'] != 0) echo 'display: none;'; ?>">
                   <p>
                     <label for="patch_img"><?php echo __('Image', SAM_DOMAIN).':'; ?></label>
                     <input id="patch_img" class="code" type="text" tabindex="3" name="patch_img" value="<?php echo htmlspecialchars(stripslashes($row['patch_img'])); ?>" style="width:100%" />
@@ -465,7 +465,7 @@ if(!class_exists('SamPlaceEdit')) {
                 <p>
                   <label for="patch_source_code"><input type="radio" id="patch_source_code" name="patch_source" value="1" <?php if($row['patch_source'] == '1') { echo 'checked="checked"'; } ?> />&nbsp;<?php _e('HTML or Javascript Code', SAM_DOMAIN); ?></label>&nbsp;&nbsp;&nbsp;&nbsp;
                 </p>
-                <div class='radio-content'>
+                <div id="rc-psc" class='radio-content' style="<?php if((int)$row['patch_source'] != 1) echo 'display: none;'; ?>">
                   <p>
                     <label for="patch_code"><?php echo __('Patch Code', SAM_DOMAIN).':'; ?></label>
                     <textarea id="patch_code" class="code" rows='10' name="patch_code" style="width:100%" ><?php echo $row['patch_code']; ?></textarea>
@@ -482,7 +482,7 @@ if(!class_exists('SamPlaceEdit')) {
                 <p>
                   <label for="patch_source_dfp"><input type="radio" id="patch_source_dfp" name="patch_source" value="2" <?php if($row['patch_source'] == '2') { echo 'checked="checked"'; } ?> />&nbsp;<?php _e('Google DFP', SAM_DOMAIN); ?></label>&nbsp;&nbsp;&nbsp;&nbsp;
                 </p>
-                <div class='radio-content'>
+                <div id="rc-psd" class='radio-content' style="<?php if((int)$row['patch_source'] != 2) echo 'display: none;'; ?>">
                   <p>
                     <label for="patch_dfp"><?php echo __('DFP Block Name', SAM_DOMAIN).':'; ?></label>
                     <input type='text' name='patch_dfp' id='patch_dfp' value='<?php echo $row['patch_dfp']; ?>'>
@@ -555,7 +555,17 @@ if(!class_exists('SamPlaceEdit')) {
               'ad_alt' => $_POST['ad_alt'],
               'ad_no' => $_POST['ad_no'],
               'ad_target' => stripslashes($_POST['ad_target']),
+              'ad_swf' => $_POST['ad_swf'],
+              'ad_swf_flashvars' => (!empty($_POST['ad_swf_flashvars'])) ? stripslashes($_POST['ad_swf_flashvars']) : '{}',
+              'ad_swf_params' => (!empty($_POST['ad_swf_params'])) ? stripslashes($_POST['ad_swf_params']) : '{}',
+              'ad_swf_attributes' => (!empty($_POST['ad_swf_attributes'])) ? stripslashes($_POST['ad_swf_attributes']) : '{}',
               'count_clicks' => $_POST['count_clicks'],
+              'ad_users' => $_POST['ad_users'],
+              'ad_users_unreg' => $_POST['ad_users_unreg'],
+              'ad_users_reg' => $_POST['ad_users_reg'],
+              'x_ad_users' => $_POST['x_ad_users'],
+              'x_view_users' => $this->removeTrailingComma( stripcslashes($_POST['x_view_users'])),
+              'ad_users_adv' => $_POST['ad_users_adv'],
               'view_type' => $_POST['view_type'],
               'view_pages' => $viewPages,
               'view_id' => $_POST['view_id'],
@@ -585,12 +595,15 @@ if(!class_exists('SamPlaceEdit')) {
               'hits_limit' => $_POST['hits_limit'],
               'limit_clicks' => $_POST['limit_clicks'],
               'clicks_limit' => $_POST['clicks_limit'],
+              'adv_nick' => $_POST['adv_nick'],
+              'adv_name' => $_POST['adv_name'],
+              'adv_mail' => $_POST['adv_mail'],
               'cpm' => $_POST['cpm'],
               'cpc' => $_POST['cpc'],
               'per_month' => $_POST['per_month'],
               'trash' => ($_POST['trash'] === 'true')
             );
-            $formatRow = array( '%d', '%s', '%s', '%d', '%d', '%s', '%s', '%s', '%d', '%s', '%d', '%d', '%d', '%s', '%d', '%s', '%d', '%s', '%d', '%s', '%d', '%s', '%d', '%s', '%d', '%s', '%d', '%s', '%d', '%s', '%d', '%s', '%s', '%s', '%d', '%d', '%d', '%d', '%d', '%d', '%d', '%d', '%d', '%d');
+            $formatRow = array( '%d', '%s', '%s', '%d', '%d', '%s', '%s', '%s', '%d', '%s', '%d', '%s', '%s', '%s', '%d', '%d', '%d', '%d', '%d', '%s', '%d', '%d', '%d', '%s', '%d', '%s', '%d', '%s', '%d', '%s', '%d', '%s', '%d', '%s', '%d', '%s', '%d', '%s', '%d', '%s', '%d', '%s', '%s', '%s', '%d', '%d', '%d', '%d', '%d', '%d', '%s', '%s', '%s', '%d', '%d', '%d', '%d');
             if($itemId === __('Undefined', SAM_DOMAIN)) {
               $wpdb->insert($aTable, $updateRow);
               $item = $wpdb->insert_id;
@@ -619,7 +632,17 @@ if(!class_exists('SamPlaceEdit')) {
                       ad_alt,
                       ad_no, 
                       ad_target,
-                      count_clicks, 
+                      ad_swf,
+                      ad_swf_flashvars,
+                      ad_swf_params,
+                      ad_swf_attributes,
+                      count_clicks,
+                      ad_users,
+                      ad_users_unreg,
+                      ad_users_reg,
+                      x_ad_users,
+                      x_view_users,
+                      ad_users_adv,
                       (SELECT place_size FROM $pTable WHERE $pTable.id = $aTable.pid) AS ad_size,
                       (SELECT place_custom_width FROM $pTable WHERE $pTable.id = $aTable.pid) AS ad_custom_width,
                       (SELECT place_custom_height FROM $pTable WHERE $pTable.id = $aTable.pid) AS ad_custom_height, 
@@ -655,6 +678,9 @@ if(!class_exists('SamPlaceEdit')) {
                       ad_clicks, 
                       ad_weight, 
                       ad_weight_hits,
+                      adv_nick,
+                      adv_name,
+                      adv_mail,
                       cpm,
                       cpc,
                       per_month, 
@@ -679,7 +705,17 @@ if(!class_exists('SamPlaceEdit')) {
               'ad_alt' => '',
               'ad_no' => 0,
               'ad_target' => '',
+              'ad_swf' => 0,
+              'ad_swf_flashvars' => '{}',
+              'ad_swf_params' => '{}',
+              'ad_swf_attributes' => '{}',
               'count_clicks' => 0,
+              'ad_users' => 0,
+              'ad_users_unreg' => 0,
+              'ad_users_reg' => 0,
+              'x_ad_users' => 0,
+              'x_view_users' => '',
+              'ad_users_adv' => 0,
               'view_type' => 1,
               'view_pages' => 0,
               'view_id' => '',
@@ -712,6 +748,9 @@ if(!class_exists('SamPlaceEdit')) {
               'ad_clicks' => 0,
               'ad_weight' => 10,
               'ad_weight_hits' => 0,
+              'adv_nick' => '',
+              'adv_name' => '',
+              'adv_mail' => '',
               'cpm' => 0.0,
               'cpc' => 0.0,
               'per_month' => 0.0,
@@ -806,7 +845,7 @@ if(!class_exists('SamPlaceEdit')) {
             </div>
           </div>
           <div id="normal-sortables" class="meta-box-sortables ui-sortable">
-            <div id="codediv" class="postbox ">
+            <div id="descdiv" class="postbox ">
               <div class="handlediv" title="<?php _e('Click to toggle', SAM_DOMAIN); ?>"><br/></div>
               <h3 class="hndle"><span><?php _e('Advertisement Description', SAM_DOMAIN);?></span></h3>
               <div class="inside">
@@ -820,374 +859,507 @@ if(!class_exists('SamPlaceEdit')) {
               </div>
             </div>
           </div>
-          <div id="sources" class="meta-box-sortables ui-sortable">
-            <div id="codediv" class="postbox ">
-              <div class="handlediv" title="<?php _e('Click to toggle', SAM_DOMAIN); ?>"><br/></div>
-              <h3 class="hndle"><span><?php _e('Ad Code', SAM_DOMAIN);?></span></h3>
-              <div class="inside">
-                <p>
-                  <input type='radio' name='code_mode' id='code_mode_false' value='0' <?php checked(0, $row['code_mode']) ?>>
-                  <label for='code_mode_false'><strong><?php _e('Image Mode', SAM_DOMAIN); ?></strong></label>                  
-                </p>
-                <div class='radio-content'>
-                  <p>
-                    <label for="ad_img"><strong><?php echo __('Ad Image', SAM_DOMAIN).':' ?></strong></label>
-                    <input id="ad_img" class="code" type="text" tabindex="3" name="ad_img" value="<?php echo $row['ad_img']; ?>" style="width:100%" />
-                  </p>
-                  <p>
-                    <label for="ad_target"><strong><?php echo __('Ad Target', SAM_DOMAIN).':' ?></strong></label>
-                    <input id="ad_target" class="code" type="text" tabindex="3" name="ad_target" value="<?php echo $row['ad_target']; ?>" style="width:100%" />
-                  </p>
-                  <p>
-                    <label for="ad_alt"><strong><?php echo __('Ad Alternative Text', SAM_DOMAIN).':' ?></strong></label>
-                    <input id="ad_alt" class="code" type="text" tabindex="3" name="ad_alt" value="<?php echo $row['ad_alt']; ?>" style="width:100%" />
-                  </p>
-                  <p>
-                    <input type='checkbox' name='count_clicks' id='count_clicks' value='1' <?php checked(1, $row['count_clicks']) ?>>
-                    <label for='count_clicks'><?php _e('Count clicks for this advertisement', SAM_DOMAIN); ?></label>
-                  </p>
-                  <p><strong><?php _e('Use carefully!', SAM_DOMAIN) ?></strong> <?php _e("Do not use if the wp-admin folder is password protected. In this case the viewer will be prompted to enter a username and password during ajax request. It's not good.", SAM_DOMAIN) ?></p>
-                  <p>
-                    <label for='ad_no'><strong><?php echo __('Add to ad', SAM_DOMAIN).':'; ?></strong></label>
-                    <select name='ad_no' id='ad_no' disabled='disabled'>
-                      <option value='0' <?php selected(0, $row['ad_no']); ?>><?php _e('Non Selected', SAM_DOMAIN) ?></option>
-                      <option value='1' <?php selected(1, $row['ad_no']); ?>><?php _e('nofollow', SAM_DOMAIN) ?></option>
-                      <option value='2' <?php selected(2, $row['ad_no']); ?>><?php _e('noindex', SAM_DOMAIN) ?></option>
-                      <option value='3' <?php selected(3, $row['ad_no']); ?>><?php _e('nofollow and noindex', SAM_DOMAIN) ?></option>
-                    </select>
-                  </p>
-                  <div class="clear"></div>
-                  <div id="source_tools" >
-                    <p><strong><?php _e('Image Tools', SAM_DOMAIN); ?></strong></p>
+          <div id="tabs">
+            <ul>
+              <li><a href="#tabs-1"><?php _e('General', SAM_DOMAIN); ?></a></li>
+              <li><a href="#tabs-2"><?php _e('Extended Restrictions', SAM_DOMAIN); ?></a></li>
+              <li><a href="#tabs-3"><?php _e('Earnings settings', SAM_DOMAIN); ?></a></li>
+            </ul>
+            <div id="tabs-1">
+              <div id="sources" class="meta-box-sortables ui-sortable">
+                <div id="codediv" class="postbox ">
+                  <div class="handlediv" title="<?php _e('Click to toggle', SAM_DOMAIN); ?>"><br/></div>
+                  <h3 class="hndle"><span><?php _e('Ad Code', SAM_DOMAIN);?></span></h3>
+                  <div class="inside">
                     <p>
-                      <label for="files_list"><strong><?php echo (__('Select File', SAM_DOMAIN).':'); ?></strong></label>
-                      <select id="files_list" name="files_list" size="1"  dir="ltr" style="width: auto;">
-                        <?php $this->getFilesList(SAM_AD_IMG); ?>
-                      </select>&nbsp;&nbsp;
-                      <input id="add-file-button" type="button" class="button-secondary" value="<?php _e('Apply', SAM_DOMAIN);?>" />  <br/>  
-                      <?php _e("Select file from your blog server.", SAM_DOMAIN); ?>                
+                      <input type='radio' name='code_mode' id='code_mode_false' value='0' <?php checked(0, $row['code_mode']) ?>>
+                      <label for='code_mode_false'><strong><?php _e('Image Mode', SAM_DOMAIN); ?></strong></label>
                     </p>
+                    <div id="rc-cmf" class='radio-content' style="<?php if((int)$row['code_mode'] != 0) echo 'display: none;'; ?>">
+                      <p>
+                        <label for="ad_img"><strong><?php echo __('Ad Image', SAM_DOMAIN).':' ?></strong></label>
+                        <input id="ad_img" class="code" type="text" tabindex="3" name="ad_img" value="<?php echo $row['ad_img']; ?>" style="width:100%" />
+                      </p>
+                      <p>
+                        <label for="ad_target"><strong><?php echo __('Ad Target', SAM_DOMAIN).':' ?></strong></label>
+                        <input id="ad_target" class="code" type="text" tabindex="3" name="ad_target" value="<?php echo $row['ad_target']; ?>" style="width:100%" />
+                      </p>
+                      <p>
+                        <label for="ad_alt"><strong><?php echo __('Ad Alternative Text', SAM_DOMAIN).':' ?></strong></label>
+                        <input id="ad_alt" class="code" type="text" tabindex="3" name="ad_alt" value="<?php echo $row['ad_alt']; ?>" style="width:100%" />
+                      </p>
+                      <p>
+                        <input type='checkbox' name='count_clicks' id='count_clicks' value='1' <?php checked(1, $row['count_clicks']); ?> />
+                        <label for='count_clicks'><?php _e('Count clicks for this advertisement', SAM_DOMAIN); ?></label>
+                      </p>
+                      <p><strong><?php _e('Use carefully!', SAM_DOMAIN) ?></strong> <?php _e("Do not use if the wp-admin folder is password protected. In this case the viewer will be prompted to enter a username and password during ajax request. It's not good.", SAM_DOMAIN) ?></p>
+                      <p>
+                        <input type="checkbox" name="ad_swf" id="ad_swf" value="1" <?php checked(1, $row['ad_swf']); ?> />
+                        <label for="ad_swf"><?php _e('This is flash (SWF) banner', SAM_DOMAIN); ?></label>
+                      </p>
+                      <div id="swf-params" class="radio-content" style="<?php if((int)$row['ad_swf'] != 1) echo 'display: none;'; ?>">
+                        <label for="ad_swf_flashvars"><strong><?php _e('Flash banner "flashvars"', SAM_DOMAIN) ?>:</strong></label>
+                        <textarea type="text" name="ad_swf_flashvars" id="ad_swf_flashvars" rows="3" style="width:100%;"><?php echo $row['ad_swf_flashvars']; ?></textarea>
+                        <p><?php _e('Insert "flashvars" parameters between braces...', SAM_DOMAIN); ?></p>
+                        <label for="ad_swf_params"><strong><?php _e('Flash banner "params"', SAM_DOMAIN) ?>:</strong></label>
+                        <textarea type="text" name="ad_swf_params" id="ad_swf_params" rows="3" style="width:100%;"><?php echo $row['ad_swf_params']; ?></textarea>
+                        <p><?php _e('Insert "params" parameters between braces...', SAM_DOMAIN); ?></p>
+                        <label for="ad_swf_attributes"><strong><?php _e('Flash banner "attributes"', SAM_DOMAIN) ?>:</strong></label>
+                        <textarea type="text" name="ad_swf_attributes" id="ad_swf_attributes" rows="3" style="width:100%;"><?php echo $row['ad_swf_attributes']; ?></textarea>
+                        <p><?php _e('Insert "attributes" parameters between braces...', SAM_DOMAIN); ?></p>
+                      </div>
+                      <p>
+                        <label for='ad_no'><strong><?php echo __('Add to ad', SAM_DOMAIN).':'; ?></strong></label>
+                        <select name='ad_no' id='ad_no' disabled='disabled'>
+                          <option value='0' <?php selected(0, $row['ad_no']); ?>><?php _e('Non Selected', SAM_DOMAIN) ?></option>
+                          <option value='1' <?php selected(1, $row['ad_no']); ?>><?php _e('nofollow', SAM_DOMAIN) ?></option>
+                          <option value='2' <?php selected(2, $row['ad_no']); ?>><?php _e('noindex', SAM_DOMAIN) ?></option>
+                          <option value='3' <?php selected(3, $row['ad_no']); ?>><?php _e('nofollow and noindex', SAM_DOMAIN) ?></option>
+                        </select>
+                      </p>
+                      <div class="clear"></div>
+                      <div id="source_tools" >
+                        <p><strong><?php _e('Image Tools', SAM_DOMAIN); ?></strong></p>
+                        <p>
+                          <label for="files_list"><strong><?php echo (__('Select File', SAM_DOMAIN).':'); ?></strong></label>
+                          <select id="files_list" name="files_list" size="1"  dir="ltr" style="width: auto;">
+                            <?php $this->getFilesList(SAM_AD_IMG); ?>
+                          </select>&nbsp;&nbsp;
+                          <input id="add-file-button" type="button" class="button-secondary" value="<?php _e('Apply', SAM_DOMAIN);?>" />  <br/>
+                          <?php _e("Select file from your blog server.", SAM_DOMAIN); ?>
+                        </p>
+                        <p>
+                          <label for="upload-file-button"><strong><?php echo (__('Upload File', SAM_DOMAIN).':'); ?></strong></label>
+                          <input id="upload-file-button" type="button" class="button-secondary" name="upload_media" value="<?php _e('Upload', SAM_DOMAIN);?>" />
+                          <img id='load_img' src='<?php echo SAM_IMG_URL ?>loader.gif' style='display: none;'>
+                          <span id="uploading"></span><br/>
+                          <span id="uploading-help"><?php _e("Select and upload file from your local computer.", SAM_DOMAIN); ?></span>
+                        </p>
+                      </div>
+                    </div>
+                    <div class='clear-line' ></div>
                     <p>
-                      <label for="upload-file-button"><strong><?php echo (__('Upload File', SAM_DOMAIN).':'); ?></strong></label>
-                      <input id="upload-file-button" type="button" class="button-secondary" name="upload_media" value="<?php _e('Upload', SAM_DOMAIN);?>" />
-                      <img id='load_img' src='<?php echo SAM_IMG_URL ?>loader.gif' style='display: none;'>
-                      <span id="uploading"></span><br/>
-                      <span id="uploading-help"><?php _e("Select and upload file from your local computer.", SAM_DOMAIN); ?></span>
+                      <input type='radio' name='code_mode' id='code_mode_true' value='1' <?php checked(1, $row['code_mode']) ?>>
+                      <label for='code_mode_true'><strong><?php _e('Code Mode', SAM_DOMAIN); ?></strong></label>
                     </p>
+                    <div id="rc-cmt" class='radio-content' style="<?php if((int)$row['code_mode'] != 1) echo 'display: none;'; ?>">
+                      <p>
+                        <label for="ad_code"><strong><?php echo __('Ad Code', SAM_DOMAIN).':'; ?></strong></label>
+                        <textarea name='ad_code' id='ad_code' rows='10' title='Ad Code' style='width: 100%;'><?php echo $row['ad_code'] ?></textarea>
+                        <input type='checkbox' name='code_type' id='code_type' value='1' <?php checked(1, $row['code_type']); ?>><label for='code_type' style='vertical-align: middle;'> <?php _e('This code of ad contains PHP script', SAM_DOMAIN); ?></label>
+                      </p>
+                    </div>
                   </div>
-                </div>                
-                <div class='clear-line' ></div>
-                <p>
-                  <input type='radio' name='code_mode' id='code_mode_true' value='1' <?php checked(1, $row['code_mode']) ?>>
-                  <label for='code_mode_true'><strong><?php _e('Code Mode', SAM_DOMAIN); ?></strong></label>
-                </p>
-                <div class='radio-content'>
-                  <p>
-                    <label for="ad_code"><strong><?php echo __('Ad Code', SAM_DOMAIN).':'; ?></strong></label>
-                    <textarea name='ad_code' id='ad_code' rows='10' title='Ad Code' style='width: 100%;'><?php echo $row['ad_code'] ?></textarea>
-                    <input type='checkbox' name='code_type' id='code_type' value='1' <?php checked(1, $row['code_type']); ?>><label for='code_type' style='vertical-align: middle;'> <?php _e('This code of ad contains PHP script', SAM_DOMAIN); ?></label>
-                  </p>
                 </div>
               </div>
-            </div>
-          </div>
-          <div id="contents" class="meta-box-sortables ui-sortable">
-            <div id="codediv" class="postbox ">
-              <div class="handlediv" title="<?php _e('Click to toggle', SAM_DOMAIN); ?>"><br/></div>
-              <h3 class="hndle"><span><?php _e('Restrictions of advertisements showing', SAM_DOMAIN);?></span></h3>
-              <div class="inside">
-                <p>
-                  <label for='ad_weight'><strong><?php echo __('Ad Weight', SAM_DOMAIN).':' ?></strong></label>
-                  <select name='ad_weight' id='ad_weight'>
-                    <?php
-                    for($i=0; $i <= 10; $i++) {
-                      ?>
-                      <option value='<?php echo $i; ?>' <?php selected($i, $row['ad_weight']); ?>>
-                        <?php 
-                          if($i == 0) echo $i.' - '.__('Inactive', SAM_DOMAIN);
-                          elseif($i == 1) echo $i.' - '.__('Minimal Activity', SAM_DOMAIN);
-                          elseif($i == 10) echo $i.' - '.__('Maximal Activity', SAM_DOMAIN);
-                          else echo $i; 
+              <div id="codes" class="meta-box-sortables ui-sortable">
+                <div id="codediv" class="postbox ">
+                  <div class="handlediv" title="<?php _e('Click to toggle', SAM_DOMAIN); ?>"><br/></div>
+                  <h3 class="hndle"><span><?php _e('Restrictions of advertisements showing', SAM_DOMAIN);?></span></h3>
+                  <div class="inside">
+                    <p>
+                      <label for='ad_weight'><strong><?php echo __('Ad Weight', SAM_DOMAIN).':' ?></strong></label>
+                      <select name='ad_weight' id='ad_weight'>
+                        <?php
+                        for($i=0; $i <= 10; $i++) {
                         ?>
-                      </option>
-                      <?php
-                    }
-                    ?>
-                  </select>
-                </p>
-                <p>
-                  <?php _e('Ad weight - coefficient of frequency of show of the advertisement for one cycle of advertisements rotation.', SAM_DOMAIN); ?><br/>
-                  <?php _e('0 - ad is inactive, 1 - minimal activity of this advertisement, 10 - maximal activity of this ad.', SAM_DOMAIN); ?>
-                </p>
-                <div class='clear-line'></div>
-                <p>
-                  <input type='radio' name='view_type' id='view_type_1' value='1' <?php checked(1, $row['view_type']); ?>>
-                  <label for='view_type_1'><strong><?php _e('Show ad on all pages of blog', SAM_DOMAIN); ?></strong></label>
-                </p>
-                <p>
-                  <input type='radio' name='view_type' id='view_type_0' value='0' <?php checked(0, $row['view_type']); ?>>
-                  <label for='view_type_0'><strong><?php echo __('Show ad only on pages of this type', SAM_DOMAIN).':'; ?></strong></label>
-                </p>
-                <div class='radio-content'>
-                  <input type='checkbox' name='is_home' id='is_home' value='<?php echo SAM_IS_HOME; ?>' <?php checked(1, $this->checkViewPages($row['view_pages'], SAM_IS_HOME)); ?>>
-                  <label for='is_home'><?php _e('Home Page (Home or Front Page)', SAM_DOMAIN); ?></label><br/>
-                  <input type='checkbox' name='is_singular' id='is_singular' value='<?php echo SAM_IS_SINGULAR; ?>' <?php checked(1, $this->checkViewPages($row['view_pages'], SAM_IS_SINGULAR)); ?>>
-                  <label for='is_singular'><?php _e('Singular Pages', SAM_DOMAIN); ?></label><br/>
-                  <div class='radio-content'>
-                    <input type='checkbox' name='is_single' id='is_single' value='<?php echo SAM_IS_SINGLE; ?>' <?php checked(1, $this->checkViewPages($row['view_pages'], SAM_IS_SINGLE)); ?>>
-                    <label for='is_single'><?php _e('Single Post', SAM_DOMAIN); ?></label><br/>
-                    <input type='checkbox' name='is_page' id='is_page' value='<?php echo SAM_IS_PAGE; ?>' <?php checked(1, $this->checkViewPages($row['view_pages'], SAM_IS_PAGE)); ?>>
-                    <label for='is_page'><?php _e('Page', SAM_DOMAIN); ?></label><br/>
-                    <input type='checkbox' name='is_posttype' id='is_posttype' value='<?php echo SAM_IS_POST_TYPE; ?>' <?php checked(1, $this->checkViewPages($row['view_pages'], SAM_IS_POST_TYPE)); ?>>
-                    <label for='is_posttype'><?php _e('Custom Post Type', SAM_DOMAIN); ?></label><br/>
-                    <input type='checkbox' name='is_attachment' id='is_attachment' value='<?php echo SAM_IS_ATTACHMENT; ?>' <?php checked(1, $this->checkViewPages($row['view_pages'], SAM_IS_ATTACHMENT)); ?>>
-                    <label for='is_attachment'><?php _e('Attachment', SAM_DOMAIN); ?></label><br/>
-                  </div>
-                  <input type='checkbox' name='is_search' id='is_search' value='<?php echo SAM_IS_SEARCH; ?>' <?php checked(1, $this->checkViewPages($row['view_pages'], SAM_IS_SEARCH)); ?>>
-                  <label for='is_search'><?php _e('Search Page', SAM_DOMAIN); ?></label><br/>
-                  <input type='checkbox' name='is_404' id='is_404' value='<?php echo SAM_IS_404; ?>' <?php checked(1, $this->checkViewPages($row['view_pages'], SAM_IS_404)); ?>>
-                  <label for='is_404'><?php _e('"Not found" Page (HTTP 404: Not Found)', SAM_DOMAIN); ?></label><br/>
-                  <input type='checkbox' name='is_archive' id='is_archive' value='<?php echo SAM_IS_ARCHIVE; ?>' <?php checked(1, $this->checkViewPages($row['view_pages'], SAM_IS_ARCHIVE)); ?>>
-                  <label for='is_archive'><?php _e('Archive Pages', SAM_DOMAIN); ?></label><br/>
-                  <div class='radio-content'>
-                    <input type='checkbox' name='is_tax' id='is_tax' value='<?php echo SAM_IS_TAX; ?>' <?php checked(1, $this->checkViewPages($row['view_pages'], SAM_IS_TAX)); ?>>
-                    <label for='is_tax'><?php _e('Taxonomy Archive Pages', SAM_DOMAIN); ?></label><br/>                  
-                    <input type='checkbox' name='is_category' id='is_category' value='<?php echo SAM_IS_CATEGORY; ?>' <?php checked(1, $this->checkViewPages($row['view_pages'], SAM_IS_CATEGORY)); ?>>
-                    <label for='is_category'><?php _e('Category Archive Pages', SAM_DOMAIN); ?></label><br/>                  
-                    <input type='checkbox' name='is_tag' id='is_tag' value='<?php echo SAM_IS_TAG; ?>' <?php checked(1, $this->checkViewPages($row['view_pages'], SAM_IS_TAG)); ?>>
-                    <label for='is_tag'><?php _e('Tag Archive Pages', SAM_DOMAIN); ?></label><br/>                  
-                    <input type='checkbox' name='is_author' id='is_author' value='<?php echo SAM_IS_AUTHOR; ?>' <?php checked(1, $this->checkViewPages($row['view_pages'], SAM_IS_AUTHOR)); ?>>
-                    <label for='is_author'><?php _e('Author Archive Pages', SAM_DOMAIN); ?></label><br/>
-                    <input type='checkbox' name='is_posttype_archive' id='is_posttype_archive' value='<?php echo SAM_IS_POST_TYPE_ARCHIVE; ?>' <?php checked(1, $this->checkViewPages($row['view_pages'], SAM_IS_POST_TYPE_ARCHIVE)); ?>>
-                    <label for='is_posttype_archive'><?php _e('Custom Post Type Archive Pages', SAM_DOMAIN); ?></label><br/>                  
-                    <input type='checkbox' name='is_date' id='is_date' value='<?php echo SAM_IS_DATE; ?>' <?php checked(1, $this->checkViewPages($row['view_pages'], SAM_IS_DATE)); ?>>
-                    <label for='is_date'><?php _e('Date Archive Pages (any date-based archive pages, i.e. a monthly, yearly, daily or time-based archive)', SAM_DOMAIN); ?></label><br/>
+                          <option value='<?php echo $i; ?>' <?php selected($i, $row['ad_weight']); ?>>
+                            <?php
+                              if($i == 0) echo $i.' - '.__('Inactive', SAM_DOMAIN);
+                              elseif($i == 1) echo $i.' - '.__('Minimal Activity', SAM_DOMAIN);
+                              elseif($i == 10) echo $i.' - '.__('Maximal Activity', SAM_DOMAIN);
+                              else echo $i;
+                            ?>
+                          </option>
+                          <?php
+                        }
+                        ?>
+                      </select>
+                    </p>
+                    <p>
+                      <?php _e('Ad weight - coefficient of frequency of show of the advertisement for one cycle of advertisements rotation.', SAM_DOMAIN); ?>
+                      <ul>
+                        <li><?php _e('0 - ad is inactive', SAM_DOMAIN); ?></li>
+                        <li><?php _e('1 - minimal activity of this advertisement', SAM_DOMAIN); ?></li>
+                        <li>...</li>
+                        <li><?php _e('10 - maximal activity of this ad.', SAM_DOMAIN); ?></li>
+                      </ul>
+                    </p>
+                    <div class='clear-line'></div>
+                    <p>
+                      <input type='radio' name='view_type' id='view_type_1' value='1' <?php checked(1, $row['view_type']); ?>>
+                      <label for='view_type_1'><strong><?php _e('Show ad on all pages of blog', SAM_DOMAIN); ?></strong></label>
+                    </p>
+                    <p>
+                      <input type='radio' name='view_type' id='view_type_0' value='0' <?php checked(0, $row['view_type']); ?>>
+                      <label for='view_type_0'><strong><?php echo __('Show ad only on pages of this type', SAM_DOMAIN).':'; ?></strong></label>
+                    </p>
+                    <div id="rc-vt0" class='radio-content' style="<?php if((int)$row['view_type'] != 0) echo 'display: none;'; ?>">
+                      <input type='checkbox' name='is_home' id='is_home' value='<?php echo SAM_IS_HOME; ?>' <?php checked(1, $this->checkViewPages($row['view_pages'], SAM_IS_HOME)); ?>>
+                      <label for='is_home'><?php _e('Home Page (Home or Front Page)', SAM_DOMAIN); ?></label><br/>
+                      <input type='checkbox' name='is_singular' id='is_singular' value='<?php echo SAM_IS_SINGULAR; ?>' <?php checked(1, $this->checkViewPages($row['view_pages'], SAM_IS_SINGULAR)); ?>>
+                      <label for='is_singular'><?php _e('Singular Pages', SAM_DOMAIN); ?></label><br/>
+                      <div class='radio-content'>
+                        <input type='checkbox' name='is_single' id='is_single' value='<?php echo SAM_IS_SINGLE; ?>' <?php checked(1, $this->checkViewPages($row['view_pages'], SAM_IS_SINGLE)); ?>>
+                        <label for='is_single'><?php _e('Single Post', SAM_DOMAIN); ?></label><br/>
+                        <input type='checkbox' name='is_page' id='is_page' value='<?php echo SAM_IS_PAGE; ?>' <?php checked(1, $this->checkViewPages($row['view_pages'], SAM_IS_PAGE)); ?>>
+                        <label for='is_page'><?php _e('Page', SAM_DOMAIN); ?></label><br/>
+                        <input type='checkbox' name='is_posttype' id='is_posttype' value='<?php echo SAM_IS_POST_TYPE; ?>' <?php checked(1, $this->checkViewPages($row['view_pages'], SAM_IS_POST_TYPE)); ?>>
+                        <label for='is_posttype'><?php _e('Custom Post Type', SAM_DOMAIN); ?></label><br/>
+                        <input type='checkbox' name='is_attachment' id='is_attachment' value='<?php echo SAM_IS_ATTACHMENT; ?>' <?php checked(1, $this->checkViewPages($row['view_pages'], SAM_IS_ATTACHMENT)); ?>>
+                        <label for='is_attachment'><?php _e('Attachment', SAM_DOMAIN); ?></label><br/>
+                      </div>
+                      <input type='checkbox' name='is_search' id='is_search' value='<?php echo SAM_IS_SEARCH; ?>' <?php checked(1, $this->checkViewPages($row['view_pages'], SAM_IS_SEARCH)); ?>>
+                      <label for='is_search'><?php _e('Search Page', SAM_DOMAIN); ?></label><br/>
+                      <input type='checkbox' name='is_404' id='is_404' value='<?php echo SAM_IS_404; ?>' <?php checked(1, $this->checkViewPages($row['view_pages'], SAM_IS_404)); ?>>
+                      <label for='is_404'><?php _e('"Not found" Page (HTTP 404: Not Found)', SAM_DOMAIN); ?></label><br/>
+                      <input type='checkbox' name='is_archive' id='is_archive' value='<?php echo SAM_IS_ARCHIVE; ?>' <?php checked(1, $this->checkViewPages($row['view_pages'], SAM_IS_ARCHIVE)); ?>>
+                      <label for='is_archive'><?php _e('Archive Pages', SAM_DOMAIN); ?></label><br/>
+                      <div class='radio-content'>
+                        <input type='checkbox' name='is_tax' id='is_tax' value='<?php echo SAM_IS_TAX; ?>' <?php checked(1, $this->checkViewPages($row['view_pages'], SAM_IS_TAX)); ?>>
+                        <label for='is_tax'><?php _e('Taxonomy Archive Pages', SAM_DOMAIN); ?></label><br/>
+                        <input type='checkbox' name='is_category' id='is_category' value='<?php echo SAM_IS_CATEGORY; ?>' <?php checked(1, $this->checkViewPages($row['view_pages'], SAM_IS_CATEGORY)); ?>>
+                        <label for='is_category'><?php _e('Category Archive Pages', SAM_DOMAIN); ?></label><br/>
+                        <input type='checkbox' name='is_tag' id='is_tag' value='<?php echo SAM_IS_TAG; ?>' <?php checked(1, $this->checkViewPages($row['view_pages'], SAM_IS_TAG)); ?>>
+                        <label for='is_tag'><?php _e('Tag Archive Pages', SAM_DOMAIN); ?></label><br/>
+                        <input type='checkbox' name='is_author' id='is_author' value='<?php echo SAM_IS_AUTHOR; ?>' <?php checked(1, $this->checkViewPages($row['view_pages'], SAM_IS_AUTHOR)); ?>>
+                        <label for='is_author'><?php _e('Author Archive Pages', SAM_DOMAIN); ?></label><br/>
+                        <input type='checkbox' name='is_posttype_archive' id='is_posttype_archive' value='<?php echo SAM_IS_POST_TYPE_ARCHIVE; ?>' <?php checked(1, $this->checkViewPages($row['view_pages'], SAM_IS_POST_TYPE_ARCHIVE)); ?>>
+                        <label for='is_posttype_archive'><?php _e('Custom Post Type Archive Pages', SAM_DOMAIN); ?></label><br/>
+                        <input type='checkbox' name='is_date' id='is_date' value='<?php echo SAM_IS_DATE; ?>' <?php checked(1, $this->checkViewPages($row['view_pages'], SAM_IS_DATE)); ?>>
+                        <label for='is_date'><?php _e('Date Archive Pages (any date-based archive pages, i.e. a monthly, yearly, daily or time-based archive)', SAM_DOMAIN); ?></label><br/>
+                      </div>
+                    </div>
+                    <p>
+                      <input type='radio' name='view_type' id='view_type_2' value='2' <?php checked(2, $row['view_type']); ?>>
+                      <label for='view_type_2'><strong><?php echo __('Show ad only in certain posts/pages', SAM_DOMAIN).':'; ?></strong></label>
+                    </p>
+                    <div id="rc-vt2" class='radio-content' style="<?php if((int)$row['view_type'] != 2) echo 'display: none;'; ?>">
+                      <p>
+                        <strong><?php echo __('Posts/Pages', SAM_DOMAIN).':'; ?></strong>
+                        <input type='hidden' name='view_id' id='view_id' value='<?php echo $row['view_id']; ?>'/>
+                      </p>
+                      <div>
+                        <div id="posts-grid" style="width: 100%; height:200px;"></div>
+                      </div>
+                      <p>
+                        <?php _e('Use this setting to display an ad only in certain posts/pages. Select posts/pages.', SAM_DOMAIN); ?>
+                      </p>
+                    </div>
                   </div>
                 </div>
-                <p>
-                  <input type='radio' name='view_type' id='view_type_2' value='2' <?php checked(2, $row['view_type']); ?>>
-                  <label for='view_type_2'><strong><?php echo __('Show ad only in certain posts/pages', SAM_DOMAIN).':'; ?></strong></label>
-                </p>
-                <div class='radio-content'>
-                  <p>
-                    <label for='view_id'><strong><?php echo __('Posts/Pages IDs (comma separated)', SAM_DOMAIN).':'; ?></strong></label>
-                    <input type='text' name='view_id' id='view_id' value='<?php echo $row['view_id']; ?>' style='width: 100%;'>
-                  </p>                  
-                </div>
-                <p>
-                  <?php _e('Use this setting to display an ad only in certain posts/pages. Enter the IDs of posts/pages, separated by commas.', SAM_DOMAIN); ?>
-                </p>
               </div>
             </div>
-          </div>
-          <div id="contents" class="meta-box-sortables ui-sortable">
-            <div id="codediv" class="postbox ">
-              <div class="handlediv" title="<?php _e('Click to toggle', SAM_DOMAIN); ?>"><br/></div>
-              <h3 class="hndle"><span><?php _e('Extended restrictions of advertisements showing', SAM_DOMAIN);?></span></h3>
-              <div class="inside"> 
-                <p>
-                  <input type='checkbox' name='x_id' id='x_id' value='1' <?php checked(1, $row['x_id']); ?>>
-                  <label for='x_id'><strong><?php echo __('Do not show ad on certain posts/pages', SAM_DOMAIN).':'; ?></strong></label>
-                </p>
-                <div class='radio-content'>
-                  <p>
-                    <label for='x_view_id'><strong><?php echo __('Posts/Pages IDs (comma separated)', SAM_DOMAIN).':'; ?></strong></label>
-                    <input type='text' name='x_view_id' id='x_view_id' value="<?php echo $row['x_view_id']; ?>" style='width: 100%;'>
-                  </p>                  
+            <div id="tabs-2">
+              <div id="xlimits" class="meta-box-sortables ui-sortable">
+                <div id="limitsusr" class="postbox">
+                  <div class="handlediv" title="<?php _e('Click to toggle', SAM_DOMAIN); ?>"><br/></div>
+                  <h3 class="hndle"><span><?php _e('Users', SAM_DOMAIN);?></span></h3>
+                  <div class="inside">
+                    <p><strong><?php echo __('Show this ad for', SAM_DOMAIN).':'; ?></strong></p>
+                    <p>
+                      <input type="radio" name="ad_users" id="ad_users_0" value="0" <?php checked(0, $row['ad_users']); ?> />
+                      <label for="ad_users_0"><strong><?php _e('all users', SAM_DOMAIN); ?></strong></label>
+                    </p>
+                    <div class="clear-line"></div>
+                    <p>
+                      <input type="radio" name="ad_users" id="ad_users_1" value="1" <?php checked(1, $row['ad_users']); ?> />
+                      <label for="ad_users_1"><strong><?php _e('these users', SAM_DOMAIN); ?></strong></label>
+                    </p>
+                    <div id="custom-users" class="radio-content" style="<?php if((int)$row['ad_users'] != 1) echo 'display: none;'; ?>">
+                      <p>
+                        <input type="checkbox" name="ad_users_unreg" id="ad_users_unreg" value="1" <?php checked(1, $row['ad_users_unreg']); ?> />
+                        <label for="ad_users_unreg"><strong><?php _e('Unregistered Users', SAM_DOMAIN); ?></strong></label>
+                      </p>
+                      <p>
+                        <input type="checkbox" name="ad_users_reg" id="ad_users_reg" value="1" <?php checked(1, $row['ad_users_reg']); ?> />
+                        <label for="ad_users_reg"><strong><?php _e('Registered Users', SAM_DOMAIN) ?></strong></label>
+                      </p>
+                      <div id="x-reg-users" class="radio-content" style="<?php if((int)$row['ad_users_reg'] != 1) echo 'display: none;'; ?>">
+                        <p>
+                          <input type="checkbox" name="x_ad_users" id="x_ad_users" value="1" <?php checked(1, $row['x_ad_users']) ?> />
+                          <label for="x_ad_users"><strong><?php _e('Exclude these users', SAM_DOMAIN) ?></strong></label>
+                        </p>
+                        <div id="x-view-users" class="radio-content" style="<?php if((int)$row['x_ad_users'] != 1) echo 'display: none;'; ?>">
+                          <strong><?php echo __('Registered Users', SAM_DOMAIN).':'; ?></strong>
+                          <input type="hidden" name="x_view_users" id="x_view_users" value="<?php echo $row['x_view_users'] ?>" />
+                          <div>
+                            <div id="users-grid" style="width: 100%; height:200px;"></div>
+                          </div>
+                        </div>
+                        <p>
+                          <input type="checkbox" name="ad_users_adv" id="ad_users_adv" value="1" <?php checked(1, $row['ad_users_adv']); ?> />
+                          <label for="ad_users_adv"><strong><?php _e('Do not show this ad for advertiser', SAM_DOMAIN) ?></strong></label>
+                        </p>
+                      </div>
+                    </div>
+                  </div>
                 </div>
-                <p>
-                  <?php _e('Use this setting to not display an ad on certain posts/pages. Enter the IDs of posts/pages, separated by commas.', SAM_DOMAIN); ?>
-                </p>
-                <div class='clear-line'></div>
-                <p>
-                  <input type='checkbox' name='ad_cats' id='ad_cats' value='1' <?php checked(1, $row['ad_cats']); ?>>
-                  <label for='ad_cats'><strong><?php echo __('Show ad only in single posts or categories archives of certain categories', SAM_DOMAIN).':'; ?></strong></label>
-                </p>
-                <div class='radio-content'>
-                  <label for='view_cats'><strong><?php echo __('Categories (comma separated)', SAM_DOMAIN).':'; ?></strong></label>
-                  <input type='text' name='view_cats' id='view_cats' autocomplete="off" value="<?php echo $row['view_cats']; ?>" style="width:100%">                  
+                <div id="limitsdiv" class="postbox ">
+                  <div class="handlediv" title="<?php _e('Click to toggle', SAM_DOMAIN); ?>"><br/></div>
+                  <h3 class="hndle"><span><?php _e('Extended restrictions of advertisements showing', SAM_DOMAIN);?></span></h3>
+                  <div class="inside">
+                    <p>
+                      <input type='checkbox' name='x_id' id='x_id' value='1' <?php checked(1, $row['x_id']); ?>>
+                      <label for='x_id'><strong><?php echo __('Do not show ad on certain posts/pages', SAM_DOMAIN).':'; ?></strong></label>
+                    </p>
+                    <div id="rc-xid" class='radio-content' style="<?php if((int)$row['x_id'] != 1) echo 'display: none;'; ?>">
+                      <p>
+                        <strong><?php echo __('Posts/Pages', SAM_DOMAIN).':'; ?></strong>
+                        <input type='hidden' name='x_view_id' id='x_view_id' value="<?php echo $row['x_view_id']; ?>" />
+                      </p>
+                      <div>
+                        <div id="x-posts-grid" style="width: 100%; height:200px;"></div>
+                      </div>
+                    </div>
+                    <p>
+                      <?php _e('Use this setting to not display an ad on certain posts/pages. Select posts/pages.', SAM_DOMAIN); ?>
+                    </p>
+                    <div class='clear-line'></div>
+                    <p>
+                      <input type='checkbox' name='ad_cats' id='ad_cats' value='1' <?php checked(1, $row['ad_cats']); ?>>
+                      <label for='ad_cats'><strong><?php echo __('Show ad only in single posts or categories archives of certain categories', SAM_DOMAIN).':'; ?></strong></label>
+                    </p>
+                    <div id="rc-ac" class='radio-content' style="<?php if((int)$row['ad_cats'] != 1) echo 'display: none;'; ?>">
+                      <p><strong><?php echo __('Categories', SAM_DOMAIN).':'; ?></strong></p>
+                      <input type='hidden' name='view_cats' id='view_cats' value="<?php echo $row['view_cats']; ?>" />
+                      <div>
+                        <div id="cats-grid" style="width: 100%; height:200px;"></div>
+                      </div>
+                    </div>
+                    <p>
+                      <?php _e('Use this setting to display an ad only in single posts or categories archives of certain categories.', SAM_DOMAIN); ?>
+                    </p>
+                    <div id="acw" class='sam-warning' style="<?php if((int)$row['ad_cats'] != 1) echo 'display: none;'; ?>">
+                      <p>
+                        <?php _e('This display logic parameter will be applied only when you use the "Show ad on all pages of blog" and "Show your ad only on the pages of this type" modes. Otherwise, it will be ignored.', SAM_DOMAIN); ?>
+                      </p>
+                    </div>
+                    <div class='clear-line'></div>
+                    <p>
+                      <input type='checkbox' name='x_cats' id='x_cats' value='1' <?php checked(1, $row['x_cats']); ?>>
+                      <label for='x_cats'><strong><?php echo __('Do not show ad in single posts or categories archives of certain categories', SAM_DOMAIN).':'; ?></strong></label>
+                    </p>
+                    <div id="rc-xc" class='radio-content' style="<?php if((int)$row['x_cats'] != 1) echo 'display: none;'; ?>">
+                      <p><strong><?php echo __('Categories', SAM_DOMAIN).':'; ?></strong></p>
+                      <input type='hidden' name='x_view_cats' id='x_view_cats' value="<?php echo $row['x_view_cats']; ?>" />
+                      <div>
+                        <div id="x-cats-grid" style="width: 100%; height:200px;"></div>
+                      </div>
+                    </div>
+                    <p>
+                      <?php _e('Use this setting to not display an ad in single posts or categories archives of certain categories.', SAM_DOMAIN); ?>
+                    </p>
+                    <div class='clear-line'></div>
+                    <p>
+                      <input type='checkbox' name='ad_authors' id='ad_authors' value='1' <?php checked(1, $row['ad_authors']); ?>>
+                      <label for='ad_authors'><strong><?php echo __('Show ad only in single posts or authors archives of certain authors', SAM_DOMAIN).':'; ?></strong></label>
+                    </p>
+                    <div id="rc-au" class='radio-content' style="<?php if((int)$row['ad_authors'] != 1) echo 'display: none;'; ?>">
+                      <p><strong><?php echo __('Authors', SAM_DOMAIN).':'; ?></strong></p>
+                      <input type='hidden' name='view_authors' id='view_authors' value="<?php echo $row['view_authors']; ?>" />
+                      <div>
+                        <div id="auth-grid" style="width: 100%; height:200px;"></div>
+                      </div>
+                    </div>
+                    <p>
+                      <?php _e('Use this setting to display an ad only in single posts or authors archives of certain authors.', SAM_DOMAIN); ?>
+                    </p>
+                    <div id="aaw" class='sam-warning' style="<?php if((int)$row['ad_authors'] != 1) echo 'display: none;'; ?>">
+                      <p>
+                        <?php _e('This display logic parameter will be applied only when you use the "Show ad on all pages of blog" and "Show your ad only on the pages of this type" modes. Otherwise, it will be ignored.', SAM_DOMAIN); ?>
+                      </p>
+                    </div>
+                    <div class='clear-line'></div>
+                    <p>
+                      <input type='checkbox' name='x_authors' id='x_authors' value='1' <?php checked(1, $row['x_authors']); ?>>
+                      <label for='x_authors'><strong><?php echo __('Do not show ad in single posts or authors archives of certain authors', SAM_DOMAIN).':'; ?></strong></label>
+                    </p>
+                    <div id="rc-xa" class='radio-content' style="<?php if((int)$row['x_authors'] != 1) echo 'display: none;'; ?>">
+                      <p><strong><?php echo __('Authors', SAM_DOMAIN).':'; ?></strong></p>
+                      <input type='hidden' name='x_view_authors' id='x_view_authors' value="<?php echo $row['x_view_authors']; ?>" />
+                      <div>
+                        <div id="x-auth-grid" style="width: 100%; height:200px;"></div>
+                      </div>
+                    </div>
+                    <p>
+                      <?php _e('Use this setting to not display an ad in single posts or authors archives of certain authors.', SAM_DOMAIN); ?>
+                    </p>
+                    <div class='clear-line'></div>
+                    <p>
+                      <input type='checkbox' name='ad_tags' id='ad_tags' value='1' <?php checked(1, $row['ad_tags']); ?>>
+                      <label for='ad_tags'><strong><?php echo __('Show ad only in single posts or tags archives of certain tags', SAM_DOMAIN).':'; ?></strong></label>
+                    </p>
+                    <div id="rc-at" class='radio-content' style="<?php if((int)$row['ad_tags'] != 1) echo 'display: none;'; ?>">
+                      <p><strong><?php echo __('Tags', SAM_DOMAIN).':'; ?></strong></p>
+                      <input type='hidden' name='view_tags' id='view_tags' value="<?php echo $row['view_tags']; ?>" />
+                      <div>
+                        <div id="tags-grid" style="width: 100%; height:200px;"></div>
+                      </div>
+                    </div>
+                    <p>
+                      <?php _e('Use this setting to display an ad only in single posts or tags archives of certain tags.', SAM_DOMAIN); ?>
+                    </p>
+                    <div id="atw" class='sam-warning' style="<?php if((int)$row['ad_tags'] != 1) echo 'display: none;'; ?>">
+                      <p>
+                        <?php _e('This display logic parameter will be applied only when you use the "Show ad on all pages of blog" and "Show your ad only on the pages of this type" modes. Otherwise, it will be ignored.', SAM_DOMAIN); ?>
+                      </p>
+                    </div>
+                    <div class='clear-line'></div>
+                    <p>
+                      <input type='checkbox' name='x_tags' id='x_tags' value='1' <?php checked(1, $row['x_tags']); ?>>
+                      <label for='x_tags'><strong><?php echo __('Do not show ad in single posts or tags archives of certain tags', SAM_DOMAIN).':'; ?></strong></label>
+                    </p>
+                    <div id="rc-xt" class='radio-content' style="<?php if((int)$row['x_tags'] != 1) echo 'display: none;'; ?>">
+                      <p><strong><?php echo __('Tags', SAM_DOMAIN).':'; ?></strong></p>
+                      <input type='hidden' name='x_view_tags' id='x_view_tags' value="<?php echo $row['x_view_tags']; ?>" />
+                      <div>
+                        <div id="x-tags-grid" style="width: 100%; height:200px;"></div>
+                      </div>
+                    </div>
+                    <p>
+                      <?php _e('Use this setting to not display an ad in single posts or tags archives of certain tags.', SAM_DOMAIN); ?>
+                    </p>
+                    <div class='clear-line'></div>
+                    <p>
+                      <input type='checkbox' name='ad_custom' id='ad_custom' value='1' <?php checked(1, $row['ad_custom']); ?>>
+                      <label for='ad_custom'><strong><?php echo __('Show ad only in custom type single posts or custom post type archives of certain custom post types', SAM_DOMAIN).':'; ?></strong></label>
+                    </p>
+                    <div id="rc-cu" class='radio-content' style="<?php if((int)$row['ad_custom'] != 1) echo 'display: none;'; ?>">
+                      <p><strong><?php echo __('Custom post types', SAM_DOMAIN).':'; ?></strong></p>
+                      <input type='hidden' name='view_custom' id='view_custom' value="<?php echo $row['view_custom']; ?>" />
+                      <div>
+                        <div id="cust-grid" style="width: 100%; height:200px;"></div>
+                      </div>
+                    </div>
+                    <p>
+                      <?php _e('Use this setting to display an ad only in custom type single posts or custom post type archives of certain custom post types.', SAM_DOMAIN); ?>
+                    </p>
+                    <div id="cuw" class='sam-warning' style="<?php if((int)$row['ad_custom'] != 1) echo 'display: none;'; ?>">
+                      <p>
+                        <?php _e('This display logic parameter will be applied only when you use the "Show ad on all pages of blog" and "Show your ad only on the pages of this type" modes. Otherwise, it will be ignored.', SAM_DOMAIN); ?>
+                      </p>
+                    </div>
+                    <div class='clear-line'></div>
+                    <p>
+                      <input type='checkbox' name='x_custom' id='x_custom' value='1' <?php checked(1, $row['x_custom']); ?>>
+                      <label for='x_custom'><strong><?php echo __('Do not show ad in custom type single posts or custom post type archives of certain custom post types', SAM_DOMAIN).':'; ?></strong></label>
+                    </p>
+                    <div id="rc-xu" class='radio-content' style="<?php if((int)$row['x_custom'] != 1) echo 'display: none;'; ?>">
+                      <p><strong><?php echo __('Custom post types', SAM_DOMAIN).':'; ?></strong></p>
+                      <input type='hidden' name='x_view_custom' id='x_view_custom' value="<?php echo $row['x_view_custom']; ?>" />
+                      <div>
+                        <div id="x-cust-grid" style="width: 100%; height:200px;"></div>
+                      </div>
+                    </div>
+                    <p>
+                      <?php _e('Use this setting to not display an ad in custom type single posts or custom post type archives of certain custom post types.', SAM_DOMAIN); ?>
+                    </p>
+                    <div class='clear-line'></div>
+                    <p>
+                      <input type='checkbox' name='ad_schedule' id='ad_schedule' value='1' <?php checked(1, $row['ad_schedule']); ?>>
+                      <label for='ad_schedule'><strong><?php _e('Use the schedule for this ad', SAM_DOMAIN); ?></strong></label>
+                    </p>
+                    <div id="rc-sc" class="radio-content" style="<?php if((int)$row['ad_schedule'] != 1) echo 'display: none;'; ?>">
+                      <p>
+                        <label for='ad_start_date'><?php echo __('Campaign Start Date', SAM_DOMAIN).':' ?></label>
+                        <input type='text' name='ad_start_date' id='ad_start_date' value='<?php echo $row['ad_start_date']; ?>'>
+                      </p>
+                      <p>
+                        <label for='ad_end_date'><?php echo __('Campaign End Date', SAM_DOMAIN).':' ?></label>
+                        <input type='text' name='ad_end_date' id='ad_end_date' value='<?php echo $row['ad_end_date']; ?>'>
+                      </p>
+                    </div>
+                    <p>
+                      <?php _e('Use these parameters for displaying ad during the certain period of time.', SAM_DOMAIN); ?>
+                    </p>
+                    <div class='clear-line'></div>
+                    <p>
+                      <input type='checkbox' name='limit_hits' id='limit_hits' value='1' <?php checked(1, $row['limit_hits']); ?>>
+                      <label for='limit_hits'><strong><?php _e('Use limitation by hits', SAM_DOMAIN); ?></strong></label>
+                    </p>
+                    <div id="rc-hl" class="radio-content" style="<?php if((int)$row['limit_hits'] != 1) echo 'display: none;'; ?>">
+                      <p>
+                        <label for='hits_limit'><?php echo __('Hits Limit', SAM_DOMAIN).':' ?></label>
+                        <input type='text' name='hits_limit' id='hits_limit' value='<?php echo $row['hits_limit']; ?>'>
+                      </p>
+                    </div>
+                    <p>
+                      <?php _e('Use this parameter for limiting displaying of ad by hits.', SAM_DOMAIN); ?>
+                    </p>
+                    <div class='clear-line'></div>
+                    <p>
+                      <input type='checkbox' name='limit_clicks' id='limit_clicks' value='1' <?php checked(1, $row['limit_clicks']); ?>>
+                      <label for='limit_clicks'><strong><?php _e('Use limitation by clicks', SAM_DOMAIN); ?></strong></label>
+                    </p>
+                    <div id="rc-cl" class="radio-content" style="<?php if((int)$row['limit_clicks'] != 1) echo 'display: none;'; ?>">
+                      <p>
+                        <label for='clicks_limit'><?php echo __('Clicks Limit', SAM_DOMAIN).':' ?></label>
+                        <input type='text' name='clicks_limit' id='clicks_limit' value='<?php echo $row['clicks_limit']; ?>'>
+                      </p>
+                    </div>
+                    <p>
+                      <?php _e('Use this parameter for limiting displaying of ad by clicks.', SAM_DOMAIN); ?>
+                    </p>
+                  </div>
                 </div>
-                <p>
-                  <?php _e('Use this setting to display an ad only in single posts or categories archives of certain categories. Enter the names of categories, separated by commas.', SAM_DOMAIN); ?>
-                </p>
-                <div class='sam-warning'>
-                  <p>
-                    <?php _e('This display logic parameter will be applied only when you use the "Show ad on all pages of blog" and "Show your ad only on the pages of this type" modes. Otherwise, it will be ignored.', SAM_DOMAIN); ?>
-                  </p>
-                </div>
-                <div class='clear-line'></div>
-                <p>
-                  <input type='checkbox' name='x_cats' id='x_cats' value='1' <?php checked(1, $row['x_cats']); ?>>
-                  <label for='ad_cats'><strong><?php echo __('Do not show ad in single posts or categories archives of certain categories', SAM_DOMAIN).':'; ?></strong></label>
-                </p>
-                <div class='radio-content'>
-                  <label for='x_view_cats'><strong><?php echo __('Categories (comma separated)', SAM_DOMAIN).':'; ?></strong></label>
-                  <input type='text' name='x_view_cats' id='x_view_cats' autocomplete="off" value="<?php echo $row['x_view_cats']; ?>" style="width:100%">                  
-                </div>
-                <p>
-                  <?php _e('Use this setting to not display an ad in single posts or categories archives of certain categories. Enter the names of categories, separated by commas.', SAM_DOMAIN); ?>
-                </p>
-                <div class='clear-line'></div>
-                <p>
-                  <input type='checkbox' name='ad_authors' id='ad_authors' value='1' <?php checked(1, $row['ad_authors']); ?>>
-                  <label for='ad_authors'><strong><?php echo __('Show ad only in single posts or authors archives of certain authors', SAM_DOMAIN).':'; ?></strong></label>
-                </p>
-                <div class='radio-content'>
-                  <label for='view_authors'><strong><?php echo __('Authors (comma separated)', SAM_DOMAIN).':'; ?></strong></label>
-                  <input type='text' name='view_authors' id='view_authors' autocomplete="off" value="<?php echo $row['view_authors']; ?>" style="width:100%">                  
-                </div>
-                <p>
-                  <?php _e('Use this setting to display an ad only in single posts or authors archives of certain authors. Enter the names of authors, separated by commas.', SAM_DOMAIN); ?>
-                </p>
-                <div class='sam-warning'>
-                  <p>
-                    <?php _e('This display logic parameter will be applied only when you use the "Show ad on all pages of blog" and "Show your ad only on the pages of this type" modes. Otherwise, it will be ignored.', SAM_DOMAIN); ?>
-                  </p>
-                </div>
-                <div class='clear-line'></div>
-                <p>
-                  <input type='checkbox' name='x_authors' id='x_authors' value='1' <?php checked(1, $row['x_authors']); ?>>
-                  <label for='x_authors'><strong><?php echo __('Do not show ad in single posts or authors archives of certain authors', SAM_DOMAIN).':'; ?></strong></label>
-                </p>
-                <div class='radio-content'>
-                  <label for='x_view_authors'><strong><?php echo __('Authors (comma separated)', SAM_DOMAIN).':'; ?></strong></label>
-                  <input type='text' name='x_view_authors' id='x_view_authors' autocomplete="off" value="<?php echo $row['x_view_authors']; ?>" style="width:100%">                  
-                </div>
-                <p>
-                  <?php _e('Use this setting to not display an ad in single posts or authors archives of certain authors. Enter the names of authors, separated by commas.', SAM_DOMAIN); ?>
-                </p>
-                <div class='clear-line'></div>
-                <p>
-                  <input type='checkbox' name='ad_tags' id='ad_tags' value='1' <?php checked(1, $row['ad_tags']); ?>>
-                  <label for='ad_tags'><strong><?php echo __('Show ad only in single posts or tags archives of certain tags', SAM_DOMAIN).':'; ?></strong></label>
-                </p>
-                <div class='radio-content'>
-                  <label for='view_tags'><strong><?php echo __('Tags (comma separated)', SAM_DOMAIN).':'; ?></strong></label>
-                  <input type='text' name='view_tags' id='view_tags' autocomplete="off" value="<?php echo $row['view_tags']; ?>" style="width:100%">                  
-                </div>
-                <p>
-                  <?php _e('Use this setting to display an ad only in single posts or tags archives of certain tags. Enter the names of tags, separated by commas.', SAM_DOMAIN); ?>
-                </p>
-                <div class='sam-warning'>
-                  <p>
-                    <?php _e('This display logic parameter will be applied only when you use the "Show ad on all pages of blog" and "Show your ad only on the pages of this type" modes. Otherwise, it will be ignored.', SAM_DOMAIN); ?>
-                  </p>
-                </div>
-                <div class='clear-line'></div>
-                <p>
-                  <input type='checkbox' name='x_tags' id='x_tags' value='1' <?php checked(1, $row['x_tags']); ?>>
-                  <label for='x_tags'><strong><?php echo __('Do not show ad in single posts or tags archives of certain tags', SAM_DOMAIN).':'; ?></strong></label>
-                </p>
-                <div class='radio-content'>
-                  <label for='x_view_tags'><strong><?php echo __('Tags (comma separated)', SAM_DOMAIN).':'; ?></strong></label>
-                  <input type='text' name='x_view_tags' id='x_view_tags' autocomplete="off" value="<?php echo $row['x_view_tags']; ?>" style="width:100%">                  
-                </div>
-                <p>
-                  <?php _e('Use this setting to not display an ad in single posts or tags archives of certain tags. Enter the names of tags, separated by commas.', SAM_DOMAIN); ?>
-                </p>
-                <div class='clear-line'></div>
-                <p>
-                  <input type='checkbox' name='ad_custom' id='ad_custom' value='1' <?php checked(1, $row['ad_custom']); ?>>
-                  <label for='ad_custom'><strong><?php echo __('Show ad only in custom type single posts or custom post type archives of certain custom post types', SAM_DOMAIN).':'; ?></strong></label>
-                </p>
-                <div class='radio-content'>
-                  <label for='view_custom'><strong><?php echo __('Custom post types (comma separated)', SAM_DOMAIN).':'; ?></strong></label>
-                  <input type='text' name='view_custom' id='view_custom' autocomplete="off" value="<?php echo $row['view_custom']; ?>" style="width:100%">                  
-                </div>
-                <p>
-                  <?php _e('Use this setting to display an ad only in custom type single posts or custom post type archives of certain custom post types. Enter the names of custom post types, separated by commas.', SAM_DOMAIN); ?>
-                </p>
-                <div class='sam-warning'>
-                  <p>
-                    <?php _e('This display logic parameter will be applied only when you use the "Show ad on all pages of blog" and "Show your ad only on the pages of this type" modes. Otherwise, it will be ignored.', SAM_DOMAIN); ?>
-                  </p>
-                </div>
-                <div class='clear-line'></div>
-                <p>
-                  <input type='checkbox' name='x_custom' id='x_custom' value='1' <?php checked(1, $row['x_custom']); ?>>
-                  <label for='x_custom'><strong><?php echo __('Do not show ad in custom type single posts or custom post type archives of certain custom post types', SAM_DOMAIN).':'; ?></strong></label>
-                </p>
-                <div class='radio-content'>
-                  <label for='x_view_custom'><strong><?php echo __('Custom post types (comma separated)', SAM_DOMAIN).':'; ?></strong></label>
-                  <input type='text' name='x_view_custom' id='x_view_custom' autocomplete="off" value="<?php echo $row['x_view_custom']; ?>" style="width:100%">                  
-                </div>
-                <p>
-                  <?php _e('Use this setting to not display an ad in custom type single posts or custom post type archives of certain custom post types. Enter the names of custom post types, separated by commas.', SAM_DOMAIN); ?>
-                </p>
-                <div class='clear-line'></div>
-                <p>
-                  <input type='checkbox' name='ad_schedule' id='ad_schedule' value='1' <?php checked(1, $row['ad_schedule']); ?>>
-                  <label for='ad_schedule'><strong><?php _e('Use the schedule for this ad', SAM_DOMAIN); ?></strong></label>
-                </p>
-                <p>
-                  <label for='ad_start_date'><?php echo __('Campaign Start Date', SAM_DOMAIN).':' ?></label>
-                  <input type='text' name='ad_start_date' id='ad_start_date' value='<?php echo $row['ad_start_date']; ?>'>
-                </p>
-                <p>
-                  <label for='ad_end_date'><?php echo __('Campaign End Date', SAM_DOMAIN).':' ?></label>
-                  <input type='text' name='ad_end_date' id='ad_end_date' value='<?php echo $row['ad_end_date']; ?>'>
-                </p>
-                <p>
-                  <?php _e('Use these parameters for displaying ad during the certain period of time.', SAM_DOMAIN); ?>
-                </p>
-                <div class='clear-line'></div>
-                <p>
-                  <input type='checkbox' name='limit_hits' id='limit_hits' value='1' <?php checked(1, $row['limit_hits']); ?>>
-                  <label for='limit_hits'><strong><?php _e('Use limitation by hits', SAM_DOMAIN); ?></strong></label>
-                </p>
-                <p>
-                  <label for='hits_limit'><?php echo __('Hits Limit', SAM_DOMAIN).':' ?></label>
-                  <input type='text' name='hits_limit' id='hits_limit' value='<?php echo $row['hits_limit']; ?>'>
-                </p>
-                <p>
-                  <?php _e('Use this parameter for limiting displaying of ad by hits.', SAM_DOMAIN); ?>
-                </p><div class='clear-line'></div>
-                <p>
-                  <input type='checkbox' name='limit_clicks' id='limit_clicks' value='1' <?php checked(1, $row['limit_clicks']); ?>>
-                  <label for='limit_clicks'><strong><?php _e('Use limitation by clicks', SAM_DOMAIN); ?></strong></label>
-                </p>
-                <p>
-                  <label for='clicks_limit'><?php echo __('Clicks Limit', SAM_DOMAIN).':' ?></label>
-                  <input type='text' name='clicks_limit' id='clicks_limit' value='<?php echo $row['clicks_limit']; ?>'>
-                </p>
-                <p>
-                  <?php _e('Use this parameter for limiting displaying of ad by clicks.', SAM_DOMAIN); ?>
-                </p>                
               </div>
             </div>
-          </div>
-          <div id="contents" class="meta-box-sortables ui-sortable">
-            <div id="codediv" class="postbox ">
-              <div class="handlediv" title="<?php _e('Click to toggle', SAM_DOMAIN); ?>"><br/></div>
-              <h3 class="hndle"><span><?php _e('Prices', SAM_DOMAIN);?></span></h3>
-              <div class="inside">
-                <p>
-                  <label for='per_month'><strong><?php echo __('Price of ad placement per month', SAM_DOMAIN).':' ?></strong></label>
-                  <input type='text' name='per_month' id='per_month' value='<?php echo $row['per_month']; ?>'>
-                </p>
-                <p>
-                  <?php _e('Tthis parameter used only for scheduled ads.', SAM_DOMAIN) ?>
-                </p>
-                <p>
-                  <label for='cpm'><strong><?php echo __('Price per Thousand Hits', SAM_DOMAIN).':' ?></strong></label>
-                  <input type='text' name='cpm' id='cpm' value='<?php echo $row['cpm']; ?>'>
-                </p>
-                <p>
-                  <?php _e('Not only humans visit your blog, bots and crawlers too. In order not to deceive an advertiser, you must enable the detection of bots and crawlers.', SAM_DOMAIN); ?>
-                </p>
-                <p>
-                  <label for='cpc'><strong><?php echo __('Price per Click', SAM_DOMAIN).':' ?></strong></label>
-                  <input type='text' name='cpc' id='cpc' value='<?php echo $row['cpc']; ?>'>
-                </p>
-                <p>
-                  <?php _e('To calculate the earnings on clicks, you must enable counting of clicks for that ad.', SAM_DOMAIN); ?>
-                </p>
+            <div id="tabs-3">
+              <div id="advertiser" class="meta-box-sortables ui-sortable">
+                <div id="advdiv" class="postbox">
+                  <div class="handlediv" title="<?php _e('Click to toggle', SAM_DOMAIN); ?>"><br/></div>
+                  <h3 class="hndle"><span><?php _e('Advertiser', SAM_DOMAIN); ?></span></h3>
+                  <div class="inside">
+                    <p>
+                      <label for="adv_nick"><strong><?php echo __('Advertiser Nick Name', SAM_DOMAIN).':' ?></strong></label>
+                      <input type="text" name="adv_nick" id="adv_nick" value="<?php echo $row['adv_nick'] ?>" style="width: 250px;">
+                    </p>
+                    <p>
+                      <label for="adv_name"><strong><?php echo __('Advertiser Name', SAM_DOMAIN).':' ?></strong></label>
+                      <input type="text" name="adv_name" id="adv_name" value="<?php echo $row['adv_name'] ?>" style="width: 250px;">
+                    </p>
+                    <p>
+                      <label for="adv_mail"><strong><?php echo __('Advertiser e-mail', SAM_DOMAIN).':' ?></strong></label>
+                      <input type="text" name="adv_mail" id="adv_mail" value="<?php echo $row['adv_mail'] ?>" style="width: 250px;">
+                    </p>
+                  </div>
+                </div>
+              </div>
+              <div id="prices" class="meta-box-sortables ui-sortable">
+                <div id="pricesdiv" class="postbox ">
+                  <div class="handlediv" title="<?php _e('Click to toggle', SAM_DOMAIN); ?>"><br/></div>
+                  <h3 class="hndle"><span><?php _e('Prices', SAM_DOMAIN);?></span></h3>
+                  <div class="inside">
+                    <p>
+                      <label for='per_month'><strong><?php echo __('Price of ad placement per month', SAM_DOMAIN).':' ?></strong></label>
+                      <input type='text' name='per_month' id='per_month' value='<?php echo $row['per_month']; ?>'>
+                    </p>
+                    <p>
+                      <?php _e('Tthis parameter used only for scheduled ads.', SAM_DOMAIN) ?>
+                    </p>
+                    <p>
+                      <label for='cpm'><strong><?php echo __('Price per Thousand Hits', SAM_DOMAIN).':' ?></strong></label>
+                      <input type='text' name='cpm' id='cpm' value='<?php echo $row['cpm']; ?>'>
+                    </p>
+                    <p>
+                      <?php _e('Not only humans visit your blog, bots and crawlers too. In order not to deceive an advertiser, you must enable the detection of bots and crawlers.', SAM_DOMAIN); ?>
+                    </p>
+                    <p>
+                      <label for='cpc'><strong><?php echo __('Price per Click', SAM_DOMAIN).':' ?></strong></label>
+                      <input type='text' name='cpc' id='cpc' value='<?php echo $row['cpc']; ?>'>
+                    </p>
+                    <p>
+                      <?php _e('To calculate the earnings on clicks, you must enable counting of clicks for that ad.', SAM_DOMAIN); ?>
+                    </p>
+                  </div>
+                </div>
               </div>
             </div>
           </div>
           <?php if($action !== 'new') { ?>
           <div id="sources" class="meta-box-sortables ui-sortable">
-            <div id="codediv" class="postbox ">
+            <div id="previewdiv" class="postbox ">
               <div class="handlediv" title="<?php _e('Click to toggle', SAM_DOMAIN); ?>"><br/></div>
               <h3 class="hndle"><span><?php _e('Ad Preview', SAM_DOMAIN);?></span></h3>
               <div class="inside">

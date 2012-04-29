@@ -16,25 +16,27 @@ if ( !class_exists( 'SimpleAdsManager' ) ) {
       'deleteFolder' => 0,
       'beforePost' => 0,
       'bpAdsId' => 0,
-      'bpUseCodes' => 1,
+      'bpUseCodes' => 0,
       'middlePost' => 0,
       'mpAdsId' => 0,
-      'mpUseCodes' => 1,
+      'mpUseCodes' => 0,
       'afterPost' => 0,
       'apAdsId' => 0,
-      'apUseCodes' => 1,
+      'apUseCodes' => 0,
       'useDFP' => 0,
       'detectBots' => 0,
       'detectingMode' => 'inexact',
       'currency' => 'auto',
       'dfpPub' => '',
       'dfpBlocks' => array(),
-      'editorButtonMode' => 'modern' // modern|classic
+      'editorButtonMode' => 'modern', // modern|classic
+      'useSWF' => 0,
+      'access' => 'manage_options'
 	  );
 		
 	  public function __construct() {
-      define('SAM_VERSION', '1.4.44');
-      define('SAM_DB_VERSION', '2.0');
+      define('SAM_VERSION', '1.5.50');
+      define('SAM_DB_VERSION', '2.1');
       define('SAM_PATH', dirname( __FILE__ ));
       define('SAM_URL', plugins_url('/' . str_replace( basename( __FILE__), "", plugin_basename( __FILE__ ) )) );
       define('SAM_IMG_URL', SAM_URL.'images/');
@@ -107,12 +109,14 @@ if ( !class_exists( 'SimpleAdsManager' ) ) {
     
     public function headerScripts() {
       $this->samNonce = wp_create_nonce('samNonce');
+      $options = self::getSettings();
       
       wp_enqueue_script('jquery');
       wp_localize_script('jquery', 'samAjax', array(
           'ajaxurl' => admin_url( 'admin-ajax.php' ), 
           '_ajax_nonce' => $this->samNonce)
       );
+      if($options['useSWF']) wp_enqueue_script('swfobject');
       wp_enqueue_script('samLayout', SAM_URL.'js/sam-layout.js', array('jquery'), SAM_VERSION);
     }
     

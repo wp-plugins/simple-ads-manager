@@ -12,6 +12,14 @@ if(!class_exists('SamAd')) {
       $this->crawler = $crawler;
       $this->ad = $this->buildAd($this->args, $this->useCodes);
     }
+
+    private function getSize($ss, $width, $height) {
+      if($ss == 'custom') return array('width' => $width, 'height' => $height);
+      else {
+        $aSize = explode("x", $ss);
+        return array('width' => $aSize[0], 'height' => $aSize[1]);
+      }
+    }
     
     private function buildAd( $args = null, $useCodes = false ) {
       if(is_null($args)) return '';
@@ -35,28 +43,60 @@ if(!class_exists('SamAd')) {
                   $aTable.ad_alt,
                   $aTable.ad_no,
                   $aTable.ad_target,
+                  $aTable.ad_swf,
+                  $aTable.ad_swf_flashvars,
+                  $aTable.ad_swf_params,
+                  $aTable.ad_swf_attributes,
                   $aTable.count_clicks,
                   $aTable.code_type,
                   $pTable.code_before,
-                  $pTable.code_after
+                  $pTable.code_after,
+                  $pTable.place_size,
+                  $pTable.place_custom_width,
+                  $pTable.place_custom_height
                 FROM $aTable
                   INNER JOIN $pTable
                     ON $aTable.pid = $pTable.id
                 WHERE $wid;";
       $ad = $wpdb->get_row($aSql, ARRAY_A);
       if($ad['code_mode'] == 0) {
-        $outId = ((int) $ad['count_clicks'] == 1) ? " id='a".rand(10, 99)."_".$ad['id']."' class='sam_ad'" : '';
-        $aStart ='';
-        $aEnd ='';
-        $iTag = '';
-        if(!empty($ad['ad_target'])) {
-          //$aStart = ((in_array((integer)$ad['ad_no'], array(2,3))) ? '<noindex>' : '')."<a href='{$ad['ad_target']}' target='_blank' ".((in_array((integer)$ad['ad_no'], array(1,3))) ? " rel='nofollow'" : '').">";
-          //$aEnd = "</a>".(in_array((integer)$ad['ad_no'], array(2,3))) ? '</noindex>' : '';
-          $aStart = "<a href='{$ad['ad_target']}' target='_blank' ".">";
-          $aEnd = "</a>";
+        if((int)$ad['ad_swf']) {
+          $id = "ad-".$ad['id'].'-'.rand(1111, 9999);
+          $file = $ad['ad_img'];
+          $sizes = self::getSize($ad['place_size'], $ad['place_custom_width'], $ad['place_custom_height']);
+          $width = $sizes['width'];
+          $height = $sizes['height'];
+          $flashvars = (!empty($ad['ad_swf_flashvars'])) ? $ad['ad_swf_flashvars'] : '{}';
+          $params = (!empty($ad['ad_swf_params'])) ? $ad['ad_swf_params'] : '{}';
+          $attributes = (!empty($ad['ad_swf_attributes'])) ? $ad['ad_swf_attributes'] : '{}';
+          $text = __('Flash ad').' ID:'.$ad['id'];
+          $output = "
+          <script type='text/javascript'>
+          var
+            flashvars = $flashvars,
+            params = $params,
+            attributes = $attributes;
+          attributes.id = '$id';
+          attributes.styleclass = 'sam_ad';
+          swfobject.embedSWF('$file', '$id', '$width', '$height', '9.0.0', '', flashvars, params, attributes);
+          </script>
+          <div id='$id'>$text</div>
+          ";
         }
-        if(!empty($ad['ad_img'])) $iTag = "<img $outId src='{$ad['ad_img']}' ".((!empty($ad['ad_alt'])) ? " alt='{$ad['ad_alt']}' " : '')." />";
-        $output = $aStart.$iTag.$aEnd;
+        else {
+          $outId = ((int) $ad['count_clicks'] == 1) ? " id='a".rand(10, 99)."_".$ad['id']."' class='sam_ad'" : '';
+          $aStart ='';
+          $aEnd ='';
+          $iTag = '';
+          if(!empty($ad['ad_target'])) {
+            //$aStart = ((in_array((integer)$ad['ad_no'], array(2,3))) ? '<noindex>' : '')."<a href='{$ad['ad_target']}' target='_blank' ".((in_array((integer)$ad['ad_no'], array(1,3))) ? " rel='nofollow'" : '').">";
+            //$aEnd = "</a>".(in_array((integer)$ad['ad_no'], array(2,3))) ? '</noindex>' : '';
+            $aStart = "<a $outId href='{$ad['ad_target']}' target='_blank' ".">";
+            $aEnd = "</a>";
+          }
+          if(!empty($ad['ad_img'])) $iTag = "<img src='{$ad['ad_img']}' ".((!empty($ad['ad_alt'])) ? " alt='{$ad['ad_alt']}' " : '')." />";
+          $output = $aStart.$iTag.$aEnd;
+        }
       }
       else {
         if($ad['code_type'] == 1) {
@@ -67,7 +107,7 @@ if(!class_exists('SamAd')) {
         }
         else $output = $ad['ad_code'];
       }
-      if(!$this->crawler)
+      if(!$this->crawler && !is_admin())
         $wpdb->query("UPDATE $aTable SET $aTable.ad_hits = $aTable.ad_hits+1 WHERE $aTable.id = {$ad['id']};");
       
       if(is_array($useCodes)) $output = $useCodes['before'].$output.$useCodes['after'];
@@ -95,6 +135,14 @@ if(!class_exists('SamAdPlace')) {
       $options = get_option(SAM_OPTIONS_NAME, '');      
       return $options;
     }
+
+    private function getSize($ss, $width, $height) {
+      if($ss == 'custom') return array('width' => $width, 'height' => $height);
+      else {
+        $aSize = explode("x", $ss);
+        return array('width' => $aSize[0], 'height' => $aSize[1]);
+      }
+    }
     
     private function getCustomPostTypes() {
       $args = array('public' => true, '_builtin' => false);
@@ -108,6 +156,41 @@ if(!class_exists('SamAdPlace')) {
     private function isCustomPostType() {
       return (in_array(get_post_type(), $this->getCustomPostTypes()));
     }
+
+    private function errorWrite($eTable, $rTable, $eSql = null, $eResult = null) {
+      global $wpdb;
+
+      //if(!is_null($eResult)) {
+        if(!$eResult) {
+          $wpdb->insert(
+            $eTable,
+            array(
+              'error_date' => current_time('mysql'),
+              'table_name' => $rTable,
+              'error_type' => 2,
+              'error_msg' => __('An error occurred during output process...', SAM_DOMAIN),
+              'error_sql' => $eSql,
+              'resolved' => 0
+            ),
+            array('%s', '%s', '%d', '%s', '%s', '%d')
+          );
+        }
+        else {
+          $wpdb->insert(
+            $eTable,
+            array(
+              'error_date' => current_time('mysql'),
+              'table_name' => $rTable,
+              'error_type' => 0,
+              'error_msg' => __('Outputed...', SAM_DOMAIN),
+              'error_sql' => $eSql,
+              'resolved' => 1
+            ),
+            array('%s', '%s', '%d', '%s', '%s', '%d')
+          );
+        }
+      //}
+    }
     
     private function buildAd( $args = null, $useCodes = false ) {
       if(is_null($args)) return '';
@@ -117,12 +200,15 @@ if(!class_exists('SamAdPlace')) {
       if($settings['adCycle'] == 0) $cycle = 1000;
       else $cycle = $settings['adCycle'];
       
-      global $wpdb;
+      global $wpdb, $current_user;
       $pTable = $wpdb->prefix . "sam_places";          
       $aTable = $wpdb->prefix . "sam_ads";
+      $eTable = $wpdb->prefix . "sam_errors";
       
       $viewPages = 0;
-      $cats = array();
+      //$cats = array();
+      //$wcul = '';
+      $wcu = '';
       $wcc = '';
       $wci = '';
       $wca = '';
@@ -131,6 +217,20 @@ if(!class_exists('SamAdPlace')) {
       $wcxc = '';
       $wcxa = '';
       $wcxt = '';
+
+      if(is_user_logged_in()) {
+        get_currentuserinfo();
+        $uSlug = $current_user->user_login;
+        $wcul = "IF($aTable.ad_users_reg = 1,
+                  IF($aTable.x_ad_users = 1, NOT FIND_IN_SET(\"$uSlug\", $aTable.x_view_users), TRUE) AND
+                  IF($aTable.ad_users_adv = 1, ($aTable.adv_nick <> \"$uSlug\"), TRUE),
+                  FALSE)";
+      }
+      else {
+        $wcul = "($aTable.ad_users_unreg = 1)";
+      }
+      $wcu = "(IF($aTable.ad_users = 0, TRUE, $wcul)) AND";
+
       if(is_home() || is_front_page()) $viewPages += SAM_IS_HOME;
       if(is_singular()) {
         $viewPages |= SAM_IS_SINGULAR;
@@ -155,10 +255,10 @@ if(!class_exists('SamAdPlace')) {
             $wcc = " AND IF($aTable.view_type < 2 AND $aTable.ad_cats AND IF($aTable.view_type = 0, $aTable.view_pages+0 & $viewPages, TRUE),";
             $wcxc = " AND IF($aTable.view_type < 2 AND $aTable.x_cats AND IF($aTable.view_type = 0, $aTable.view_pages+0 & $viewPages, TRUE),";
             foreach($categories as $category) {
-              if(empty($wcc_0)) $wcc_0 = " FIND_IN_SET(\"{$category->cat_name}\", $aTable.view_cats)";
-              else $wcc_0 .= " OR FIND_IN_SET(\"{$category->cat_name}\", $aTable.view_cats)";
-              if(empty($wcxc_0)) $wcxc_0 = " (NOT FIND_IN_SET(\"{$category->cat_name}\", $aTable.x_view_cats))";
-              else $wcxc_0 .= " AND (NOT FIND_IN_SET(\"{$category->cat_name}\", $aTable.x_view_cats))";
+              if(empty($wcc_0)) $wcc_0 = " FIND_IN_SET(\"{$category->category_nicename}\", $aTable.view_cats)";
+              else $wcc_0 .= " OR FIND_IN_SET(\"{$category->category_nicename}\", $aTable.view_cats)";
+              if(empty($wcxc_0)) $wcxc_0 = " (NOT FIND_IN_SET(\"{$category->category_nicename}\", $aTable.x_view_cats))";
+              else $wcxc_0 .= " AND (NOT FIND_IN_SET(\"{$category->category_nicename}\", $aTable.x_view_cats))";
             }
             $wcc .= $wcc_0.", TRUE)";
             $wcxc .= $wcxc_0.", TRUE)";
@@ -170,10 +270,10 @@ if(!class_exists('SamAdPlace')) {
             $wct .= " AND IF($aTable.view_type < 2 AND $aTable.ad_tags AND IF($aTable.view_type = 0, $aTable.view_pages+0 & $viewPages, TRUE),";
             $wcxt .= " AND IF($aTable.view_type < 2 AND $aTable.x_tags AND IF($aTable.view_type = 0, $aTable.view_pages+0 & $viewPages, TRUE),";
             foreach($tags as $tag) {
-              if(empty($wct_0)) $wct_0 = " FIND_IN_SET(\"{$tag->name}\", $aTable.view_tags)";
-              else $wct_0 .= " OR FIND_IN_SET(\"{$tag->name}\", $aTable.view_tags)";
-              if(empty($wcxt_0)) $wcxt_0 = " (NOT FIND_IN_SET(\"{$tag->name}\", $aTable.x_view_tags))";
-              else $wcxt_0 .= " AND (NOT FIND_IN_SET(\"{$tag->name}\", $aTable.x_view_tags))";
+              if(empty($wct_0)) $wct_0 = " FIND_IN_SET(\"{$tag->slug}\", $aTable.view_tags)";
+              else $wct_0 .= " OR FIND_IN_SET(\"{$tag->slug}\", $aTable.view_tags)";
+              if(empty($wcxt_0)) $wcxt_0 = " (NOT FIND_IN_SET(\"{$tag->slug}\", $aTable.x_view_tags))";
+              else $wcxt_0 .= " AND (NOT FIND_IN_SET(\"{$tag->slug}\", $aTable.x_view_tags))";
             }
             $wct .= $wct_0.", TRUE)";
             $wcxt .= $wcxt_0.", TRUE)";
@@ -202,14 +302,14 @@ if(!class_exists('SamAdPlace')) {
         if(is_category()) {
           $viewPages |= SAM_IS_CATEGORY;
           $cat = get_category(get_query_var('cat'), false);
-          $wcc = " AND IF($aTable.view_type < 2 AND $aTable.ad_cats AND IF($aTable.view_type = 0, $aTable.view_pages+0 & $viewPages, TRUE), FIND_IN_SET(\"{$cat->cat_name}\", $aTable.view_cats), TRUE)";
-          $wcxc = " AND IF($aTable.view_type < 2 AND $aTable.x_cats AND IF($aTable.view_type = 0, $aTable.view_pages+0 & $viewPages, TRUE), NOT FIND_IN_SET(\"{$cat->cat_name}\", $aTable.x_view_cats), TRUE)";
+          $wcc = " AND IF($aTable.view_type < 2 AND $aTable.ad_cats AND IF($aTable.view_type = 0, $aTable.view_pages+0 & $viewPages, TRUE), FIND_IN_SET(\"{$cat->category_nicename}\", $aTable.view_cats), TRUE)";
+          $wcxc = " AND IF($aTable.view_type < 2 AND $aTable.x_cats AND IF($aTable.view_type = 0, $aTable.view_pages+0 & $viewPages, TRUE), NOT FIND_IN_SET(\"{$cat->category_nicename}\", $aTable.x_view_cats), TRUE)";
         }
         if(is_tag()) {
           $viewPages |= SAM_IS_TAG;
           $tag = get_tag(get_query_var('tag_id'));
-          $wct = " AND IF($aTable.view_type < 2 AND $aTable.ad_tags AND IF($aTable.view_type = 0, $aTable.view_pages+0 & $viewPages, TRUE), FIND_IN_SET('{$tag->name}', $aTable.view_tags), TRUE)";
-          $wcxt = " AND IF($aTable.view_type < 2 AND $aTable.x_tags AND IF($aTable.view_type = 0, $aTable.view_pages+0 & $viewPages, TRUE), NOT FIND_IN_SET('{$tag->name}', $aTable.x_view_tags), TRUE)";
+          $wct = " AND IF($aTable.view_type < 2 AND $aTable.ad_tags AND IF($aTable.view_type = 0, $aTable.view_pages+0 & $viewPages, TRUE), FIND_IN_SET('{$tag->slug}', $aTable.view_tags), TRUE)";
+          $wcxt = " AND IF($aTable.view_type < 2 AND $aTable.x_tags AND IF($aTable.view_type = 0, $aTable.view_pages+0 & $viewPages, TRUE), NOT FIND_IN_SET('{$tag->slug}', $aTable.x_view_tags), TRUE)";
         }
         if(is_author()) {
           global $wp_query;
@@ -232,7 +332,7 @@ if(!class_exists('SamAdPlace')) {
       if(empty($wcc)) $wcc = " AND ($aTable.ad_cats = 0)";
       if(empty($wca)) $wca = " AND ($aTable.ad_authors = 0)";
       
-      $whereClause  = "(($aTable.view_type = 1)";
+      $whereClause  = "$wcu (($aTable.view_type = 1)";
       $whereClause .= " OR ($aTable.view_type = 0 AND ($aTable.view_pages+0 & $viewPages))";
       $whereClause .= "$wci)";
       $whereClause .= "$wcc $wca $wct $wcx $wcxc $wcxa $wcxt";
@@ -269,6 +369,11 @@ if(!class_exists('SamAdPlace')) {
                 WHERE $pId AND $pTable.trash IS FALSE;";
       
       $place = $wpdb->get_row($pSql, ARRAY_A);
+
+      if(!$place) {
+        self::errorWrite($eTable, $pTable, $pSql, $place);
+        return '';
+      }
       
       if($place['patch_source'] == 2) {
         if(($settings['useDFP'] == 1) && !empty($settings['dfpPub'])) {
@@ -326,6 +431,10 @@ if(!class_exists('SamAdPlace')) {
                   $aTable.ad_alt,
                   $aTable.ad_no,
                   $aTable.ad_target,
+                  $aTable.ad_swf,
+                  $aTable.ad_swf_flashvars,
+                  $aTable.ad_swf_params,
+                  $aTable.ad_swf_attributes,
                   $aTable.count_clicks,
                   $aTable.code_type,
                   $aTable.ad_hits,
@@ -335,24 +444,55 @@ if(!class_exists('SamAdPlace')) {
                 WHERE $aTable.pid = {$place['id']} AND $aTable.trash IS FALSE AND $whereClause $whereClauseT $whereClauseW
                 ORDER BY ad_cycle
                 LIMIT 1;";
-      
+
       if(abs($place['ad_logic_count']) > 0) {
         $ad = $wpdb->get_row($aSql, ARRAY_A);
+
+        if(!$ad) {
+          self::errorWrite($eTable, $aTable, $aSql, $ad);
+          return '';
+        }
+
         if($ad['code_mode'] == 0) {
-          $outId = ((int) $ad['count_clicks'] == 1) ? " id='a".rand(10, 99)."_".$ad['id']."' class='sam_ad'" : '';
-          $aStart ='';
-          $aEnd ='';
-          $iTag = '';
-          if(!empty($settings['adDisplay'])) $target = '_'.$settings['adDisplay'];
-          else $target = '_blank';
-          if(!empty($ad['ad_target'])) {
-            //$aStart = ((in_array((integer)$ad['ad_no'], array(2,3))) ? '<noindex>' : '')."<a href='{$ad['ad_target']}' target='$target' ".((in_array((integer)$ad['ad_no'], array(1,3))) ? " rel='nofollow'" : '').">";
-            //$aEnd = "</a>".(in_array((integer)$ad['ad_no'], array(2,3))) ? '</noindex>' : '';
-            $aStart = "<a href='{$ad['ad_target']}' target='$target' ".">";
-            $aEnd = "</a>";
+          if((int)$ad['ad_swf']) {
+            $id = "ad-".$ad['id'].'-'.rand(1111, 9999);
+            $file = $ad['ad_img'];
+            $sizes = self::getSize($place['place_size'], $place['place_custom_width'], $place['place_custom_height']);
+            $width = $sizes['width'];
+            $height = $sizes['height'];
+            $flashvars = (!empty($ad['ad_swf_flashvars'])) ? $ad['ad_swf_flashvars'] : '{}';
+            $params = (!empty($ad['ad_swf_params'])) ? $ad['ad_swf_params'] : '{}';
+            $attributes = (!empty($ad['ad_swf_attributes'])) ? $ad['ad_swf_attributes'] : '{}';
+            $text = __('Flash ad').' ID:'.$ad['id'];
+            $output = "
+            <script type='text/javascript'>
+            var
+              flashvars = $flashvars,
+              params = $params,
+              attributes = $attributes;
+            attributes.id = '$id';
+            attributes.styleclass = 'sam_ad';
+            swfobject.embedSWF('$file', '$id', '$width', '$height', '9.0.0', '', flashvars, params, attributes);
+            </script>
+            <div id='$id'>$text</div>
+            ";
           }
-          if(!empty($ad['ad_img'])) $iTag = "<img $outId src='{$ad['ad_img']}' ".((!empty($ad['ad_alt'])) ? " alt='{$ad['ad_alt']}' " : '')." />";
-          $output = $aStart.$iTag.$aEnd;
+          else {
+            $outId = ((int) $ad['count_clicks'] == 1) ? " id='a".rand(10, 99)."_".$ad['id']."' class='sam_ad'" : '';
+            $aStart ='';
+            $aEnd ='';
+            $iTag = '';
+            if(!empty($settings['adDisplay'])) $target = '_'.$settings['adDisplay'];
+            else $target = '_blank';
+            if(!empty($ad['ad_target'])) {
+              //$aStart = ((in_array((integer)$ad['ad_no'], array(2,3))) ? '<noindex>' : '')."<a href='{$ad['ad_target']}' target='$target' ".((in_array((integer)$ad['ad_no'], array(1,3))) ? " rel='nofollow'" : '').">";
+              //$aEnd = "</a>".(in_array((integer)$ad['ad_no'], array(2,3))) ? '</noindex>' : '';
+              $aStart = "<a $outId href='{$ad['ad_target']}' target='$target' ".">";
+              $aEnd = "</a>";
+            }
+            if(!empty($ad['ad_img'])) $iTag = "<img src='{$ad['ad_img']}' ".((!empty($ad['ad_alt'])) ? " alt='{$ad['ad_alt']}' " : " alt='' ")." />";
+            $output = $aStart.$iTag.$aEnd;
+          }
         }
         else {
           if($ad['code_type'] == 1) {
@@ -363,7 +503,7 @@ if(!class_exists('SamAdPlace')) {
           }
           else $output = $ad['ad_code'];
         }
-        if(!$this->crawler)
+        if(!$this->crawler && !is_admin())
           $wpdb->query("UPDATE $aTable SET $aTable.ad_hits = $aTable.ad_hits+1, $aTable.ad_weight_hits = $aTable.ad_weight_hits+1 WHERE $aTable.id = {$ad['id']}");
       }
       
