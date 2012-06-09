@@ -13,6 +13,11 @@ if(!class_exists('SamAd')) {
       $this->ad = $this->buildAd($this->args, $this->useCodes);
     }
 
+    private function getSettings() {
+      $options = get_option(SAM_OPTIONS_NAME, '');
+      return $options;
+    }
+
     private function getSize($ss, $width, $height) {
       if($ss == 'custom') return array('width' => $width, 'height' => $height);
       else {
@@ -29,6 +34,7 @@ if(!class_exists('SamAd')) {
       $pTable = $wpdb->prefix . "sam_places";
       $aTable = $wpdb->prefix . "sam_ads";
       
+      $settings = $this->getSettings();
       if(!empty($args['id'])) $wid = "$aTable.id = {$args['id']}";
       else $wid = "$aTable.name = '{$args['name']}'";
       
@@ -88,10 +94,12 @@ if(!class_exists('SamAd')) {
           $aStart ='';
           $aEnd ='';
           $iTag = '';
+          if(!empty($settings['adDisplay'])) $target = '_'.$settings['adDisplay'];
+          else $target = '_blank';
           if(!empty($ad['ad_target'])) {
             //$aStart = ((in_array((integer)$ad['ad_no'], array(2,3))) ? '<noindex>' : '')."<a href='{$ad['ad_target']}' target='_blank' ".((in_array((integer)$ad['ad_no'], array(1,3))) ? " rel='nofollow'" : '').">";
             //$aEnd = "</a>".(in_array((integer)$ad['ad_no'], array(2,3))) ? '</noindex>' : '';
-            $aStart = "<a $outId href='{$ad['ad_target']}' target='_blank' ".">";
+            $aStart = "<a $outId href='{$ad['ad_target']}' target='$target' ".">";
             $aEnd = "</a>";
           }
           if(!empty($ad['ad_img'])) $iTag = "<img src='{$ad['ad_img']}' ".((!empty($ad['ad_alt'])) ? " alt='{$ad['ad_alt']}' " : '')." />";
@@ -157,7 +165,7 @@ if(!class_exists('SamAdPlace')) {
       return (in_array(get_post_type(), $this->getCustomPostTypes()));
     }
 
-    private function errorWrite($eTable, $rTable, $eSql = null, $eResult = null) {
+    private function errorWrite($eTable, $rTable, $eSql = null, $eResult = null, $lastError = null) {
       global $wpdb;
 
       //if(!is_null($eResult)) {
@@ -168,7 +176,7 @@ if(!class_exists('SamAdPlace')) {
               'error_date' => current_time('mysql'),
               'table_name' => $rTable,
               'error_type' => 2,
-              'error_msg' => __('An error occurred during output process...', SAM_DOMAIN),
+              'error_msg' => $lastError,
               'error_sql' => $eSql,
               'resolved' => 0
             ),
@@ -182,7 +190,7 @@ if(!class_exists('SamAdPlace')) {
               'error_date' => current_time('mysql'),
               'table_name' => $rTable,
               'error_type' => 0,
-              'error_msg' => __('Outputed...', SAM_DOMAIN),
+              'error_msg' => __('Empty data...', SAM_DOMAIN),
               'error_sql' => $eSql,
               'resolved' => 1
             ),
@@ -371,7 +379,7 @@ if(!class_exists('SamAdPlace')) {
       $place = $wpdb->get_row($pSql, ARRAY_A);
 
       if(!$place) {
-        self::errorWrite($eTable, $pTable, $pSql, $place);
+        self::errorWrite($eTable, $pTable, $pSql, $place, $wpdb->last_error);
         return '';
       }
       
@@ -448,8 +456,8 @@ if(!class_exists('SamAdPlace')) {
       if(abs($place['ad_logic_count']) > 0) {
         $ad = $wpdb->get_row($aSql, ARRAY_A);
 
-        if(!$ad) {
-          self::errorWrite($eTable, $aTable, $aSql, $ad);
+        if($ad === false) {
+          self::errorWrite($eTable, $aTable, $aSql, $ad, $wpdb->last_error);
           return '';
         }
 
@@ -714,35 +722,34 @@ if(!class_exists('SamAdBlock')) {
         $cols = (integer) $block['b_cols'];
         $blockDiv = "<div style='margin: ".$block['b_margin']."; padding: ".$block['b_padding']."; background: ".$block['b_background']."; border: ".$block['b_border']."'>";
         $itemDiv = "<div style='display: inline-block; margin: ".$block['i_margin']."; padding: ".$block['i_padding']."; background: ".$block['i_background']."; border: ".$block['i_border']."'>";
-        
+
         for($i = 1; $i <= $lines; $i++) {
-          $output .= $blockDiv;
+          $lDiv = '';
           for($j = 1; $j <= $cols; $j++) {
             $id = $ads[$i][$j]['id'];
-            $output .= $itemDiv;
             switch($ads[$i][$j]['type']) {
               case 'place':
                 $place = new SamAdPlace(array('id' => $id), false, $crawler);
-                $output .= $place->ad;
+                $iDiv = $place->ad;
                 break;
                 
               case 'ad':
                 $ad = new SamAd(array('id' => $id), false, $crawler);
-                $output .= $ad->ad;
+                $iDiv = $ad->ad;
                 break;
                 
               case 'zone':
                 $zone = new SamAdPlaceZone(array('id' => $id), false, $crawler);
-                $output .= $zone->ad;
+                $iDiv = $zone->ad;
                 break;
                 
               default:
-                $output .= '';
+                $iDiv = '';
                 break;
             }
-            $output .= "</div>";
+            if(!empty($iDiv)) $lDiv .= $itemDiv.$iDiv."</div>";
           }
-          $output .= "</div>";
+          if(!empty($lDiv)) $output .= $blockDiv.$lDiv."</div>";
         }
       }
       else $output = '';

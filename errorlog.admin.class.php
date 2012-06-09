@@ -33,7 +33,8 @@ if(!class_exists('SamErrorLog')) {
         elseif($iaction === 'untrash') $wpdb->update( $eTable, array( 'resolved' => false ), array( 'id' => $item ), array( '%d' ), array( '%d' ) );
         elseif($iaction === 'kill') $wpdb->query("DELETE FROM $eTable WHERE id=$item");
       }
-      if($iaction === 'kill-em-all') $wpdb->query("DELETE FROM $eTable WHERE resolved=true");
+      if($iaction === 'kill-em-all') $wpdb->query("DELETE FROM $eTable");
+      if($iaction === 'kill-resolved') $wpdb->query("DELETE FROM $eTable WHERE resolved = TRUE;");
       $resolved_num = $wpdb->get_var($wpdb->prepare("SELECT COUNT(*) FROM $eTable WHERE resolved = TRUE"));
       $active_num = $wpdb->get_var($wpdb->prepare("SELECT COUNT(*) FROM $eTable WHERE resolved = FALSE"));
       if(is_null($active_num)) $active_num = 0;
@@ -62,6 +63,9 @@ if(!class_exists('SamErrorLog')) {
   <div class="tablenav">
     <div class="alignleft">
       <a class="button-secondary" href="<?php echo admin_url('admin.php'); ?>?page=sam-errors&action=errors&mode=resolved&iaction=kill-em-all"><?php _e('Clear Error Log', SAM_DOMAIN); ?></a>
+    </div>
+    <div class="alignleft">
+      <a class="button-secondary" href="<?php echo admin_url('admin.php'); ?>?page=sam-errors&action=errors&mode=resolved&iaction=kill-resolved"><?php _e('Clear Resolved', SAM_DOMAIN); ?></a>
     </div>
     <div class="tablenav-pages">
       <?php $page_links_text = sprintf( '<span class="displaying-num">' . __( 'Displaying %s&#8211;%s of %s', SAM_DOMAIN ) . '</span>%s',
@@ -167,6 +171,9 @@ if(!class_exists('SamErrorLog')) {
   <div class="tablenav">
     <div class="alignleft">
       <a class="button-secondary" href="<?php echo admin_url('admin.php'); ?>?page=sam-errors&action=errors&mode=trash&iaction=kill-em-all"><?php _e('Clear Error Log', SAM_DOMAIN); ?></a>
+    </div>
+    <div class="alignleft">
+      <a class="button-secondary" href="<?php echo admin_url('admin.php'); ?>?page=sam-errors&action=errors&mode=resolved&iaction=kill-resolved"><?php _e('Clear Resolved', SAM_DOMAIN); ?></a>
     </div>
     <div class="tablenav-pages">
       <?php $page_links_text = sprintf( '<span class="displaying-num">' . __( 'Displaying %s&#8211;%s of %s', SAM_DOMAIN ) . '</span>%s',

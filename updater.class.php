@@ -13,7 +13,7 @@ if(!class_exists('SamUpdater')) {
       global $wpdb;
 
       if(!is_null($eResult)) {
-        if(!$eResult) {
+        if($eResult === false) {
           $wpdb->insert(
             $eTable,
             array(
@@ -63,14 +63,14 @@ if(!class_exists('SamUpdater')) {
       if( $dbVersion != SAM_DB_VERSION ) {
         if($wpdb->get_var("SHOW TABLES LIKE '$eTable'") != $eTable) {
           $eSql = "CREATE TABLE $eTable (
-                    `id` int(11) NOT NULL AUTO_INCREMENT,
-                    `error_date` datetime DEFAULT NULL,
-                    `table_name` varchar(30) DEFAULT NULL,
-                    `error_type` int(11) NOT NULL DEFAULT 0,
-                    `error_msg` varchar(255) DEFAULT NULL,
-                    `error_sql` text,
-                    `resolved` tinyint(1) NOT NULL DEFAULT 0,
-                    PRIMARY KEY (`id`)
+                    id int(11) NOT NULL AUTO_INCREMENT,
+                    error_date datetime DEFAULT NULL,
+                    table_name varchar(30) DEFAULT NULL,
+                    error_type int(11) NOT NULL DEFAULT 0,
+                    error_msg varchar(255) DEFAULT NULL,
+                    error_sql text,
+                    resolved tinyint(1) NOT NULL DEFAULT 0,
+                    PRIMARY KEY (id)
                     ) $charset_collate;";
           dbDelta($eSql);
         }
