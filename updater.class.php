@@ -146,7 +146,7 @@ if(!class_exists('SamUpdater')) {
                   x_view_users varchar(255) DEFAULT NULL,
                   ad_users_adv tinyint(1) DEFAULT 0,
                   view_type INT(11) DEFAULT 1,
-                  view_pages SET('isHome', 'isSingular', 'isSingle', 'isPage', 'isAttachment', 'isSearch', 'is404', 'isArchive', 'isTax', 'isCategory', 'isTag', 'isAuthor', 'isDate') DEFAULT NULL,
+                  view_pages SET('isHome','isSingular','isSingle','isPage','isAttachment','isSearch','is404','isArchive','isTax','isCategory','isTag','isAuthor','isDate','isPostType','isPostTypeArchive') DEFAULT NULL,
                   view_id VARCHAR(255) DEFAULT NULL,
                   ad_cats TINYINT(1) DEFAULT 0,
                   view_cats VARCHAR(255) DEFAULT NULL,
