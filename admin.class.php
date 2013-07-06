@@ -716,13 +716,14 @@ if ( !class_exists( 'SimpleAdsManagerAdmin' && class_exists('SimpleAdsManager') 
     
     public function drawTextOption( $id, $args ) {
       $settings = parent::getSettings();
-      $width = $args['width'];
+      if(isset($args['width'])) $width = $args['width'];
+      else $width = 55;
       ?>
         <input id="<?php echo $id; ?>"
 					name="<?php echo SAM_OPTIONS_NAME.'['.$id.']'; ?>"
 					type="text"
 					value="<?php echo $settings[$id]; ?>"
-          style="height: 22px; font-size: 11px; <?php if(!empty($width)) echo 'width: '.$width.'px;' ?>" />
+          style="height: 22px; font-size: 11px; <?php echo "width: {$width}px;" ?>" />
       <?php
     }
 
@@ -828,6 +829,7 @@ if ( !class_exists( 'SimpleAdsManagerAdmin' && class_exists('SimpleAdsManager') 
         if(!empty($errors->errorString)) echo $errors->errorString;
         if(isset($_GET['settings-updated'])) $updated = $_GET['settings-updated'];
         elseif(isset($_GET['updated'])) $updated = $_GET['updated'];
+        else $updated = false;
 				if($updated === 'true') {
           parent::getSettings(true);
 				  ?>

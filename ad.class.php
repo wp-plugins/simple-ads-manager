@@ -637,7 +637,7 @@ if(!class_exists('SamAdPlaceZone')) {
               }
             }
           }
-          if(is_page()) $id = $zone['z_page'];
+          if(is_page() && !is_front_page()) $id = $zone['z_page'];
           if(is_attachment()) $id = $zone['z_attachment'];
         }
         if(is_search()) $id = $zone['z_search'];

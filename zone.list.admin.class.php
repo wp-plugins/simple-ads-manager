@@ -110,7 +110,7 @@ if(!class_exists('SamZoneList')) {
       if(!is_array($zones) || empty ($zones)) {
       ?>
       <tr id="g0" class="no-items" valign="top">
-        <th class="colspanchange" colspan='2'><?php _e('There are no data ...', SAM_DOMAIN).$pTable; ?></th>
+        <th class="colspanchange" colspan='2'><?php _e('There are no data ...', SAM_DOMAIN); ?></th>
       </tr>
         <?php } else {
           foreach($zones as $row) {            
