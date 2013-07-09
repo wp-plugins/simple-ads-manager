@@ -4,7 +4,7 @@ Donate link: https://load.payoneer.com/LoadToPage.aspx?email=minimus@simplelib.c
 Tags: ad, adbrite, adgridwork, adify, admin, adpinion, adroll, ads, adsense, adserver, advertisement, advertising, affiliate, banner, banners, chitika, cj, commercial, commission, crispads, dfp, google, income, junction, link, manager, media, money, plugin, random, referral, revenue, rotator, seo, server, shoppingads, widget, widgetbucks, yahoo, ypn
 Requires at least: 3.3
 Tested up to: 3.6
-Stable tag: 1.7.59
+Stable tag: 1.7.60
 
 Advertisement rotation system with a flexible logic of displaying advertisements.
 
@@ -82,7 +82,7 @@ No questions now...
 
 == Changelog ==
 
-= 1.7.59 =
+= 1.7.60 =
 * Minor bug is resolved (Ads Places List)
 = 1.7.58 =
 * Major bug is resolved (bug of database creating, not database updating)
@@ -163,7 +163,7 @@ No questions now...
 
 == Upgrade Notice ==
 
-= 1.7.59 =
+= 1.7.60 =
 Minor bug is resolved (Ads Places List)
 = 1.7.58 =
 Major bug is resolved (bug of database creating, not database updating)
