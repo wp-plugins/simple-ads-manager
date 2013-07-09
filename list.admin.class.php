@@ -116,7 +116,7 @@ if(!class_exists('SamPlaceList')) {
             $wpdb->query("UPDATE $aTable SET $aTable.ad_hits = 0, $aTable.ad_clicks = 0;");
           }
           $trash_num = $wpdb->get_var("SELECT COUNT(*) FROM $pTable WHERE trash = TRUE");
-          $active_num = $wpdb->get_var("SELECT COUNT(*) FROM $aTable WHERE trash = FALSE");
+          $active_num = $wpdb->get_var("SELECT COUNT(*) FROM $pTable WHERE trash = FALSE");
           if(is_null($active_num)) $active_num = 0;
           if(is_null($trash_num)) $trash_num = 0;
           $all_num = $trash_num + $active_num;
