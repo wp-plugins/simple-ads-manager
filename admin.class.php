@@ -942,7 +942,7 @@ if ( !class_exists( 'SimpleAdsManagerAdmin' && class_exists('SimpleAdsManager') 
 		}
     
     public function addButtons() {
-      if ( ! current_user_can('edit_posts') && ! current_user_can('edit_pages') )
+      if ( ! current_user_can('edit_posts') && ! current_user_can('edit_pages') && ! current_user_can(SAM_ACCESS) )
         return;
       
       if ( get_user_option('rich_editing') == 'true') {
