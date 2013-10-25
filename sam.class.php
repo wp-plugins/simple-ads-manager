@@ -37,7 +37,7 @@ if ( !class_exists( 'SimpleAdsManager' ) ) {
 	  );
 		
 	  public function __construct() {
-      define('SAM_VERSION', '1.7.61');
+      define('SAM_VERSION', '1.7.63');
       define('SAM_DB_VERSION', '2.2');
       define('SAM_PATH', dirname( __FILE__ ));
       define('SAM_URL', plugins_url('/' . str_replace( basename( __FILE__), "", plugin_basename( __FILE__ ) )) );
@@ -117,8 +117,8 @@ if ( !class_exists( 'SimpleAdsManager' ) ) {
       if($options['useSWF']) wp_enqueue_script('swfobject');
       wp_enqueue_script('samLayout', SAM_URL.'js/sam-layout.js', array('jquery'), SAM_VERSION);
       wp_localize_script('samLayout', 'samAjax', array(
-          'ajaxurl' => admin_url( 'admin-ajax.php' ),
-          '_ajax_nonce' => $this->samNonce)
+          'ajaxurl' => SAM_URL . 'sam-ajax.php',
+          'level' => count(explode('/', str_replace( ABSPATH, '', dirname( __FILE__ ) ))))
       );
     }
     
