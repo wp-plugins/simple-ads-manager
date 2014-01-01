@@ -87,8 +87,9 @@ No questions now...
 
 == Changelog ==
 
-= 1.8.72 =
+= 2.0.73 =
 * Javascript output of ads (for caching compatibility) is added
+* Mailing Ststem is added
 * Custom Taxonomies restrictions are added
 * Building query for SQL request is optimised
 * Admin interface is improved
@@ -182,7 +183,7 @@ No questions now...
 
 == Upgrade Notice ==
 
-= 1.8.72 =
+= 2.0.73 =
 Caching plugins compatibility, bbPress compatibility, Custom Taxonomies restrictions, etc.
 = 1.7.63 =
 Some bugs (Ads Block style, Click Tracker) are resolved.
