@@ -3,7 +3,7 @@
 Plugin Name: Simple Ads Manager
 Plugin URI: http://www.simplelib.com/?p=480
 Description: "Simple Ads Manager" is easy to use plugin providing a flexible logic of displaying advertisements. Visit <a href="http://www.simplelib.com/">SimpleLib blog</a> for more details.
-Version: 1.7.63
+Version: 2.0.73
 Author: minimus
 Author URI: http://blogcoding.ru
 */
@@ -25,15 +25,16 @@ Author URI: http://blogcoding.ru
     Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 */
 
-global $samObject;
+global $samObject, $SAM_Query;
 
 define('SAM_MAIN_FILE', __FILE__);
+if(is_admin()) define('SAM_IS_ADMIN', true);
 
 include_once('ad.class.php');
 include_once('sam.class.php');
 
 if (is_admin()) {
-	include_once('admin.class.php');
+  include_once('admin.class.php');
 	if (class_exists("SimpleAdsManagerAdmin") && class_exists("SimpleAdsManager")) 
 		$samObject = new SimpleAdsManagerAdmin();
 }
@@ -42,8 +43,8 @@ else {
 }
 
 include_once('widget.class.php');
-if(class_exists('simple_ads_manager_widget')) 
-  add_action('widgets_init', create_function('', 'return register_widget("simple_ads_manager_widget");'));
+if(class_exists('simple_ads_manager_widget'))
+    add_action('widgets_init', create_function('', 'return register_widget("simple_ads_manager_widget");'));
 if(class_exists('simple_ads_manager_zone_widget')) 
   add_action('widgets_init', create_function('', 'return register_widget("simple_ads_manager_zone_widget");'));
 if(class_exists('simple_ads_manager_ad_widget')) 

@@ -3,14 +3,18 @@ Contributors: minimus
 Donate link: https://load.payoneer.com/LoadToPage.aspx?email=minimus@simplelib.com
 Tags: ad, adbrite, adgridwork, adify, admin, adpinion, adroll, ads, adsense, adserver, advertisement, advertising, affiliate, banner, banners, chitika, cj, commercial, commission, crispads, dfp, google, income, junction, link, manager, media, money, plugin, random, referral, revenue, rotator, seo, server, shoppingads, widget, widgetbucks, yahoo, ypn
 Requires at least: 3.5
-Tested up to: 3.7
-Stable tag: 1.7.63
+Tested up to: 3.8
+Stable tag: 2.0.73
+License: GPLv2 or later
+License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
 Advertisement rotation system with a flexible logic of displaying advertisements.
 
 == Description ==
 
 Simple Ads Manager is easy to use plugin providing a flexible logic of displaying advertisements.
+
+[![endorse](https://api.coderwall.com/minimus/endorsecount.png)](https://coderwall.com/minimus)
 
 = Features =
 * Flexible logic of advertisements rotation based on defined weight of each advertisement in group (Ads Place)
@@ -38,9 +42,10 @@ Simple Ads Manager is easy to use plugin providing a flexible logic of displayin
 * Customizable limitation of displaying advertisements by hits
 * Customizable limitation of displaying advertisements by clicks
 * Statistics of hits
-* Statistics of clicks (your own advertisment image mode)
+* Statistics of clicks (excluding iframes and swf-banners)
 * Customizable accuracy of bots and crawlers detection
-* Counting revenue from ads placement, display ads and clicks on advertisements 
+* Counting revenue from ads placement, display ads and clicks on advertisements
+* Compatible with all caching plugins
 
 = Requirements =
 * PHP 5.2.14+
@@ -82,6 +87,16 @@ No questions now...
 
 == Changelog ==
 
+= 1.8.72 =
+* Javascript output of ads (for caching compatibility) is added
+* Custom Taxonomies restrictions are added
+* Building query for SQL request is optimised
+* Admin interface is improved
+* Loading/Selecting banners from Wordpress Media Library is added
+* Updater is fixed and improved
+* Language pack folder is added
+* bbPress support is added
+* Some bugs are fixed
 = 1.7.63 =
 * Some bugs (Ads Block style, Click Tracker) are resolved.
 = 1.7.61 =
@@ -167,6 +182,8 @@ No questions now...
 
 == Upgrade Notice ==
 
+= 1.8.72 =
+Caching plugins compatibility, bbPress compatibility, Custom Taxonomies restrictions, etc.
 = 1.7.63 =
 Some bugs (Ads Block style, Click Tracker) are resolved.
 = 1.7.61 =

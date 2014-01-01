@@ -75,7 +75,7 @@ if(!class_exists('SamBlockEditor')) {
               <div class="inside">
                 <input type='radio' name='item-<?php echo $line.'-'.$column; ?>' id='item-<?php echo $line.'-'.$column; ?>-place' value='0' <?php checked('place', $data[$line][$column]['type']); ?>>
                 <label for='item-<?php echo $line.'-'.$column; ?>-place'><?php _e('Ads Place', SAM_DOMAIN); ?>:</label>
-                <select name='place_id_<?php echo $line.'_'.$column; ?>' id='place_id_<?php echo $line.'_'.$column; ?>'>
+                <select name='place_id_<?php echo $line.'_'.$column; ?>' id='place_id_<?php echo $line.'_'.$column; ?>' style="width: 100%;">
                   <option value='0' <?php selected(0, ($data[$line][$column]['type'] == 'place') ? $data[$line][$column]['id'] : 0); ?>><?php _e('Non selected', SAM_DOMAIN); ?></option>
       <?php
         foreach($this->freeItems['places'] as $value) {
@@ -85,10 +85,10 @@ if(!class_exists('SamBlockEditor')) {
         }
       ?>
                 </select>
-                <br/>
+                <br><br>
                 <input type='radio' name='item-<?php echo $line.'-'.$column; ?>' id='item-<?php echo $line.'-'.$column; ?>-ad' value='1' <?php checked('ad', $data[$line][$column]['type']); ?>>
                 <label for='item-<?php echo $line.'-'.$column; ?>-ad'><?php _e('Single Ad', SAM_DOMAIN); ?>:</label>
-                <select name='ad_id_<?php echo $line.'_'.$column; ?>' id='ad_id_<?php echo $line.'_'.$column; ?>'>
+                <select name='ad_id_<?php echo $line.'_'.$column; ?>' id='ad_id_<?php echo $line.'_'.$column; ?>' style="width: 100%;">
                   <option value='0' <?php selected(0, ($data[$line][$column]['type'] == 'ad') ? $data[$line][$column]['id'] : 0); ?>><?php _e('Non selected', SAM_DOMAIN); ?></option>
       <?php
         foreach($this->freeItems['ads'] as $value) {
@@ -98,10 +98,10 @@ if(!class_exists('SamBlockEditor')) {
         }
       ?>
                 </select>
-                <br/>
+                <br><br>
                 <input type='radio' name='item-<?php echo $line.'-'.$column; ?>' id='item-<?php echo $line.'-'.$column; ?>-zone' value='2' <?php checked('zone', $data[$line][$column]['type']); ?>>
                 <label for='item-<?php echo $line.'-'.$column; ?>-zone'><?php _e('Ads Zone', SAM_DOMAIN); ?>:</label>
-                <select name='zone_id_<?php echo $line.'_'.$column; ?>' id='zone_id_<?php echo $line.'_'.$column; ?>'>
+                <select name='zone_id_<?php echo $line.'_'.$column; ?>' id='zone_id_<?php echo $line.'_'.$column; ?>' style="width: 100%">
                   <option value='0' <?php selected(0, ($data[$line][$column]['type'] == 'zone') ? $data[$line][$column]['id'] : 0); ?>><?php _e('Non selected', SAM_DOMAIN); ?></option>
       <?php
         foreach($this->freeItems['zones'] as $value) {
@@ -258,7 +258,10 @@ if(!class_exists('SamBlockEditor')) {
                   <div id="minor-publishing-actions">
                     <div id="save-action"> </div>
                     <div id="preview-action">
-                      <a id="post-preview" class="preview button" href='<?php echo admin_url('admin.php'); ?>?page=sam-block-list'><?php _e('Back to Blocks List', SAM_DOMAIN) ?></a>
+                      <a id="back-button" class="color-btn color-btn-left" href='<?php echo admin_url('admin.php'); ?>?page=sam-block-list'>
+                        <b style="background-color: #bcbcbc"></b>
+                        <?php _e('Back to Blocks List', SAM_DOMAIN) ?>
+                      </a>
                     </div>
                     <div class="clear"></div>
                   </div>
@@ -266,8 +269,8 @@ if(!class_exists('SamBlockEditor')) {
                     <div class="misc-pub-section">
                       <label for="place_id_stat"><?php echo __('Ads Block ID', SAM_DOMAIN).':'; ?></label>
                       <span id="place_id_stat" class="post-status-display"><?php echo $row['id']; ?></span>
-                      <input type="hidden" id="block_id" name="block_id" value="<?php echo $row['id']; ?>" />
-                      <input type='hidden' name='editor_mode' id='editor_mode' value='zone'>
+                      <input type="hidden" id="block_id" name="block_id" value="<?php echo $row['id']; ?>">
+                      <input type='hidden' name='editor_mode' id='editor_mode' value='block'>
                     </div>
                     <div class="misc-pub-section">
                       <label for="trash_no"><input type="radio" id="trash_no" value="false" name="trash" <?php if (!$row['trash']) { echo 'checked="checked"'; }?> >  <?php _e('Is Active', SAM_DOMAIN); ?></label><br/>
@@ -278,10 +281,18 @@ if(!class_exists('SamBlockEditor')) {
                 </div>
                 <div id="major-publishing-actions">
                   <div id="delete-action">
-                    <a class="submitdelete deletion" href='<?php echo admin_url('admin.php'); ?>?page=sam-block-list'><?php _e('Cancel', SAM_DOMAIN) ?></a>
+                    <!--<a class="submitdelete deletion" href='<?php echo admin_url('admin.php'); ?>?page=sam-block-list'><?php _e('Cancel', SAM_DOMAIN) ?></a>-->
                   </div>
                   <div id="publishing-action">
-                    <input type="submit" class='button-primary' name="update_block" value="<?php _e('Save', SAM_DOMAIN) ?>" />
+                    <a id="cancel-button" class="color-btn color-btn-left" href='<?php echo admin_url('admin.php'); ?>?page=sam-block-list'>
+                      <b style="background-color: #E5584A"></b>
+                      <?php _e('Cancel', SAM_DOMAIN) ?>
+                    </a>
+                    <button id="submit-button" class="color-btn color-btn-left" name="update_block" type="submit">
+                      <b style="background-color: #21759b"></b>
+                      <?php _e('Save', SAM_DOMAIN) ?>
+                    </button>
+                    <!--<input type="submit" class='button-primary' name="update_block" value="<?php _e('Save', SAM_DOMAIN) ?>" />-->
                   </div>
                   <div class="clear"></div>
                 </div>
@@ -295,7 +306,7 @@ if(!class_exists('SamBlockEditor')) {
           <div id="titlediv">
             <div id="titlewrap">
               <label class="screen-reader-text" for="title"><?php _e('Name', SAM_DOMAIN); ?></label>
-              <input id="title" type="text" autocomplete="off" tabindex="1" size="30" name="block_name" value="<?php echo $row['name']; ?>" />
+              <input id="title" type="text" autocomplete="off" tabindex="1" size="30" name="block_name" value="<?php echo $row['name']; ?>" title="<?php echo __('Name of Ads Block', SAM_DOMAIN).'. '.__('Required for SAM widgets.', SAM_DOMAIN); ?>" />
             </div>
           </div>
           <div class="meta-box-sortables ui-sortable">
@@ -390,7 +401,7 @@ if(!class_exists('SamBlockEditor')) {
               <div class="handlediv" title="<?php _e('Click to toggle', SAM_DOMAIN); ?>"><br/></div>
               <h3 class="hndle"><span><?php _e('Ads Block Editor', SAM_DOMAIN);?></span></h3>
               <div class="inside">
-                <p><?php _e('Enter description of this Ads Block.', SAM_DOMAIN);?></p>
+                <p><?php _e('Adjust items settings of this Ads Block.', SAM_DOMAIN);?></p>
                 <?php $this->buildEditorItems($row['b_lines'], $row['b_cols'], $data); ?>
                 <p><?php _e('Block Editor.', SAM_DOMAIN); ?></p>
               </div>
