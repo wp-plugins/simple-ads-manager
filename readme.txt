@@ -89,7 +89,7 @@ No questions now...
 
 = 2.0.73 =
 * Javascript output of ads (for caching compatibility) is added
-* Mailing Ststem is added
+* Mailing System is added
 * Custom Taxonomies restrictions are added
 * Building query for SQL request is optimised
 * Admin interface is improved
