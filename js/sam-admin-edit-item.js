@@ -25,7 +25,7 @@ var sam = sam || {};
         return;
       }
 
-      var Attachment = wp.media.model.Attachment;
+      //var Attachment = wp.media.model.Attachment;
 
       this._frame = media.frame = wp.media({
         title: mediaTexts.title,
@@ -52,17 +52,17 @@ var sam = sam || {};
     },
 
     handleMediaAttachment: function(a) {
-      var attechment = a.toJSON();
-      $(this.adUrl).val(attechment.url);
-      $(this.adImgId).val(attechment.id);
-      if('' == $(this.adName).val() && '' != attechment.title) $(this.adName).val(attechment.title);
-      if('' == $(this.adDesc).val() && '' != attechment.caption) $(this.adDesc).val(attechment.caption);
-      if('' == $(this.adAlt).val() && '' != attechment.alt) $(this.adAlt).val(attechment.alt);
+      var attachment = a.toJSON();
+      $(this.adUrl).val(attachment.url);
+      $(this.adImgId).val(attachment.id);
+      if('' == $(this.adName).val() && '' != attachment.title) $(this.adName).val(attachment.title);
+      if('' == $(this.adDesc).val() && '' != attachment.caption) $(this.adDesc).val(attachment.caption);
+      if('' == $(this.adAlt).val() && '' != attachment.alt) $(this.adAlt).val(attachment.alt);
     }
   };
 
   $(document).ready(function () {
-    var em = $('#editor_mode').val(), options, fu, title = $('#title');
+    var em = $('#editor_mode').val(), fu, title = $('#title');
 
     var
       rcvt0 = $('#rc-vt0'), rcvt2 = $('#rc-vt2'), xId = $('#x_id'), rcxid = $('#rc-xid'),
@@ -93,7 +93,6 @@ var sam = sam || {};
       xcustGrid = $('#x-cust-grid'), xcustIn = $('#x_view_custom');
 
     var
-      //samUploader, mediaTexts = samEditorOptions.media,
       samAjaxUrl = samEditorOptions.samAjaxUrl,
       samStatsUrl = samEditorOptions.samStatsUrl,
       models = samEditorOptions.models,
@@ -101,7 +100,76 @@ var sam = sam || {};
       samStrs = samEditorOptions.strings,
       sPost = encodeURI(samStrs.posts), sPage = encodeURI(samStrs.page);
 
-    var stats, statsData, itemId = $('#item_id').val(), sMonth = 0;
+    var stats, itemId = $('#item_id').val(), sMonth = 0;
+    var plot, plotData = [],
+      plotOptions = {
+        animate: true,
+        animateReplot: true,
+        cursor: {
+          showTooltip: false
+        },
+        series:[
+          {
+            pointLabels: {
+              show: true
+            },
+            renderer: $.jqplot.BarRenderer,
+            showHighlight: false,
+            rendererOptions: {
+              animation: {
+                speed: 2500
+              },
+              barWidth: 15,
+              barPadding: -15,
+              barMargin: 0,
+              highlightMouseOver: false
+            },
+            label: samStrs.labels.hits
+          },
+          {
+            label: samStrs.labels.clicks,
+            rendererOptions: {
+              animation: {
+                speed: 2000
+              }
+            }
+          }
+        ],
+        axesDefaults: {
+          pad: 0
+        },
+        axes: {
+          xaxis: {
+            tickInterval: 1,
+            drawMajorGridlines: false,
+            drawMinorGridlines: true,
+            drawMajorTickMarks: false,
+            rendererOptions: {
+              tickInset: 1,
+              minorTicks: 1
+            },
+            min: 1
+          },
+          yaxis: {
+            rendererOptions: {
+              forceTickAt0: true
+            }
+          }
+        },
+        highlighter: {
+          show: true,
+          showLabel: true,
+          tooltipAxes: 'y',
+          sizeAdjust: 7.5 ,
+          tooltipLocation : 'ne',
+          useAxesFormatters: false,
+          tooltipFormatString: samStrs.labels.clicks + ': %d'
+        },
+        legend: {
+          show: true,
+          placement: 'ne'
+        }
+      };
 
     function buildLGrid(name, grid, vi, field, gc, url) {
       var iVal = vi.val();
@@ -216,30 +284,10 @@ var sam = sam || {};
       id: itemId,
       sm: sMonth
     }).done(function(data) {
-        var
-          hits = {label: samStrs.labels.hits, data: data.hits},
-          clicks = {label: samStrs.labels.clicks, data: data.clicks};
-        statsData = [hits, clicks];
         $('#total_hits').text(data.total.hits);
         $('#total_clicks').text(data.total.clicks);
-        $.plot('#graph', statsData, {
-          series: {
-            lines: { show: true },
-            points: { show: true }
-          },
-          xaxis: {
-            mode: "categories",
-            tickLength: 0
-          },
-          legend: {
-            backgroundColor: 'rgb(235, 233, 233)'
-          },
-          grid: {
-            backgroundColor: { colors: ["#FFFFFF", "#DDDDDD"] },
-            borderWidth: 1,
-            borderColor: '#DFDFDF'
-          }
-        });
+        plotData = [data.hits, data.clicks];
+        plot = $.jqplot('graph', plotData, plotOptions);
     });
 
     fu = new AjaxUpload(btnUpload, {
@@ -337,25 +385,19 @@ var sam = sam || {};
         }
         if(el == 'tabs-3')
           if(xViewUsers.is(':visible') && w2ui['users-grid']) usersGrid.w2render('users-grid');
-        if(el == 'tabs-5')
-          $.plot('#graph', statsData, {
-            series: {
-              lines: { show: true },
-              points: { show: true }
-            },
-            xaxis: {
-              mode: "categories",
-              tickLength: 0
-            },
-            legend: {
-              backgroundColor: 'rgb(235, 233, 233)'
-            },
-            grid: {
-              backgroundColor: { colors: ["#FFFFFF", "#DDDDDD"] },
-              borderWidth: 1,
-              borderColor: '#DFDFDF'
-            }
-          });
+        if(el == 'tabs-5') {
+          if(plot) {
+            plot.destroy();
+            plot = $.jqplot('graph', plotData, plotOptions);
+          }
+        }
+      }
+    });
+
+    $(window).resize(function() {
+      if(plot) {
+        plot.destroy();
+        plot = $.jqplot('graph', plotData, plotOptions);
       }
     });
 
@@ -840,30 +882,13 @@ var sam = sam || {};
         id: itemId,
         sm: sMonth
       }).done(function(data) {
-          var
-            hits = {label: samStrs.labels.hits, data: data.hits},
-            clicks = {label: samStrs.labels.clicks, data: data.clicks};
-          statsData = [hits, clicks];
           $('#total_hits').text(data.total.hits);
           $('#total_clicks').text(data.total.clicks);
-          $.plot('#graph', statsData, {
-            series: {
-              lines: { show: true },
-              points: { show: true }
-            },
-            xaxis: {
-              mode: "categories",
-              tickLength: 0
-            },
-            legend: {
-              backgroundColor: 'rgb(235, 233, 233)'
-            },
-            grid: {
-              backgroundColor: { colors: ["#FFFFFF", "#DDDDDD"] },
-              borderWidth: 1,
-              borderColor: '#DFDFDF'
-            }
-          });
+          plotData = [data.hits, data.clicks];
+          if(plot) {
+            plot.destroy();
+            plot = $.jqplot('graph', plotData, plotOptions);
+          }
         });
     });
 

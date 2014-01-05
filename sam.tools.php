@@ -144,8 +144,12 @@ if(!class_exists('SamMailer')) {
   <tbody>";
         $k = 0;
         foreach($ads as $ad) {
+          $cpm = number_format($ad['e_cpm'], 2);
+          $cpc = number_format($ad['e_cpc'], 2);
+          $ctr = number_format($ad['e_ctr'], 2) . '%';
+
           $class = ( ($k % 2) == 1 ) ? 'odd' : 'even';
-          $mess .= "<tr class='{$class}'><td>{$ad['name']}</td><td>{$ad['description']}</td><td>{$ad['ad_hits']}</td><td>{$ad['ad_clicks']}</td><td>{$ad['e_cpm']}</td><td>{$ad['e_cpc']}</td><td>{$ad['e_ctr']}</td></tr>";
+          $mess .= "<tr class='{$class}'><td>{$ad['name']}</td><td>{$ad['description']}</td><td>{$ad['ad_hits']}</td><td>{$ad['ad_clicks']}</td><td>{$cpm}</td><td>{$cpc}</td><td>{$ctr}</td></tr>";
           $k++;
         }
         $mess .= "</tbody></table>";

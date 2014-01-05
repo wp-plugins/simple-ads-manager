@@ -46,7 +46,6 @@ if ( !class_exists( 'SimpleAdsManagerAdmin' && class_exists('SimpleAdsManager') 
       add_action('admin_init', array(&$this, 'checkCachePlugins'));
       add_action('admin_init', array(&$this, 'checkBbpForum'));
       add_action('admin_init', array(&$this, 'initSettings'), 11);
-      add_filter('image_size_names_choose', array(&$this, 'sizeNamesChoose'));
       if(version_compare($wp_version, '3.3', '<'))
         add_filter('contextual_help', array(&$this, 'help'), 10, 3);
       
@@ -446,10 +445,6 @@ if ( !class_exists( 'SimpleAdsManagerAdmin' && class_exists('SimpleAdsManager') 
       );
     }
 
-    public function sizeNamesChoose() {
-      return array('full' => __('Full Size'));
-    }
-
     private function getGridsData() {
       global $wpdb, $wp_taxonomies;
 
@@ -680,6 +675,7 @@ if ( !class_exists( 'SimpleAdsManagerAdmin' && class_exists('SimpleAdsManager') 
           wp_enqueue_style('wp-pointer');
           wp_enqueue_style('colorButtons', SAM_URL.'css/color-buttons.css', false, SAM_VERSION);
           wp_enqueue_style('W2UI', SAM_URL . 'css/w2ui.min.css', false, '1.3');
+          wp_enqueue_style('jqPlot', SAM_URL . 'css/jquery.jqplot.min.css', false, '1.0.2');
 
           if($this->cmsVer === 'low') {
             wp_register_script('jquery-effects-core', SAM_URL.'js/jquery.effects.core.min.js', array('jquery'), '1.8.16');
@@ -699,9 +695,11 @@ if ( !class_exists( 'SimpleAdsManagerAdmin' && class_exists('SimpleAdsManager') 
           wp_enqueue_script('AjaxUpload', SAM_URL.'js/ajaxupload.js', array('jquery'), '3.9');
           wp_enqueue_script('W2UI', SAM_URL . 'js/w2ui.min.js', array('jquery'), '1.3');
 
-          wp_enqueue_script('flot', SAM_URL.'js/jquery.flot.min.js', array('jquery'), '0.8.1');
-          wp_enqueue_script('flotCategories', SAM_URL.'js/jquery.flot.categories.min.js', array('jquery'), '0.8.1');
-          wp_enqueue_script('flotResize', SAM_URL.'js/jquery.flot.resize.min.js', array('jquery'), '0.8.1');
+          wp_enqueue_script('jqPlot', SAM_URL . 'js/jquery.jqplot.min.js', array('jquery'), '1.0.2');
+          wp_enqueue_script('barRenderer', SAM_URL . 'js/jqplot.barRenderer.min.js', array('jquery', 'jqPlot'), '1.0.2');
+          wp_enqueue_script('highlighter', SAM_URL . 'js/jqplot.highlighter.min.js', array('jquery', 'jqPlot'), '1.0.2');
+          wp_enqueue_script('cursor', SAM_URL . 'js/jqplot.cursor.min.js', array('jquery', 'jqPlot'), '1.0.2');
+          wp_enqueue_script('pointLabels', SAM_URL . 'js/jqplot.pointLabels.min.js', array('jquery', 'jqPlot'), '1.0.2');
 
           wp_enqueue_script('wp-pointer');
           wp_enqueue_script('adminEditScript', SAM_URL.'js/sam-admin-edit-place.min.js', array('jquery', 'jquery-ui-core', 'jquery-ui-widget', 'jquery-ui-position'), SAM_VERSION);
@@ -738,6 +736,7 @@ if ( !class_exists( 'SimpleAdsManagerAdmin' && class_exists('SimpleAdsManager') 
           wp_enqueue_style('wp-pointer');
           wp_enqueue_style('colorButtons', SAM_URL.'css/color-buttons.css', false, SAM_VERSION);
           wp_enqueue_style('W2UI', SAM_URL . 'css/w2ui.min.css', false, '1.3');
+          wp_enqueue_style('jqPlot', SAM_URL . 'css/jquery.jqplot.min.css', false, '1.0.2');
 
           $options = parent::getSettings();
           $loc = get_locale();
@@ -771,9 +770,12 @@ if ( !class_exists( 'SimpleAdsManagerAdmin' && class_exists('SimpleAdsManager') 
 
           //wp_enqueue_script('cg-props', SAM_URL.'js/jquery.i18n.properties-1.0.9.js', array('jquery', 'jquery-ui-core', 'jquery-ui-widget', 'jquery-ui-position'), '1.0.9');
           wp_enqueue_script('ComboGrid', SAM_URL.'js/jquery.ui.combogrid-1.6.3.js', array('jquery', 'jquery-ui-core', 'jquery-ui-widget', 'jquery-ui-position'/*, 'cg-props'*/), '1.6.3');
-          wp_enqueue_script('flot', SAM_URL.'js/jquery.flot.min.js', array('jquery'), '0.8.1');
-          wp_enqueue_script('flotCategories', SAM_URL.'js/jquery.flot.categories.min.js', array('jquery'), '0.8.1');
-          wp_enqueue_script('flotResize', SAM_URL.'js/jquery.flot.resize.min.js', array('jquery'), '0.8.1');
+
+          wp_enqueue_script('jqPlot', SAM_URL . 'js/jquery.jqplot.min.js', array('jquery'), '1.0.2');
+          wp_enqueue_script('barRenderer', SAM_URL . 'js/jqplot.barRenderer.min.js', array('jquery', 'jqPlot'), '1.0.2');
+          wp_enqueue_script('highlighter', SAM_URL . 'js/jqplot.highlighter.min.js', array('jquery', 'jqPlot'), '1.0.2');
+          wp_enqueue_script('cursor', SAM_URL . 'js/jqplot.cursor.min.js', array('jquery', 'jqPlot'), '1.0.2');
+          wp_enqueue_script('pointLabels', SAM_URL . 'js/jqplot.pointLabels.min.js', array('jquery', 'jqPlot'), '1.0.2');
 
           wp_enqueue_script('wp-pointer');
           wp_enqueue_script('adminEditScript', SAM_URL.'js/sam-admin-edit-item.min.js', array('jquery', 'jquery-ui-core', 'jquery-ui-widget', 'jquery-ui-position'), SAM_VERSION);
