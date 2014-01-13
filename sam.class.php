@@ -9,52 +9,59 @@ if ( !class_exists( 'SimpleAdsManager' ) ) {
     
     private $defaultSettings = array(
       'adCycle' => 1000,
-      'adShow' => 'php', // php|js
-      'adDisplay' => 'blank',
-      'placesPerPage' => 10,
-      'itemsPerPage' => 10,
-	    'deleteOptions' => 0,
-      'deleteDB' => 0,
-      'deleteFolder' => 0,
-      'beforePost' => 0,
-      'bpAdsId' => 0,
-      'bpUseCodes' => 0,
-      'bpExcerpt' => 0,
-      'bbpBeforePost' => 0,
-      'bbpList' => 0,
-      'middlePost' => 0,
-      'mpAdsId' => 0,
-      'mpUseCodes' => 0,
-      'bbpMiddlePost' => 0,
-      'afterPost' => 0,
-      'apAdsId' => 0,
-      'apUseCodes' => 0,
-      'bbpAfterPost' => 0,
-      'useDFP' => 0,
-      'detectBots' => 0,
+      'adShow' => 'php',                // php|js
+      'adDisplay' => 'blank',           // string or null
+      'placesPerPage' => 10,            // int
+      'itemsPerPage' => 10,             // int
+	    'deleteOptions' => 0,             // bool
+      'deleteDB' => 0,                  // bool
+      'deleteFolder' => 0,              // bool
+      'beforePost' => 0,                // bool
+      'bpAdsId' => 0,                   // int
+      'bpUseCodes' => 0,                // bool
+      'bpExcerpt' => 0,                 // bool
+      'bbpBeforePost' => 0,             // bool
+      'bbpList' => 0,                   // bool
+      'middlePost' => 0,                // bool
+      'mpAdsId' => 0,                   // int
+      'mpUseCodes' => 0,                // bool
+      'bbpMiddlePost' => 0,             // bool
+      'afterPost' => 0,                 // bool
+      'apAdsId' => 0,                   // int
+      'apUseCodes' => 0,                // bool
+      'bbpAfterPost' => 0,              // bool
+      'useDFP' => 0,                    // bool
+      'detectBots' => 0,                // bool
       'detectingMode' => 'inexact',
-      'currency' => 'auto',
-      'dfpPub' => '',
-      'dfpBlocks' => array(),
-      'editorButtonMode' => 'modern', // modern|classic
-      'useSWF' => 0,
-      'access' => 'manage_options',
-      'errorlog' => 1,
-      'errorlogFS' => 1,
-      'bbpActive' => 0,
-      'bbpEnabled' => 0,
+      'currency' => 'auto',             // usd|eur|auto
+      'dfpPub' => '',                   // string
+      'dfpBlocks' => array(),           // array
+      'editorButtonMode' => 'modern',   // modern|classic
+      'useSWF' => 0,                    // bool
+      'access' => 'manage_options',     //
+      'errorlog' => 1,                  // bool
+      'errorlogFS' => 1,                // bool
+      'bbpActive' => 0,                 // bool
+      'bbpEnabled' => 0,                // bool
       // Mailer
-      'mailer' => 1,
+      'mailer' => 1,                    // bool
       'mail_subject' => 'Ad campaign report ([month])',
       'mail_greeting' => 'Hi! [name]!',
       'mail_text_before' => 'This is your Ad Campaing Report:',
       'mail_text_after' => '',
       'mail_warning' => 'You received this mail because you are an advertiser of site [site]. If time of your campaign expires or if you refuse to post your ads on our site, you will be excluded from the mailing list automatically. Thank you for your cooperation.',
-      'mail_message' => 'Do not respond to this mail! This mail was sent automatically by Wordpress plugin Simple Ads Manager.'
+      'mail_message' => 'Do not respond to this mail! This mail was sent automatically by Wordpress plugin Simple Ads Manager.',
+      'mail_period' => 'monthly',        // monthly|weekly
+      'mail_hits' => 1,                  // bool
+      'mail_clicks' => 1,                // bool
+      'mail_cpm' => 1,                   // bool
+      'mail_cpc' => 1,                   // bool
+      'mail_ctr' => 1,                   // bool
+      'mail_preview' => 0
 	  );
 		
 	  public function __construct() {
-      define('SAM_VERSION', '2.1.77');
+      define('SAM_VERSION', '2.2.80');
       define('SAM_DB_VERSION', '2.6');
       define('SAM_PATH', dirname( __FILE__ ));
       define('SAM_URL', plugins_url( '/',  __FILE__  ) );
@@ -169,11 +176,19 @@ if ( !class_exists( 'SimpleAdsManager' ) ) {
 
     public function samMaintenance() {
       $options = self::getSettings();
-      if(false === ($mDate = get_transient( 'sam_maintenance_date' ))) {
+      if(false === ($mDate = get_transient( 'sam_maintenance_date' )) && $options['mailer']) {
         $date = new DateTime('now');
-        $date->modify('+1 month');
-        $nextDate = new DateTime($date->format('Y-m-01 02:00'));
-        $diff = $nextDate->format('U') - $_SERVER['REQUEST_TIME'];
+        if($options['mail_period'] == 'monthly') {
+          $date->modify('+1 month');
+          $nextDate = new DateTime($date->format('Y-m-01 02:00'));
+          $diff = $nextDate->format('U') - $_SERVER['REQUEST_TIME'];
+        }
+        else {
+          $dd = 8 - ((integer) $date->format('N'));
+          $date->modify("+{$dd} day");
+          $nextDate = new DateTime($date->format('Y-m-d 02:00'));
+          $diff = (8 - ((integer) $date->format('N'))) * DAY_IN_SECONDS;
+        }
 
         if($options['mailer']) {
           include_once('sam.tools.php');
@@ -210,7 +225,9 @@ if ( !class_exists( 'SimpleAdsManager' ) ) {
       if($settings['adCycle'] == 0) $cycle = 1000;
       else $cycle = $settings['adCycle'];
 
-      global $current_user;
+      global $current_user, $wpdb;
+
+      $sTable = $wpdb->prefix . 'sam_stats';
 
       $viewPages = 0;
       $wcc = '';
@@ -362,9 +379,12 @@ if ( !class_exists( 'SimpleAdsManager' ) ) {
       $whereClause .= " OR (sa.view_type = 0 AND (sa.view_pages+0 & $viewPages))";
       $whereClause .= "$wci)";
       $whereClause .= "$wcc $wca $wct $wcct $wcx $wcxc $wcxa $wcxt $wcxct";
+
+      $hits = "SELECT IFNULL(COUNT(*), 0) FROM $sTable ss WHERE ss.id = sa.id AND ss.event_type = 0";
+      $clicks = "SELECT IFNULL(COUNT(*), 0) FROM $sTable ss WHERE ss.id = sa.id AND ss.event_type = 1";
       $whereClauseT = " AND IF(sa.ad_schedule, CURDATE() BETWEEN sa.ad_start_date AND sa.ad_end_date, TRUE)";
-      $whereClauseT .= " AND IF(sa.limit_hits, sa.hits_limit > sa.ad_hits, TRUE)";
-      $whereClauseT .= " AND IF(sa.limit_clicks, sa.clicks_limit > sa.ad_clicks, TRUE)";
+      $whereClauseT .= " AND IF(sa.limit_hits, sa.hits_limit > ({$hits}), TRUE)";
+      $whereClauseT .= " AND IF(sa.limit_clicks, sa.clicks_limit > ({$clicks}), TRUE)";
 
       $whereClauseW = " AND IF(sa.ad_weight > 0, (sa.ad_weight_hits*10/(sa.ad_weight*$cycle)) < 1, FALSE)";
       $whereClause2W = "AND (sa.ad_weight > 0)";
@@ -519,25 +539,25 @@ if ( !class_exists( 'SimpleAdsManager' ) ) {
     }
     
     public function doAdShortcode($atts) {
-      shortcode_atts( array( 'id' => '', 'name' => '', 'codes' => ''), $atts );
+      $atts = shortcode_atts( array( 'id' => '', 'name' => '', 'codes' => ''), $atts );
       $ad = new SamAd(array('id' => $atts['id'], 'name' => $atts['name']), ($atts['codes'] == 'true'), $this->crawler);
       return $ad->ad;
     }
     
     public function doShortcode( $atts ) {
-      shortcode_atts( array( 'id' => '', 'name' => '', 'codes' => ''), $atts );
+      $atts = shortcode_atts( array( 'id' => '', 'name' => '', 'codes' => ''), $atts );
       $ad = new SamAdPlace(array('id' => $atts['id'], 'name' => $atts['name']), ($atts['codes'] == 'true'), $this->crawler);
       return $ad->ad;
     }
     
     public function doZoneShortcode($atts) {
-      shortcode_atts( array( 'id' => '', 'name' => '', 'codes' => ''), $atts );
+      $atts = shortcode_atts( array( 'id' => '', 'name' => '', 'codes' => ''), $atts );
       $ad = new SamAdPlaceZone(array('id' => $atts['id'], 'name' => $atts['name']), ($atts['codes'] == 'true'), $this->crawler);
       return $ad->ad;
     }
     
     public function doBlockShortcode($atts) {
-      shortcode_atts( array( 'id' => '', 'name' => ''), $atts );
+      $atts = shortcode_atts( array( 'id' => '', 'name' => ''), $atts );
       $block = new SamAdBlock(array('id' => $atts['id'], 'name' => $atts['name']), $this->crawler);
       return $block->ad;
     }

@@ -10,6 +10,7 @@ if(!class_exists('SamAd')) {
     public $ad = '';
     
     public function __construct($args = null, $useCodes = false, $crawler = false) {
+      if(!defined('SAM_OPTIONS_NAME')) define('SAM_OPTIONS_NAME', 'samPluginOptions');
       $this->args = $args;
       $this->useCodes = $useCodes;
       $this->crawler = $crawler;
@@ -150,6 +151,7 @@ if(!class_exists('SamAdPlace')) {
     public function __construct($args = null, $useCodes = false, $crawler = false, $clauses = null, $ajax = false) {
       global $SAM_Query;
 
+      if(!defined('SAM_OPTIONS_NAME')) define('SAM_OPTIONS_NAME', 'samPluginOptions');
       $this->args = $args;
       $this->useCodes = $useCodes;
       $this->crawler = $crawler;
@@ -225,7 +227,7 @@ if(!class_exists('SamAdPlace')) {
       $rId = rand(1111, 9999);
       if($settings['adCycle'] == 0) $cycle = 1000;
       else $cycle = $settings['adCycle'];
-      $el = (integer)$settings['errorlogFS'];
+      $el = isset($settings['errorlogFS']);
       
       global $wpdb;
       $pTable = $wpdb->prefix . "sam_places";          
@@ -296,7 +298,7 @@ if(!class_exists('SamAdPlace')) {
         return $output;
       }
 
-      if(($settings['adShow'] == 'js') && !$this->force) {
+      if(isset($settings['adShow']) && ($settings['adShow'] == 'js') && !$this->force) {
         //$data = "{id: 0, pid: {$place['id']}, codes: $codes}";
         return "<div id='c{$rId}_0_{$place['id']}' class='sam-container sam-place' data-sam='{$data}'></div>";
       }
