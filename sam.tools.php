@@ -29,9 +29,27 @@ if(!class_exists('SamMailer')) {
       return $list;
     }
 
+    private function getSiteInfo( $info = 'name' ) {
+      $infos = array(
+        'name' => 'blogname',
+        'url' => 'siteurl',
+        'admin_email' => 'admin_email'
+      );
+
+      if(function_exists('get_bloginfo')) $out = get_bloginfo($info);
+      else {
+        global $wpdb;
+        $oTable = $wpdb->prefix . 'options';
+
+        $oSql = "SELECT wo.option_value FROM $oTable wo WHERE wo.option_name = %s  LIMIT 1;";
+        $out = $wpdb->get_var($wpdb->prepare($oSql, $infos[$info]));
+      }
+      return $out;
+    }
+
     private function parseText( $text, $advert ) {
       $out = str_replace('[name]', $advert, $text);
-      $out = str_replace('[site]', get_bloginfo('name'), $out);
+      $out = str_replace('[site]', self::getSiteInfo(), $out);
       $out = str_replace('Simple Ads Manager', "<a href='http://www.simplelib.com/?p=480' target='_blank'>Simple Ads Manager</a>", $out);
       $out = str_replace('[month]', $this->month, $out);
       $out = str_replace('[first]', $this->first, $out);
@@ -93,11 +111,6 @@ if(!class_exists('SamMailer')) {
       $options = $this->options;
       $aTable = $wpdb->prefix . 'sam_ads';
       $sTable = $wpdb->prefix . 'sam_stats';
-      $greeting = self::parseText($options['mail_greeting'], $user['adv_name']);
-      $textBefore = self::parseText($options['mail_text_before'], $user['adv_name']);
-      $textAfter = self::parseText($options['mail_text_after'], $user['adv_name']);
-      $warning = self::parseText($options['mail_warning'], $user['adv_name']);
-      $message = self::parseText($options['mail_message'], $user['adv_name']);
 
       $columns = array(
         'mail_hits' => 'Hits',
@@ -126,6 +139,12 @@ if(!class_exists('SamMailer')) {
         $this->first = $first;
         $this->last = $last;
       }
+
+      $greeting = self::parseText($options['mail_greeting'], $user['adv_name']);
+      $textBefore = self::parseText($options['mail_text_before'], $user['adv_name']);
+      $textAfter = self::parseText($options['mail_text_after'], $user['adv_name']);
+      $warning = self::parseText($options['mail_warning'], $user['adv_name']);
+      $message = self::parseText($options['mail_message'], $user['adv_name']);
 
       $sql = "SELECT
                   sa.id,
@@ -222,10 +241,15 @@ if(!class_exists('SamMailer')) {
         $headers = 'Content-type: text/html; charset=UTF-8' . "\r\n";
         //$headers .= 'From: Tests <wordpress@simplelib.com>' . "\r\n";
         foreach($advertisers as $adv) {
-          $subject = self::parseText($this->options['mail_subject'], $adv['adv_name']);
           $message = self::buildMessage($adv);
+          $subject = self::parseText($this->options['mail_subject'], $adv['adv_name']);
           if(!empty($message)) {
-            wp_mail($adv['adv_mail'], $subject, $message, $headers);
+            if(function_exists('wp_mail')) wp_mail($adv['adv_mail'], $subject, $message, $headers);
+            else {
+              $samAdminMail = self::getSiteInfo('admin_email');
+              $headers .= "From: SAM Info <{$samAdminMail}>" . "\r\n";
+              mail($adv['adv_mail'], $subject, $message, $headers);
+            }
             $k++;
           }
         }
@@ -234,6 +258,26 @@ if(!class_exists('SamMailer')) {
     }
 
     public function buildPreview($user) {
+      $date = new DateTime('now');
+      if($this->options['mail_period'] === 'monthly') {
+        $date->modify('-1 month');
+        $first = $date->format('Y-m-01 00:00:00');
+        $last = $date->format('Y-m-t 23:59:59');
+        $this->first = $first;
+        $this->last = $last;
+      }
+      else {
+        $date->modify('-1 week');
+        $dd = 7 - ((integer) $date->format('N'));
+        if($dd > 0) $date->modify("+{$dd} day");
+        $last = $date->format('Y-m-d 23:59:59');
+        $date->modify('-6 day');
+        $first = $date->format('Y-m-d 00:00:00');
+
+        $this->first = $first;
+        $this->last = $last;
+      }
+
       $options = $this->options;
       $greeting = self::parseText($options['mail_greeting'], $user);
       $textBefore = self::parseText($options['mail_text_before'], $user);
@@ -320,6 +364,78 @@ if(!class_exists('SamMailer')) {
 <p class='mess'>{$message}</p>";
 
       return $mess;
+    }
+  }
+}
+
+if(!class_exists('SamStatsCleaner')) {
+  class SamStatsCleaner {
+    private $options;
+
+    public function __construct($settings) {
+      $this->options = $settings;
+    }
+
+    private function errorWrite($eTable, $rTable, $eSql = null, $eResult = null, $lastError = null, $date = null) {
+      global $wpdb;
+
+      if(!is_null($eResult)) {
+        if($eResult === false) {
+          $wpdb->insert(
+            $eTable,
+            array(
+              'error_date' => current_time('mysql'),
+              'table_name' => $rTable,
+              'error_type' => 1,
+              'error_msg' => (empty($lastError)) ? __('An error occurred during updating process...', SAM_DOMAIN) : $lastError,
+              'error_sql' => $eSql,
+              'resolved' => 0
+            ),
+            array('%s', '%s', '%d', '%s', '%s', '%d')
+          );
+        }
+        else {
+          $wpdb->insert(
+            $eTable,
+            array(
+              'error_date' => current_time('mysql'),
+              'table_name' => $rTable,
+              'error_type' => 0,
+              'error_msg' => (empty($lastError)) ? sprintf( __('All statistical data before %s is cleared...', SAM_DOMAIN), $date ) : $lastError,
+              'error_sql' => $eSql,
+              'resolved' => 1
+            ),
+            array('%s', '%s', '%d', '%s', '%s', '%d')
+          );
+        }
+      }
+    }
+
+    public function clear($date = null) {
+      if($this->options['keepStats'] == 0) return;
+
+      if($date == null) {
+        $nowDate = new DateTime('now');
+        $modify = ($this->options['keepStats'] < 12) ? '-' . $this->options['keepStats'] . ' month' : '-1 year';
+        $nowDate->modify($modify);
+        $date = $nowDate->format('Y-m-01 00:00');
+        $sDate = $nowDate->format(str_replace(array('d', 'j'), array('01', '1'), get_option('date_format')));
+      }
+      else $sDate = $date;
+
+      global $wpdb;
+      $dbResult = null;
+      $el = (integer)$this->options['errorlog'];
+
+      $sTable = $wpdb->prefix . 'sam_stats';
+      $eTable = $wpdb->prefix . "sam_errors";
+
+      $sql = "DELETE FROM $sTable WHERE event_time < %s;";
+      $dbResult = $wpdb->query($wpdb->prepare($sql, $date));
+      if($el) {
+        self::errorWrite($eTable, $sTable, $wpdb->prepare($sql, $date), $dbResult, $wpdb->last_error, $sDate);
+        $dbResult = null;
+      }
     }
   }
 }
