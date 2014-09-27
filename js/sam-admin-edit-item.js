@@ -96,6 +96,7 @@ var sam = sam || {};
       samAjaxUrl = samEditorOptions.samAjaxUrl,
       samStatsUrl = samEditorOptions.samStatsUrl,
       models = samEditorOptions.models,
+      searches = samEditorOptions.searches,
       gData = samEditorOptions.data,
       samStrs = samEditorOptions.strings,
       sPost = encodeURI(samStrs.posts), sPage = encodeURI(samStrs.page);
@@ -171,14 +172,21 @@ var sam = sam || {};
         }
       };
 
-    function buildLGrid(name, grid, vi, field, gc, url) {
+    function buildLGrid(name, grid, vi, field, gc, url, ss) {
       var iVal = vi.val();
       grid.w2grid({
         name: name,
-        show: {selectColumn: true},
+        show: {
+          selectColumn: true,
+          toolbar: true,
+          footer: true
+        },
+        multiSearch: true,
+        searches: ss,
         multiSelect: true,
         columns: gc,
         url: url,
+        limit: 10000,
         onSelect: function(event) {
           event.onComplete = function() {
             var out = '', recs = this.getSelection(), data;
@@ -419,9 +427,9 @@ var sam = sam || {};
       postAjax =
         samAjaxUrl +
         '?action=load_posts&cstr=' + samEditorOptions.data.custList +
-          '&sp=' + sPost + '&spg=' + sPage;
-    buildLGrid('posts-grid', postsGrid, postsIn, 'id', models.posts, postAjax);
-    buildLGrid('x-posts-grid', xpostsGrid, xpostsIn, 'id', models.posts, postAjax);
+          '&sp=' + sPost + '&spg=' + sPage + '&limit=10000';
+    buildLGrid('posts-grid', postsGrid, postsIn, 'id', models.posts, postAjax, searches.posts);
+    buildLGrid('x-posts-grid', xpostsGrid, xpostsIn, 'id', models.posts, postAjax, searches.posts);
 
     $('#tabs').tabs({
       activate: function( event, ui ) {

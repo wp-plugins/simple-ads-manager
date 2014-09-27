@@ -4,7 +4,7 @@ Donate link: https://load.payoneer.com/LoadToPage.aspx?email=minimus@simplelib.c
 Tags: ad, adbrite, adgridwork, adify, admin, adpinion, adroll, ads, adsense, adserver, advertisement, advertising, affiliate, banner, banners, chitika, cj, commercial, commission, crispads, dfp, google, income, junction, link, manager, media, money, plugin, random, referral, revenue, rotator, seo, server, shoppingads, widget, widgetbucks, yahoo, ypn
 Requires at least: 3.9
 Tested up to: 4.0
-Stable tag: 2.3.85
+Stable tag: 2.4.90
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -85,6 +85,12 @@ No questions now...
 
 == Changelog ==
 
+= 2.4.90 =
+* The quantity of SQL of requests for each ad was reduced.
+* Indices for plugin's database tables were added.
+* Sequential loading of ads was changed to packet loading.
+* The bug of data loading into the grid is fixed.
+* Added ability to enable/disable the collection and storage of statistical data
 = 2.3.85 =
 * Scheduled Auto Cleaning of Statistical Data is added
 * Auto inserting is changed (more objects for auto inserting of advertisements)
@@ -195,6 +201,8 @@ No questions now...
 
 == Upgrade Notice ==
 
+= 2.4.90 =
+More faster, fewer bugs... See change log.
 = 2.3.85 =
 Some major changes of plugin (see change log).
 = 2.0.74 =
@@ -288,4 +296,6 @@ Initial upload
 
 == Other Notes ==
 
-This plugin is using jQuery **[AjaxUpload plugin](http://valums.com/ajax-upload/)**.
+This plugin is using jQuery **[jqPlot plugin](http://www.jqplot.com/)**.
+This plugin is using jQuery **[W2UI - JavaScript UI Library](http://w2ui.com/web/)**.
+This plugin is using jQuery **[ComboGrid plugin](http://combogrid.justmybit.com/)**.
