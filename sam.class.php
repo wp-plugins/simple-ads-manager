@@ -53,10 +53,10 @@ if ( !class_exists( 'SimpleAdsManager' ) ) {
       'mailer' => 1,                    // bool
       'mail_subject' => 'Ad campaign report ([month])',
       'mail_greeting' => 'Hi! [name]!',
-      'mail_text_before' => 'This is your Ad Campaing Report:',
+      'mail_text_before' => 'This is your Ad Campaign Report:',
       'mail_text_after' => '',
       'mail_warning' => 'You received this mail because you are an advertiser of site [site]. If time of your campaign expires or if you refuse to post your ads on our site, you will be excluded from the mailing list automatically. Thank you for your cooperation.',
-      'mail_message' => 'Do not respond to this mail! This mail was sent automatically by Wordpress plugin Simple Ads Manager.',
+      'mail_message' => 'Do not respond to this mail! This mail was sent automatically by Wordpress plugin Simple Ads Manager (Free Edition).',
       'mail_period' => 'monthly',        // monthly|weekly
       'mail_hits' => 1,                  // bool
       'mail_clicks' => 1,                // bool
@@ -74,7 +74,7 @@ if ( !class_exists( 'SimpleAdsManager' ) ) {
 	  );
 		
 	  public function __construct() {
-      define('SAM_VERSION', '2.5.94');
+      define('SAM_VERSION', '2.6.96');
       define('SAM_DB_VERSION', '2.8');
       define('SAM_PATH', dirname( __FILE__ ));
       define('SAM_URL', plugins_url( '/',  __FILE__  ) );
@@ -523,11 +523,12 @@ if ( !class_exists( 'SimpleAdsManager' ) ) {
       if($options['detectBots'] == 1) {
         switch($options['detectingMode']) {
           case 'inexact':
-            if($_SERVER["HTTP_USER_AGENT"] == '' ||
-               $_SERVER['HTTP_ACCEPT'] == '' ||
-               $_SERVER['HTTP_ACCEPT_ENCODING'] == '' ||
-               $_SERVER['HTTP_ACCEPT_LANGUAGE'] == '' ||
-               $_SERVER['HTTP_CONNECTION']=='') $crawler = true;
+            if(((!isset($_SERVER["HTTP_USER_AGENT"])) ? true : ($_SERVER["HTTP_USER_AGENT"] == '')) ||
+               ((!isset($_SERVER['HTTP_ACCEPT'])) ? true : ($_SERVER['HTTP_ACCEPT'] == '')) ||
+               ((!isset($_SERVER['HTTP_ACCEPT_ENCODING'])) ? true : ($_SERVER['HTTP_ACCEPT_ENCODING'] == '')) ||
+               ((!isset($_SERVER['HTTP_ACCEPT_LANGUAGE'])) ? true : ($_SERVER['HTTP_ACCEPT_LANGUAGE'] == '')) ||
+               ((!isset($_SERVER['HTTP_CONNECTION'])) ? true : $_SERVER['HTTP_CONNECTION'] == ''))
+	            $crawler = true;
             break;
             
           case 'exact':
