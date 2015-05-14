@@ -86,7 +86,9 @@ No questions now...
 == Changelog ==
 
 = 2.8.0.105 =
-Some improvements...
+* The list of advertisers was added
+* The Ads Zone Editor was improved
+* The bug of pagination was resolved
 = 2.7.102 =
 * Potential vulnerability issue was resolved
 = 2.7.101 =
@@ -223,9 +225,7 @@ Some improvements...
 == Upgrade Notice ==
 
 = 2.8.0.105 =
-* The list of advertisers was added
-* The Ads Zone Editor was improved
-* The bug of pagination was resolved
+Some improvements...
 = 2.7.102 =
 Potential vulnerability issue was resolved.
 = 2.7.101 =
