@@ -4,6 +4,8 @@
  * Date: 23.12.13
  * Time: 18:25
  */
+
+include_once('sam.functions.php');
 if(!class_exists('SamMailer')) {
   class SamMailer {
     private $options;
@@ -261,6 +263,30 @@ if(!class_exists('SamMailer')) {
     public function setContentType() {
       return 'text/html';
     }
+
+	  public function sendMail($user, $key = 'nick') {
+		  $column = 'adv_' . $key;
+		  $advKey = array_search($user, array_column($this->advertisersList, $column));
+		  $adv = $this->advertisersList[$advKey];
+		  $success = false;
+
+		  if(!is_null($adv) && $adv !== false) {
+			  $headers = 'Content-type: text/html; charset=UTF-8' . "\r\n";
+			  $message = self::buildMessage( $adv );
+			  $subject = self::parseText( $this->options['mail_subject'], $adv['adv_name'] );
+			  if ( ! empty( $message ) ) {
+				  if ( function_exists( 'wp_mail' ) ) {
+					  $success = wp_mail( $adv['adv_mail'], $subject, $message, $headers );
+				  } else {
+					  $samAdminMail = self::getSiteInfo( 'admin_email' );
+					  $headers .= "From: SAM Info <{$samAdminMail}>" . "\r\n";
+					  $success = mail( $adv['adv_mail'], $subject, $message, $headers );
+				  }
+			  }
+		  }
+
+		  return $success;
+	  }
 
     public function sendMails() {
       $k = 0; $s = 0; $e = 0;
