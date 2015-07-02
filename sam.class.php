@@ -79,7 +79,7 @@ if ( !class_exists( 'SimpleAdsManager' ) ) {
 	  );
 		
 	  public function __construct() {
-      define('SAM_VERSION', '2.9.3.114');
+      define('SAM_VERSION', '2.9.4.116');
       define('SAM_DB_VERSION', '2.9');
       define('SAM_PATH', dirname( __FILE__ ));
       define('SAM_URL', plugins_url( '/',  __FILE__  ) );
@@ -450,7 +450,7 @@ if ( !class_exists( 'SimpleAdsManager' ) ) {
           'ajaxurl' => SAM_URL . 'sam-ajax.php',
           'loadurl' => SAM_URL . 'sam-ajax-loader.php',
           'load' => ($this->samOptions['adShow'] == 'js'),
-          'level' => self::getDirLevel(), //count(explode('/', str_replace( ABSPATH, '', dirname( __FILE__ ) ))),
+          //'level' => self::getDirLevel(),
           'mailer' => $options['mailer'],
           'clauses' => $clauses64,
 		      'doStats' => $this->samOptions['stats'],
